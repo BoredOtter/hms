@@ -26,7 +26,9 @@
 
 10. Run `tilt up`
 
-11. Hope that will work
+11. Run `minikube tunnel`
+
+12. Hope that will work
 
 
 ### App Urls:
