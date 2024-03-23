@@ -1,4 +1,4 @@
-const baseUrl = 'https://auth.app.test';
+const baseUrl = 'https://auth.hms.test';
 
 export default {
   baseUrl: baseUrl,
@@ -7,7 +7,7 @@ export default {
     password: 'password',
     grant_type: 'password',
     client_id: 'test-cli',
-    realmName: 'quickstart'
+    realmName: 'hms'
   },
   adminClient: {
     baseUrl: baseUrl,

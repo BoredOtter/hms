@@ -1,7 +1,0 @@
-{
-  "realm": "quickstart",
-  "auth-server-url": "https://auth.app.test",
-  "ssl-required": "external",
-  "resource": "spa",
-  "public-client": true
-}

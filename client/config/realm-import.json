@@ -1,13 +1,13 @@
 {
-  "realm": "quickstart",
+  "realm": "hms",
   "enabled": true,
   "clients": [
     {
-      "clientId": "spa",
+      "clientId": "hms-client",
       "enabled": true,
       "publicClient": true,
       "directAccessGrantsEnabled": true,
-      "redirectUris": [ "https://app.test/*"]
+      "redirectUris": [ "https://hms.test/*"]
     }
   ],
   "users" : [

@@ -1,5 +1,5 @@
 {
-  "name": "spa",
+  "name": "client",
   "type": "module",
   "scripts": {
     "start": "node app.js",

@@ -54,14 +54,14 @@ metadata:
   name: keycloak
   annotations:
     nginx.ingress.kubernetes.io/enable-cors: "true"
-    nginx.ingress.kubernetes.io/cors-allow-origin: "http://app.test"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "https://hms.test"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
 spec:
   tls:
     - hosts:
-        - auth.app.test
+        - auth.hms.test
   rules:
-    - host: auth.app.test
+    - host: auth.hms.test
       http:
         paths:
           - path: /

@@ -1,6 +1,6 @@
-k8s_yaml('deployment/spa.yaml')
+k8s_yaml('deployment/client.yaml')
 k8s_yaml('deployment/keycloak.yaml')
 
-docker_build('spa','spa/')
+docker_build('client','client/')
 
-k8s_resource('spa')
+k8s_resource('client')

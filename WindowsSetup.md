@@ -18,10 +18,10 @@
 
 9. Add this lines to `C:\Windows\System32\drivers\etc\hosts`
 ```
-    <minikube ip> auth.app.test
-    <minikube ip> app.test
-    127.0.0.1 auth.app.test
-    127.0.0.1 app.test
+    <minikube ip> auth.hms.test
+    <minikube ip> hms.test
+    127.0.0.1 auth.hms.test
+    127.0.0.1 hms.test
 ```
 
 10. Run `tilt up`
@@ -32,6 +32,5 @@
 
 
 ### App Urls:
-1. app.test
-2. auth.app.test
-
+1. hms.test
+2. auth.hms.test
