@@ -50,3 +50,10 @@ spec:
             name: client
             port:
               number: 8080
+      - path: /protected  
+        pathType: Prefix
+        backend:
+          service:
+            name: validator
+            port:
+              number: 8000
