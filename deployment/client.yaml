@@ -37,7 +37,7 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/enable-cors: "true"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/cors-allow-origin: "https://auth.hms.test"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "https://auth.hms.test, http://127.0.0.1:8000"
 spec:
   rules:
   - host: hms.test

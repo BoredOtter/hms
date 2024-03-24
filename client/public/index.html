@@ -12,6 +12,7 @@
       <button id="showAccessToken" type="button">Show Access Token</button>
       <button id="refreshToken" type="button">Refresh</button>
       <button id="checkTokenValidity" type="button">Check Token Validity</button>
+      <button id="testRequestwithToken" type="button">Test request with token</button>
       <hr>
       <h2 id="name"></h2>
       <p><strong>User ID:</strong> <span id="userId"></span></p>
@@ -78,6 +79,17 @@
         .addEventListener("click", async () => {
           await keycloak.accountManagement();
         });
+      document
+        .getElementById("testRequestwithToken")
+        .addEventListener("click", async () => {
+          const response = await fetch("http://127.0.0.1:8000/protected", {
+            headers: {
+              Authorization: `Bearer ${keycloak.token}`,
+            },
+          });
+          const data = await response.json();
+          usersOutputElement.textContent = JSON.stringify(data, null, 2);
+        });
 
       document
         .getElementById("checkTokenValidity")
@@ -88,10 +100,17 @@
 
         function logoutOnTokenExpired() {
           console.log("Setting up token expiration handler.");
-          keycloak.onTokenExpired = function() {
-            console.log("Token expired. Logging out.");
-            keycloak.logout();
-          };
+          if (keycloak.tokenParsed.exp) {
+            const currentTime = Math.floor(new Date().getTime() / 1000);
+            const remainingTime = keycloak.tokenParsed.exp - currentTime;
+            console.log(`Token expires in ${remainingTime} seconds.`);
+            setTimeout(() => {
+              console.log("Token expired. Logging out.");
+              keycloak.logout();
+            }, remainingTime * 1000);
+          } else {
+            console.log("Token expiration time not found.");
+          }
           console.log("Token expiration handler set up.");
         }
 
