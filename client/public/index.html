@@ -11,15 +11,26 @@
       <button id="showIdToken" type="button">Show ID Token</button>
       <button id="showAccessToken" type="button">Show Access Token</button>
       <button id="refreshToken" type="button">Refresh</button>
+      <button id="checkTokenValidity" type="button">Check Token Validity</button>
       <hr>
       <h2 id="name"></h2>
+      <p><strong>User ID:</strong> <span id="userId"></span></p>
       <pre id="output"></pre>
+      <hr>
+      <h2>Get Users</h2>
+      <button id="getUsers" type="button">Get Users</button>
+      <pre id="usersOutput"></pre>
     </div>
     <script src="KC_URL/js/keycloak.js"></script>
     <script type="module">
+
+      console.log("Scripts loading...");
+
       const outputElement = document.getElementById("output");
       const nameElement = document.getElementById("name");
+      const userIdElement = document.getElementById("userId");
       const userElement = document.getElementById("user");
+      const usersOutputElement = document.getElementById("usersOutput");
 
       function output(content) {
         if (typeof content === "object") {
@@ -33,8 +44,10 @@
         const name =
           keycloak.idTokenParsed.name ||
           keycloak.idTokenParsed.preferred_username;
+        const userId = keycloak.idTokenParsed.sub;
 
         nameElement.textContent = `Hello ${name}`;
+        userIdElement.textContent = userId;
         userElement.style.display = "block";
       }
 
@@ -63,12 +76,42 @@
       document
         .getElementById("showMyAccount")
         .addEventListener("click", async () => {
-          await keycloak.accountManagement()
+          await keycloak.accountManagement();
         });
 
-      const keycloak = new Keycloak();
-      await keycloak.init({ onLoad: "login-required" });
-      showProfile();
+      document
+        .getElementById("checkTokenValidity")
+        .addEventListener("click", async () => {
+          const isTokenValid = keycloak.token !== null && !keycloak.isTokenExpired();
+          output({ "Token Validity": isTokenValid });
+        });
+
+        function logoutOnTokenExpired() {
+          console.log("Setting up token expiration handler.");
+          keycloak.onTokenExpired = function() {
+            console.log("Token expired. Logging out.");
+            keycloak.logout();
+          };
+          console.log("Token expiration handler set up.");
+        }
+
+        function logRemainingTime() {
+          const currentTime = Math.floor(new Date().getTime() / 1000);
+          const remainingTime = keycloak.tokenParsed.exp - currentTime;
+          console.log(`Remaining time before logout: ${remainingTime} seconds.`);
+        }
+
+        const keycloak = new Keycloak();
+        keycloak.init({ onLoad: "login-required" }).then(() => {
+          console.log("Keycloak initialized.");
+          showProfile();
+          logoutOnTokenExpired();
+          setInterval(logRemainingTime, 1000); // Call logRemainingTime every 5 seconds
+        }).catch((error) => {
+          console.error("Error initializing Keycloak: ", error);
+        });
+
+        console.log("Scripts loaded.");
     </script>
   </body>
 </html>
