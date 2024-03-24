@@ -13,17 +13,23 @@ app = FastAPI()
 
 
 @app.get("/protected")
-async def protected_endpoint(request: Request, token: str = Header(...)):
-    if validate_token(token):
-        return {"message": "Token is valid"}
-    else:
+async def protected_endpoint(request: Request):
+    # body = await request.body()
+    # headers = request.headers
+    # path_params = request.path_params
+    # query_params = request.query_params
+    # request_info = f"Body: {body}\nHeaders: {headers}\nPath params: {path_params}\nQuery params: {query_params}"
+    # print(request_info)
+    # raise Exception(request_info)
+    token = request.headers['authorization'].split(' ')[1]
+    if not validate_token(token):
         raise HTTPException(status_code=401, detail="Invalid token")
+    return {"message": "This is the protected endpoint."}
+
 
 def validate_token(token: str) -> bool:
     # get token from header
-    raise Exception(token)
     token_info = keycloak_openid.introspect(token)
-    raise Exception(token_info)
     return token_info['active']
 
 @app.get("/")
