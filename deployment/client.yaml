@@ -50,10 +50,10 @@ spec:
             name: client
             port:
               number: 8080
-      - path: /protected  
+      - path: /api/
         pathType: Prefix
         backend:
           service:
-            name: validator
+            name: kraken
             port:
-              number: 8000
+              number: 8080
