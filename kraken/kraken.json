@@ -8,7 +8,10 @@
       "auth/validator": {
         "alg": "RS256",
         "jwk_url": "http://keycloak:8080/realms/hms/protocol/openid-connect/certs",
-        "disable_jwk_security": true
+        "disable_jwk_security": true,
+        "roles_key": "realm_access.roles",
+        "roles": ["admin"],
+        "roles_key_is_nested": true
       }
     },
     "backend": [

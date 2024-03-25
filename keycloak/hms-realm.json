@@ -116,6 +116,21 @@
   ],
   "users" : [
     {
+      "username" : "doctor",
+      "enabled": true,
+      "email" : "doctor@keycloak.org",
+      "firstName": "Doctor",
+      "lastName": "Doctor",
+      "credentials" : [
+        { "type" : "password",
+          "value" : "doctor" }
+      ],
+      "realmRoles": [ "doctor", "offline_access"  ],
+      "clientRoles": {
+        "account": [ "manage-account" ]
+      }
+    },
+    {
       "username" : "alice",
       "enabled": true,
       "email" : "alice@keycloak.org",
@@ -149,6 +164,10 @@
   ],
   "roles" : {
     "realm" : [
+      {
+        "name": "doctor",
+        "description": "Doctor privileges"
+      },
       {
         "name": "user",
         "description": "User privileges"
