@@ -21,11 +21,11 @@ else:
 
 # Configure client
 keycloak_openid = KeycloakOpenID(
-    server_url=KC_URL,
+    server_url="http://keycloak:8080/", #WTF
     client_id=KC_CLIENT_ID,
     realm_name=KC_REALM,
     client_secret_key=KC_CLIENT_SECRET,
-    verify=SSL,
+    verify=False,
 )
 
 
