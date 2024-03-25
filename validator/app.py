@@ -3,25 +3,15 @@ from keycloak import KeycloakOpenID
 from os import environ
 import logging
 
-KC_URL = environ.get("KC_URL", "https://auth.hms.test/")
+KC_URL = environ.get("KC_URL", "http://keycloak")
+KC_PORT = environ.get("KC_PORT", "8080")
 KC_REALM = environ.get("KC_REALM", "hms")
 KC_CLIENT_ID = environ.get("KC_CLIENT_ID", "python")
-KC_CLIENT_SECRET = environ.get(
-    "KC_CLIENT_SECRET", "olszak-sie-obrazi-jak-wpisze-tu-cos-smiesznego"
-)
-
-# TODO: how to make it good?
-SSL = environ.get("SSL", "True")
-if SSL.lower() in ["true"]:
-    SSL = True
-elif SSL.lower() in ["false"]:
-    SSL = False
-else:
-    raise Exception("Invalid value for SSL")
+KC_CLIENT_SECRET = environ.get("KC_CLIENT_SECRET")
 
 # Configure client
 keycloak_openid = KeycloakOpenID(
-    server_url="http://keycloak:8080/", #WTF
+    server_url=f"{KC_URL}:{KC_PORT}",
     client_id=KC_CLIENT_ID,
     realm_name=KC_REALM,
     client_secret_key=KC_CLIENT_SECRET,
