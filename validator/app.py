@@ -1,18 +1,33 @@
 from fastapi import FastAPI, Header, HTTPException, Request
 from keycloak import KeycloakOpenID
+from os import environ
+
+KC_URL = environ.get('KC_URL', 'https://auth.hms.test/')
+KC_REALM = environ.get('KC_REALM', 'hms')
+KC_CLIENT_ID = environ.get('KC_CLIENT_ID', 'python')
+KC_CLIENT_SECRET = environ.get('KC_CLIENT_SECRET', 'olszak-sie-obrazi-jak-wpisze-tu-cos-smiesznego')
+
+#TODO: how to make it good?
+SSL = environ.get('SSL', 'True')
+if SSL.lower() in ['true']:
+    SSL = True
+elif SSL.lower() in ['false']:
+    SSL = False
+else:
+    raise Exception('Invalid value for SSL')
 
 
 # Configure client
-keycloak_openid = KeycloakOpenID(server_url="https://auth.hms.test/",
-                                 client_id="python",
-                                 realm_name="hms",
-                                 client_secret_key="olszak-sie-obrazi-jak-wpisze-tu-cos-smiesznego",
-                                 verify=False)
+keycloak_openid = KeycloakOpenID(server_url=KC_URL,
+                                 client_id=KC_CLIENT_ID,
+                                 realm_name=KC_REALM,
+                                 client_secret_key=KC_CLIENT_SECRET,
+                                 verify=SSL)
 
 app = FastAPI()
 
 
-@app.get("/protected")
+@app.get("/api/v1")
 async def protected_endpoint(request: Request):
     # body = await request.body()
     # headers = request.headers

@@ -17,6 +17,12 @@ spec:
         image: validator
         ports:
         - containerPort: 8000
+        envFrom:
+        - configMapRef:
+            name: validator
+        #TBD
+        # - secretRef:
+        #     name: validator
 ---
 apiVersion: v1
 kind: Service
