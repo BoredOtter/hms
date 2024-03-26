@@ -1,3 +1,9 @@
+# Hospital Management System (HMS)
+
+This project is a proof of concept for a Hospital Management System (HMS) using Keycloak for authentication and authorization, KrakenD as an API gateway, and Kubernetes for deployment and management.
+ 
+The HMS aims to provide a comprehensive solution for managing various aspects of a hospital, including patient records, appointments, medical staff, and more. Keycloak is used for secure user authentication and authorization, ensuring that only authorized personnel can access sensitive information.
+
 # System Architecture:
 
 1. **Keycloak**: Keycloak is an open-source identity and access management solution, used for authentication and authorization.
@@ -10,6 +16,9 @@
 
 5. **Kubernetes**: Kubernetes as a container orchestration platform is used to deploy and manage the services.
 
+## Target Architecture:
+![Target Architecture](./docs/Architecture.png)
+
 # Development Environment:
 ## To develop and test the project, you will need the following tools:
 1. Local Kubernetes cluster (For now we are using Minikube) -> `minikube.sigs.k8s.io`
@@ -19,3 +28,10 @@
 - If you are using Linux, run the `LinuxSetup.sh` script.
 
 After successfully setting up minikube just run `tilt up` in the root directory of the project. This will start the development environment and open the browser with tilt UI.
+## Creating HMS realm in Keycloak
+- Open the Keycloak admin console at `auth.hms.test`
+- Login with the admin credentials (username: `admin`, password: `admin`)
+- Create a new realm by importing the `hms-realm.json` file from the `keycloak` directory
+
+## Accessing the Example Client App
+- Open the browser and navigate to `hms.test`
