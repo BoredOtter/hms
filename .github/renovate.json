@@ -1,0 +1,16 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "platform": "github",
+    "repositories": ["BoredOtter/custom-images"],
+    "branchConcurrentLimit": 0,
+    "prConcurrentLimit": 0,
+    "prHourlyLimit": 0,
+    
+    "packageRules": [
+        {
+            "matchBaseBranches": ["master"],
+            "matchUpdateTypes": ["major", "minor", "patch"],
+            "matchPaths": ["*"]
+        }
+    ]
+}
