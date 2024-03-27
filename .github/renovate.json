@@ -8,7 +8,7 @@
     
     "packageRules": [
         {
-            "matchBaseBranches": ["odnowiciel-wip"],
+            "matchBaseBranches": ["master"],
             "matchUpdateTypes": ["major", "minor", "patch"],
             "matchPaths": ["*"]
         }
