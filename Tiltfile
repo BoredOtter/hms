@@ -2,7 +2,11 @@ kustomize = kustomize('./deployment/')
 k8s_yaml(kustomize)
 
 
-docker_build('client','client/')
+docker_build('client','client/',
+    live_update=[
+        sync('./client', '/app')
+    ]
+)
 
 docker_build('validator','validator/',
     live_update=[
