@@ -20,9 +20,8 @@ spec:
         envFrom:
         - configMapRef:
             name: validator
-        #TBD
-        # - secretRef:
-        #     name: validator
+        - secretRef:
+            name: validator
 ---
 apiVersion: v1
 kind: Service

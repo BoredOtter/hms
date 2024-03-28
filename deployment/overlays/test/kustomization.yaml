@@ -1,0 +1,39 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- ../../base
+- ./ingresses/client.yaml
+- ./ingresses/keycloak.yaml
+- ./autoscaling/kraken.yaml
+patches:
+  - path: deployments/keycloak.yaml
+    target:
+      kind: Deployment
+      name: keycloak
+images: #TODO: good way for templating __TAG__
+- name: kraken
+  newName: ksw2137/kraken
+  newTag: __TAG__
+- name: client
+  newName: ksw2137/client
+  newTag: __TAG__
+- name: validator
+  newName: ksw2137/validator
+  newTag: __TAG__
+configMapGenerator:
+- name: client
+  literals:
+  - KC_URL="https://auth.hms.test.boredotter.dev"
+- name: validator
+  literals:
+  - KC_URL="http://keycloak"
+  - KC_PORT="8080"
+  - KC_REALM="hms"
+  - SSL="False" #I dont like it here, maybe force it in service code?
+#tbh I dont care about this secrets here, probably will do the same for all 
+#this secret sholud be outside of the repo 
+secretGenerator:
+- name: validator
+  literals:
+  - KC_CLIENT_ID="python"
+  - KC_CLIENT_SECRET="olszak-sie-obrazi-jak-wpisze-tu-cos-smiesznego"

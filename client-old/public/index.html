@@ -84,7 +84,7 @@
       document
         .getElementById("apiGatewayHealth")
         .addEventListener("click", async () => {
-          const response = await fetch("https://hms.test/api/v1/health", {
+          const response = await fetch("API_URL/api/v1/health", {
             headers: {
               Authorization: `Bearer ${keycloak.token}`,
             },
@@ -101,7 +101,7 @@
         document
           .getElementById("testRequestToService")
           .addEventListener("click", async () => {
-            const response = await fetch("https://hms.test/api/v1/validator", {
+            const response = await fetch("API_URL/api/v1/validator", {
               headers: {
                 Authorization: `Bearer ${keycloak.token}`,
               },

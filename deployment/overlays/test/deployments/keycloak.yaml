@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+spec:
+  template:
+    spec:
+      containers:
+        - name: keycloak
+          args: ["start", "--hostname=auth.hms.test.boredotter.dev", "--http-enabled=true", "--proxy-headers=xforwarded"]
+          env:
+            #TODO: find good way for storing creds like this
+            - name: KEYCLOAK_ADMIN
+              value: "admin"
+            - name: KEYCLOAK_ADMIN_PASSWORD
+              value: "admin"
+            - name: KC_PROXY
+              value: "edge"
+          ports:
+            - name: http
+              containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /realms/master
+              port: 8080

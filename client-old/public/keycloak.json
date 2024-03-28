@@ -1,6 +1,6 @@
 {
   "realm": "hms",
-  "auth-server-url": "https://auth.hms.test",
+  "auth-server-url": "http://localhost:8081",
   "ssl-required": "external",
   "resource": "hms",
   "public-client": true

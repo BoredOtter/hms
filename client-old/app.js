@@ -5,7 +5,8 @@ const app = express();
 const port = 8080;
 
 app.use(stringReplace({
-  KC_URL: process.env.KC_URL || "https://auth.hms.test"
+  KC_URL: process.env.KC_URL || "http://localhost:8081",
+  API_URL: process.env.API_URL || "http://localhost:8082",
 }));
 
 app.use('/', express.static('public'));
