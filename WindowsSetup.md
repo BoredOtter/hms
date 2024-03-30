@@ -18,8 +18,6 @@
 
 9. Add this lines to `C:\Windows\System32\drivers\etc\hosts`
 ```
-    <minikube ip> auth.hms.test
-    <minikube ip> hms.test
     127.0.0.1 auth.hms.test
     127.0.0.1 hms.test
 ```

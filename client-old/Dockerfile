@@ -1,7 +1,7 @@
 #TODO: do it good
 FROM node:latest
 
-WORKDIR /app
+WORKDIR /usr/src/app
 
 COPY package*.json ./
 
@@ -11,4 +11,4 @@ COPY . .
 
 EXPOSE 8080
 
-CMD ["npx", "vite", "--host", "0.0.0.0"]
+CMD ["node", "app.js"]
