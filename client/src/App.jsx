@@ -16,20 +16,19 @@ import {
 
 const App = () => {
   const isLogin = useAuth();
-  // const router = createBrowserRouter(
-  //   createRoutesFromElements(
-  //     <Route path='/' element={<MainLayout />}>
-  //       <Route path ='/register' element={<RegisterPatient />}></Route>
-  //       <Route path ='/departments' element ={<DepartmentsPage />}></Route>
-  //       {/* <Route path='/departments/:id' element={<DepartmentPage />} loader={jobLoader}></Route> */}
-  //       <Route path ='/*' element={<NotFoundPage/>}></Route>
-  //     </Route>
-  //   )
-  // );
-  //console.log(isLogin)
+  const router = createBrowserRouter(
+    createRoutesFromElements(
+      <Route path='/' element={<MainLayout />}>
+        <Route path ='/register' element={<RegisterPatient />}></Route>
+        <Route path ='/departments' element ={<DepartmentsPage />}></Route>
+        {/* <Route path='/departments/:id' element={<DepartmentPage />} loader={jobLoader}></Route> */}
+        <Route path ='/*' element={<NotFoundPage/>}></Route>
+      </Route>
+    )
+  );
+  console.log(isLogin)
   return (  
-    <div>abe</div>
-      // <RouterProvider router={router} />
+      <RouterProvider router={router} />
   );
 }
 
