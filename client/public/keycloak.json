@@ -1,7 +1,0 @@
-{
-  "realm": "hms",
-  "auth-server-url": "https://auth.hms.test",
-  "ssl-required": "external",
-  "resource": "hms",
-  "public-client": true
-}
