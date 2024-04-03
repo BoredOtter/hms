@@ -1,12 +1,16 @@
 import { useLocation, Navigate, Outlet } from "react-router-dom";
-import useAuth from "./useAuth";
-
+import keycloak from "./keycloak";
 const RequireAuth = ({ allowedRoles }) => {
-    const { auth } = useAuth();
+ 
+    const roles = "";
+    const tokenPayload = keycloak.tokenParsed;
+    if(tokenPayload && tokenPayload.realm_access && tokenPayload.realm_access.roles){
+        roles = tokenPayload.realm_access.roles;
+    }
     const location = useLocation();
 
     return (
-        auth?.roles?.find(role => allowedRoles?.includes(role))
+        roles.find(role => allowedRoles?.includes(role))
             ? <Outlet />
             : auth?.user
                 ? <Navigate to="/unauthorized" state={{ from: location }} replace />
