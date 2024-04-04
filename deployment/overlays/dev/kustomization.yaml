@@ -22,7 +22,7 @@ configMapGenerator:
 
 # In dev env idk about creds in repo
 secretGenerator:
-- name: validator
+- name: kc-config
   literals:
   - KC_CLIENT_ID="python"
   - KC_CLIENT_SECRET="olszak-sie-obrazi-jak-wpisze-tu-cos-smiesznego"

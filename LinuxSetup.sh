@@ -20,3 +20,6 @@ MINIKUBE_IP=$(minikube ip)
 echo "$MINIKUBE_IP auth.hms.test hms.test" | sudo tee -a /etc/hosts
 
 echo "Minikube setup complete."
+
+kubectl apply -k deploy/overlays/dev/
+tilt up
