@@ -26,16 +26,23 @@ spec:
     spec:
       containers:
       - name: postgres
-        image: postgres:latest
-        #For dev env i dont care about creds here
-        #I will make it 'good' while attempting to create CICD
+        image: postgres:16.2-alpine3.19
         env:
           - name: POSTGRES_USER
-            value: keycloak
+            valueFrom:
+            secretKeyRef:
+              name: postgres-credentials
+              key: POSTGRES_USER
           - name: POSTGRES_PASSWORD
-            value: keycloak
+            valueFrom:
+            secretKeyRef:
+              name: postgres-credentials
+              key: POSTGRES_PASSWORD
           - name: POSTGRES_DB
-            value: keycloak
+            valueFrom:
+            secretKeyRef:
+              name: postgres-credentials
+              key: POSTGRES_DB
         ports:
           - containerPort: 5432
         volumeMounts:

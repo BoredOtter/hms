@@ -1,37 +1,37 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: validator
+  name: client
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: validator
+      app: client
   template:
     metadata:
       labels:
-        app: validator
+        app: client
     spec:
       containers:
-      - name: validator
-        image: validator
+      - name: client
+        image: client
         ports:
-        - containerPort: 8000
+        - containerPort: 8080
         envFrom:
         - configMapRef:
-            name: validator
-        #TBD
+            name: client
+        #TODO: is there any need for secrets here?
         # - secretRef:
-        #     name: validator
+        #     name: client
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: validator
+  name: client
 spec:
   selector:
-    app: validator
+    app: client
   ports:
     - protocol: TCP
-      port: 8000
-      targetPort: 8000
+      port: 8080
+      targetPort: 8080

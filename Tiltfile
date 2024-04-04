@@ -1,4 +1,4 @@
-kustomize = kustomize('./deployment/')
+kustomize = kustomize('./deployment/overlays/dev/')
 k8s_yaml(kustomize)
 
 
