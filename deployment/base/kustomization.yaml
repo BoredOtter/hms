@@ -4,6 +4,6 @@ kind: Kustomization
 resources:
 - client.yaml
 - keycloak.yaml
-- secrets.yaml
 - validator.yaml
 - kraken.yaml
+- postgres.yaml #postgres as StatefulSet in base - for 'prod' ideally would be to have DBs outside of cluster
