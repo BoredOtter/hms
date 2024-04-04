@@ -7,3 +7,4 @@ resources:
 - secrets.yaml
 - validator.yaml
 - kraken.yaml
+- postgres.yaml
