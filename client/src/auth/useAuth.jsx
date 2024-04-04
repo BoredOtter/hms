@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import keycloak from './keycloak';
-import httpClient from '../client/httpClient';
+import httpClient from '../client/HttpClient.jsx';
 
 const useAuth = () => {
     const isRun = useRef(false);
