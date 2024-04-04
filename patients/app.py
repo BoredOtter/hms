@@ -1,8 +1,9 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 import logging
 from utils import token_validator
-from database import engine
-from sqlalchemy import text, MetaData
+from models import Patient as patient_model
+from schemas import Patient as patient_schema
+from database import get_db
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -13,20 +14,14 @@ app = FastAPI()
 async def protected_endpoint():
     return "This is the protected endpoint from patient-service."
 
-@app.get("/unprotected")
-async def unprotected_endpoint():
-    metadata = MetaData()
+@app.get("/getall")
+def get_patients(db=Depends(get_db)):
+    return db.query(patient_model).all()
 
-    # Reflect all tables from the database
-    metadata.reflect(bind=engine)
 
-    # Print all table names
-    logger.info("Tables in the database:")
-    for table in metadata.tables.values():
-        logger.info(table.name)
-    
-    # get patient data
-    with engine.connect() as connection:
-        result = connection.execute(text("SELECT * FROM Patients"))
-        patients = result.fetchall()
-        logger.info(patients)
+@app.post("/create")
+def create_patient(patient: patient_schema, db = Depends(get_db)):
+    db.add(patient_model(**patient.dict()))
+    db.commit()
+    return {"message": "Patient created successfully."}
+
