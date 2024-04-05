@@ -1,4 +1,4 @@
-kustomize = kustomize('./deployment/')
+kustomize = kustomize('./deployment/overlays/dev/')
 k8s_yaml(kustomize)
 
 
@@ -19,3 +19,4 @@ docker_build('kraken','kraken/')
 k8s_resource('client')
 k8s_resource('validator')
 k8s_resource('kraken')  
+k8s_resource('postgres')
