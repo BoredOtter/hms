@@ -1,4 +1,4 @@
-import departments from '../../departments.json'
+import departments from '../../../departments.json'
 import DepartmentListing from './DepartmentListing';
 // import Spinner from './Spinner';
 

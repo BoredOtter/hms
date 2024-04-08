@@ -39,7 +39,7 @@ const RegisterPatient = () => {
     return (
     <div className='main-container bg-blue-50 px-4 py-10 '>
             <div className="form-container">
-            <div className = "title mt-4 text-2xl">
+            <div className = "title mt-4  text-2xl">
                 <h3>Register Patient</h3>
             </div>
             <form className="register-form" onSubmit={handleSubmit}>

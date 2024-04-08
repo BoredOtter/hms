@@ -2,7 +2,7 @@ import React from 'react'
 import { NavLink } from 'react-router-dom';
 import keycloak from '../../auth/keycloak';
 
-const CURRENT_USER_TYPE = "doctor";
+const CURRENT_USER_TYPE = "nurse";
 
 const NavbarRoles = () => {
     const linkClass = ({ isActive }) =>
@@ -15,7 +15,7 @@ const NavbarRoles = () => {
       
   return (
     <>
-    <NavLink to='/' className={linkClass}>Home</NavLink>
+    <NavLink to='/home' className={linkClass}>Home</NavLink>
     <NavLink to='/departments' className={linkClass}>Departments</NavLink>
       {(CURRENT_USER_TYPE === "nurse") ? 
       <>

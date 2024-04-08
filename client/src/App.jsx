@@ -3,7 +3,9 @@ import MainLayout from './layouts/MainLayout';
 import RegisterPatient from './pages/RegisterPatient';
 import WarningInfo from './pages/WarningInfo';
 import DepartmentsPage from './pages/DepartmentsPage';
-import useAuth from './auth/useAuth';
+import DepartmentPage from './pages/DepartmentPage';
+import Home from './pages/Home';
+// import useAuth from './auth/useAuth';
 
 import {
   Route,
@@ -12,7 +14,6 @@ import {
   RouterProvider,
   Routes
 } from 'react-router-dom';
-
 
 const NurseDoctorRoutes = () => (
   <Routes>
@@ -23,7 +24,6 @@ const NurseDoctorRoutes = () => (
 
 
 const App = () => {
-  //const [isLogin, roles] = useAuth();
 
   const roles = ['admin', 'doctor', 'nurse']
    const generateRoutes = () => {
@@ -34,8 +34,12 @@ const App = () => {
             <Route path='/register' element={<RegisterPatient />} />
           )}
           {(roles.includes('admin') || roles.includes('user')) && (
-            <Route path='/departments' element={<DepartmentsPage />} />
+            <>
+              <Route path='/departments' element={<DepartmentsPage />} />
+              <Route path='/departments/:id' element={<DepartmentPage />} />
+            </>
           )}
+          <Route path='/home' element={<Home />} />
           <Route path='/unauthorized' element={<WarningInfo info="Unauthorized!" />} />
           <Route path='/*' element={<WarningInfo info="404 Not Found!" />} />
         </Route>

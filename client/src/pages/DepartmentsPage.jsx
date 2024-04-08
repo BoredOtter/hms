@@ -1,5 +1,5 @@
 import React from 'react'
-import DepartmentsListing from '../components/DepartmentsListing'
+import DepartmentsListing from '../components/listing/DepartmentsListing'
 
 
 const DepartmentsPage = () => {
