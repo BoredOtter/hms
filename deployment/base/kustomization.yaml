@@ -5,5 +5,7 @@ resources:
 - client.yaml
 - keycloak.yaml
 - validator.yaml
+- patients.yaml
+- patients-db.yaml
 - kraken.yaml
 - postgres.yaml #postgres as StatefulSet in base - for 'prod' ideally would be to have DBs outside of cluster

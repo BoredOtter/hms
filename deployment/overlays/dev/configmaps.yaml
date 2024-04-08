@@ -1,9 +1,20 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: validator
+  name: kc-config
 data:
   KC_URL: "http://keycloak"
   KC_PORT: "8080"
   KC_REALM: "hms"
   SSL: "False"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: patients-db-configmap
+data:
+  DB_HOST: "patients-db"
+  DB_PORT: "3306"
+  DB_NAME: "patientsdb"
+  DB_USER: "root"
+  DB_PASSWORD: "password"

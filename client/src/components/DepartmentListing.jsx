@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-const JobListing = ({ department }) => {
+const DepartmentListing = ({ department }) => {
 
   return (
     <div className='bg-white rounded-xl shadow-md relative'>
@@ -21,4 +21,4 @@ const JobListing = ({ department }) => {
 
   );
 };
-export default JobListing;
+export default DepartmentListing;

@@ -1,36 +1,38 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: validator
+  name: patients
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: validator
+      app: patients
   template:
     metadata:
       labels:
-        app: validator
+        app: patients
     spec:
       containers:
-      - name: validator
-        image: validator
+      - name: patients
+        image: patients
         ports:
-        - containerPort: 8000
+        - containerPort: 8001
         envFrom:
         - configMapRef:
             name: kc-config
+        - configMapRef:
+            name: patients-db-configmap
         - secretRef:
             name: kc-config
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: validator
+  name: patients
 spec:
   selector:
-    app: validator
+    app: patients
   ports:
     - protocol: TCP
-      port: 8000
-      targetPort: 8000
+      port: 8001
+      targetPort: 8001

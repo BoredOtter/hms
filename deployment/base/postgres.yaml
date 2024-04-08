@@ -30,19 +30,19 @@ spec:
         env:
           - name: POSTGRES_USER
             valueFrom:
-            secretKeyRef:
-              name: postgres-credentials
-              key: POSTGRES_USER
+              secretKeyRef:
+                name: postgres-credentials
+                key: POSTGRES_USER
           - name: POSTGRES_PASSWORD
             valueFrom:
-            secretKeyRef:
-              name: postgres-credentials
-              key: POSTGRES_PASSWORD
+              secretKeyRef:
+                name: postgres-credentials
+                key: POSTGRES_PASSWORD
           - name: POSTGRES_DB
             valueFrom:
-            secretKeyRef:
-              name: postgres-credentials
-              key: POSTGRES_DB
+              secretKeyRef:
+                name: postgres-credentials
+                key: POSTGRES_DB
         ports:
           - containerPort: 5432
         volumeMounts:

@@ -1,8 +1,8 @@
 import departments from '../../departments.json'
-import JobListing from './JobListing';
+import DepartmentListing from './DepartmentListing';
 // import Spinner from './Spinner';
 
-const JobListings = ({ isHome = false }) => {
+const DepartmentsListing = ({ isHome = false }) => {
 
     const departmentsData = departments.departments || [];
 
@@ -14,11 +14,11 @@ const JobListings = ({ isHome = false }) => {
         </h2>
           <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
             {departmentsData.map((department) => (
-              <JobListing key={department.id} department={department} />
+              <DepartmentListing key={department.id} department={department} />
             ))}
           </div>
       </div>
     </section>
   );
 };
-export default JobListings;
+export default DepartmentsListing;

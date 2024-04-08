@@ -23,21 +23,23 @@ const NurseDoctorRoutes = () => (
 
 
 const App = () => {
-  const [isLogin, roles] = useAuth();
+  //const [isLogin, roles] = useAuth();
 
-  // Dynamically generate routes based on roles
-  const generateRoutes = () => {
+  const roles = ['admin', 'doctor', 'nurse']
+   const generateRoutes = () => {
     const routes = (
-      <Route path='/' element={<MainLayout />}>
-        {roles.includes('admin') && (
-          <Route path='/register' element={<RegisterPatient />} />
-        )}
-        {(roles.includes('admin') || roles.includes('user')) && (
-          <Route path='/departments' element={<DepartmentsPage />} />
-        )}
-        <Route path='/unauthorized' element={<WarningInfo info="Unauthorized!" />} />
-        <Route path='/*' element={<WarningInfo info="404 Not Found!" />} />
-      </Route>
+      // isLogin ? (
+        <Route path='/' element={<MainLayout />}>
+          {roles.includes('admin') && (
+            <Route path='/register' element={<RegisterPatient />} />
+          )}
+          {(roles.includes('admin') || roles.includes('user')) && (
+            <Route path='/departments' element={<DepartmentsPage />} />
+          )}
+          <Route path='/unauthorized' element={<WarningInfo info="Unauthorized!" />} />
+          <Route path='/*' element={<WarningInfo info="404 Not Found!" />} />
+        </Route>
+      // ) : <Route path='/' element={<WarningInfo info="AUTHORIZATION SERVER NOT RUNNING"/>}></Route>
     );
 
     return routes;
