@@ -73,10 +73,7 @@ jobs:
       - name: Bake Kustomization files
         run: |
           export TAG=${{ github.sha }}
-          echo ./deployment/overlays/test/kustomization.yaml
-          cat ./deployment/overlays/test/kustomization.yaml
           sed -i "s/__TAG__/$TAG/" ./deployment/overlays/test/kustomization.yaml
-          cat ./deployment/overlays/test/kustomization.yaml 
 
       - name: Bake Kustomization files
         run: |
@@ -88,5 +85,5 @@ jobs:
         working-directory: ./manifests
         run: |
           git add .
-          git commit -m "Updated image tag to ${{ github.sha }}"
+          git commit -m "Updated images tag to ${{ github.sha }}"
           git push
