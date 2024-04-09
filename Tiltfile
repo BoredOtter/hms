@@ -3,6 +3,7 @@ k8s_yaml(kustomize)
 
 
 docker_build('client','client/',
+    dockerfile='Dockerfile.dev',
     live_update=[
         sync('./client', '/app'),
         run('cd /app && npm install', trigger='./client/package.json')

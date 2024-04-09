@@ -1,14 +1,24 @@
-#TODO: do it good
-FROM node:latest
+FROM node:latest AS build
 
 WORKDIR /app
 
 COPY package*.json ./
-
 RUN npm install
 
 COPY . .
 
-EXPOSE 8080
+RUN npm run build-stage
 
-CMD ["npx", "vite", "--host", "0.0.0.0"]
+
+FROM nginx:alpine
+
+RUN rm -rf /usr/share/nginx/html/*
+
+COPY --from=build /app/dist /usr/share/nginx/html
+
+#XD
+RUN sed -i 's/auth\.hms\.test/auth\.hms\.test\.boredotter\.dev/g' /usr/share/nginx/html/index.html
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
