@@ -33,7 +33,9 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.image }}:${{ github.sha }}
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.image }}:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.image }}:latest
           context: ${{ matrix.context }}
 
       #TODO
