@@ -75,9 +75,10 @@ jobs:
           mkdir ./temp
           export TAG=${{ github.sha }}
           BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//-/g')
-          sed "s/__TAG__/$TAG/" ./overlays/test/kustomization.yaml > ./overlays/test/kustomization.yaml 
+          sed "s/__TAG__/$TAG/" ./deployment/overlays/test/kustomization.yaml > ../deployment/overlays/test/kustomization.yaml 
+          echo ./overlays/test/kustomization.yaml 
           mkdir ./manifests/$BRANCH_NAME
-          kustomize build ./overlays/test -o ./manifests/$BRANCH_NAME
+          kustomize build ./deployment/overlays/test -o ./manifests/$BRANCH_NAME
 
       - name: Push updated manifest
         working-directory: ./manifests
