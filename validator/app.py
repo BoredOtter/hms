@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Header, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request
 from keycloak import KeycloakOpenID
 from os import environ
 import logging
@@ -37,7 +37,7 @@ async def protected_endpoint(request: Request):
     token = request.headers["authorization"].split(" ")[1]
 
     if not validate_token(token):
-        raise HTTPException(status_code=401, detail="Invalid token")
+        raise HTTPException(status_code=403, detail="Invalid token")
     return {"message": "This is the protected endpoint."}
 
 
@@ -49,4 +49,4 @@ def validate_token(token: str) -> bool:
 
 @app.get("/")
 async def read_root():
-    return keycloak_openid.well_known()
+    return "ok"
