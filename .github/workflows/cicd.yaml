@@ -38,34 +38,49 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.image }}:latest
           context: ${{ matrix.context }}
 
-      #TODO
-      # - name: Checkout manifest repository
-      #   uses: actions/checkout@v4
-      #   with:
-      #     token: ${{ secrets.REPO_TOKEN }}
-      #     repository: BoredOtter/custom-images-manifests
-      #     path: ./temp
-      #     ref: main
+  deploy:
+      name: Deploy
+      runs-on: ubuntu-22.04
+      steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
 
-      # - name: Setup Git
-      #   working-directory: ./temp
-      #   if: steps.changes.outputs.image == 'true'
-      #   run: |
-      #     git config --global user.name "🦝"
-      #     git config --global user.email "🦝@users.noreply.github.com"
-      #     git remote set-url --push origin https://github.com/BoredOtter/custom-images-manifests.git
+      - name: Setup kustomize
+        uses: yokawasa/action-setup-kube-tools@v0.11.1
+        with:
+          kustomize: '5.4.1'
+      - run: |
+          kustomize version
+        
+      - name: Checkout manifest repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: BoredOtter/hms-manifests
+          path: ./manifests
+          ref: main
 
-      # - name: Render manifest template
-      #   if: steps.changes.outputs.image == 'true'
-      #   working-directory: ./temp
-      #   run: |
-      #     export TAG=${{ github.sha }}
-      #     sed "s/__TAG__/$TAG/" ./templates/${{ matrix.image }}/deployment.yaml > ./manifests/${{ matrix.image }}/deployment.yaml
+      - name: Setup Git
+        working-directory: ./manifests
+        run: |
+          git config --global user.name "🦝"
+          git config --global user.email "🦝@users.noreply.github.com"
+          git remote set-url --push origin https://github.com/BoredOtter/hms-manifests.git
 
-      # - name: Push updated manifest
-      #   if: steps.changes.outputs.image == 'true'
-      #   working-directory: ./temp
-      #   run: |
-      #     git add .
-      #     git commit -m "Updated ${{ matrix.image }} image tag to: ${{ github.sha }}"
-      #     git push
+        #maybe find . -n *.yaml and sed in all of them?
+      - name: Bake Kustomization files
+        run: |
+          mkdir ./temp
+          export TAG=${{ github.sha }}
+          BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//-/g')
+          sed "s/__TAG__/$TAG/" ./overlays/test/kustomization.yaml > ./overlays/test/kustomization.yaml 
+          mkdir ./manifests/$BRANCH_NAME
+          kustomize build ./overlays/test -o ./manifests/$BRANCH_NAME
+
+      - name: Push updated manifest
+        working-directory: ./manifests
+        run: |
+          git add .
+          git commit -m "Updated image tag to ${{ github.sha }}"
+          git push

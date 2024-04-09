@@ -8,13 +8,13 @@ resources:
 images:
   - name: client
     newName: ksw2137/hms-client
-    newTag: latest
+    newTag: __TAG__
   - name: kraken
     newName: ksw2137/hms-kraken
-    newTag: latest
+    newTag: __TAG__
   - name: validator
     newName: ksw2137/hms-validator
-    newTag: latest
+    newTag: __TAG__
 
 patches:
 - target:
