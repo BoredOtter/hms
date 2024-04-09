@@ -78,7 +78,7 @@ jobs:
       - name: Bake Kustomization files
         run: |
           BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//-/g')
-          mkdir ./manifests/$BRANCH_NAME
+          mkdir -p ./manifests/$BRANCH_NAME
           kustomize build ./deployment/overlays/test -o ./manifests/$BRANCH_NAME
 
       - name: Push updated manifest
