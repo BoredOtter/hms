@@ -4,7 +4,6 @@ resources:
 - ../../base
 - ingress.yaml
 - configmaps.yaml
-- client-svc.yaml
 
 patches:
 - target:
