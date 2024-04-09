@@ -23,7 +23,7 @@ spec:
           service:
             name: client
             port:
-              number: 8080
+              number: 80
       - path: /api/
         pathType: Prefix
         backend:
