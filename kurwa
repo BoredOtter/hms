@@ -1,0 +1,348 @@
+apiVersion: v1
+data:
+  CLIENT_ID: hms-client
+  KEYCLOAK_SERVER_URL: https://auth.hms.test.boredotter.dev
+  REALM_NAME: hms
+kind: ConfigMap
+metadata:
+  name: client-2b684t626k
+---
+apiVersion: v1
+data:
+  KC_PORT: "8080"
+  KC_REALM: hms
+  KC_URL: http://keycloak
+  SSL: "False"
+kind: ConfigMap
+metadata:
+  name: validator
+---
+apiVersion: v1
+data:
+  KEYCLOAK_ADMIN: Ym9yZWRhZG1pbg==
+  KEYCLOAK_ADMIN_PASSWORD: Ym9yZWRhZG1pbg==
+kind: Secret
+metadata:
+  name: keycloak-credentials-bg295mkc9f
+type: Opaque
+---
+apiVersion: v1
+data:
+  POSTGRES_DB: a2V5Y2xvYWs=
+  POSTGRES_PASSWORD: a2V5Y2xvYWs=
+  POSTGRES_USER: a2V5Y2xvYWs=
+kind: Secret
+metadata:
+  name: postgres-credentials-btbdb8bkhg
+type: Opaque
+---
+apiVersion: v1
+data:
+  KC_CLIENT_ID: cHl0aG9u
+  KC_CLIENT_SECRET: b2xzemFrLXNpZS1vYnJhemktamFrLXdwaXN6ZS10dS1jb3Mtc21pZXN6bmVnbw==
+kind: Secret
+metadata:
+  name: validator-cbdf8655d6
+type: Opaque
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: client
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: client
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: keycloak
+  name: keycloak
+spec:
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+  selector:
+    app: keycloak
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kraken
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: kraken
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+spec:
+  clusterIP: None
+  ports:
+  - port: 5432
+  selector:
+    app: postgres
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: validator
+spec:
+  ports:
+  - port: 8000
+    protocol: TCP
+    targetPort: 8000
+  selector:
+    app: validator
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: client
+  template:
+    metadata:
+      labels:
+        app: client
+    spec:
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: client-2b684t626k
+        image: ksw2137/hms-client:__TAG__
+        name: client
+        ports:
+        - containerPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: keycloak
+  name: keycloak
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: keycloak
+  template:
+    metadata:
+      labels:
+        app: keycloak
+    spec:
+      containers:
+      - args:
+        - start
+        - --hostname=auth.hms.test.boredotter.dev
+        - --http-enabled=true
+        - --proxy-headers=xforwarded
+        - --db=postgres
+        - --db-url-host=postgres
+        - --db-username=keycloak
+        - --db-password=keycloak
+        env:
+        - name: KEYCLOAK_ADMIN
+          valueFrom:
+            secretKeyRef:
+              key: KEYCLOAK_ADMIN
+              name: keycloak-credentials-bg295mkc9f
+        - name: KEYCLOAK_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: KEYCLOAK_ADMIN_PASSWORD
+              name: keycloak-credentials-bg295mkc9f
+        image: quay.io/keycloak/keycloak:24.0.1
+        name: keycloak
+        ports:
+        - containerPort: 8080
+          name: http
+        readinessProbe:
+          httpGet:
+            path: /realms/master
+            port: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kraken
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kraken
+  template:
+    metadata:
+      labels:
+        app: kraken
+    spec:
+      containers:
+      - env:
+        - name: KRAKEND_PORT
+          value: "8080"
+        image: ksw2137/hms-kraken:__TAG__
+        name: kraken
+        ports:
+        - containerPort: 8080
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            add:
+            - NET_BIND_SERVICE
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 1000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: validator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: validator
+  template:
+    metadata:
+      labels:
+        app: validator
+    spec:
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: validator
+        - secretRef:
+            name: validator-cbdf8655d6
+        image: ksw2137/hms-validator:__TAG__
+        name: validator
+        ports:
+        - containerPort: 8000
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  serviceName: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_USER
+              name: postgres-credentials-btbdb8bkhg
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_PASSWORD
+              name: postgres-credentials-btbdb8bkhg
+        - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_DB
+              name: postgres-credentials-btbdb8bkhg
+        image: postgres:16.2-alpine3.19
+        name: postgres
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: postgres-data
+  volumeClaimTemplates:
+  - metadata:
+      name: postgres-data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-cluster-issuer
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/cors-allow-origin: https://auth.hms.test.boredotter.dev/
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+  name: client
+spec:
+  rules:
+  - host: hms.test.boredotter.dev
+    http:
+      paths:
+      - backend:
+          service:
+            name: client
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+      - backend:
+          service:
+            name: kraken
+            port:
+              number: 8080
+        path: /api/
+        pathType: Prefix
+  tls:
+  - hosts:
+    - hms.test.boredotter.dev
+    secretName: hms-test-tls
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-cluster-issuer
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/cors-allow-origin: https://hms.test.boredotter.dev/
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+  name: keycloak
+spec:
+  rules:
+  - host: auth.hms.test.boredotter.dev
+    http:
+      paths:
+      - backend:
+          service:
+            name: keycloak
+            port:
+              number: 8080
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - auth.hms.test.boredotter.dev
+    secretName: auth-hms-test-tls

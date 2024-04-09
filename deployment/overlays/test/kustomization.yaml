@@ -24,6 +24,9 @@ patches:
     name: keycloak
   path: keycloak-patch.yaml
 
+patchesStrategicMerge:
+  - client-svc-patch.yaml
+
 configMapGenerator:
 - name: client
   literals:
