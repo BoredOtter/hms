@@ -1,0 +1,181 @@
+{
+  "realm": "hms",
+  "displayName": "HMS",
+  "enabled": true,
+  "displayNameHtml": "Hospital Management System",
+  "clients": [
+    {
+      "clientId": "hms",
+      "enabled": true,
+      "publicClient": true,
+      "directAccessGrantsEnabled": true,
+      "redirectUris": [ "https://hms.test.boredotter.dev/*"]
+    },
+    {
+      "id": "d2cd162a-b83f-4ca5-a223-4fbdd49a9b80",
+      "clientId": "python",
+      "name": "python",
+      "description": "",
+      "rootUrl": "",
+      "adminUrl": "",
+      "baseUrl": "",
+      "surrogateAuthRequired": false,
+      "enabled": true,
+      "alwaysDisplayInConsole": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "olszak-sie-obrazi-jak-wpisze-tu-cos-smiesznego",
+      "redirectUris": [
+        "https://hms.test.boredotter.dev/*"
+      ],
+      "webOrigins": [
+        "https://hms.test.boredotter.dev"
+      ],
+      "notBefore": 0,
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
+      "frontchannelLogout": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "oidc.ciba.grant.enabled": "false",
+        "client.secret.creation.time": "1711298979",
+        "backchannel.logout.session.required": "true",
+        "post.logout.redirect.uris": "+",
+        "oauth2.device.authorization.grant.enabled": "false",
+        "display.on.consent.screen": "false",
+        "backchannel.logout.revoke.offline.tokens": "false"
+      },
+      "authenticationFlowBindingOverrides": {},
+      "fullScopeAllowed": true,
+      "nodeReRegistrationTimeout": -1,
+      "protocolMappers": [
+        {
+          "id": "30dc80e2-0404-41be-a000-731b31cd3e50",
+          "name": "Client IP Address",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usersessionmodel-note-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.session.note": "clientAddress",
+            "introspection.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "clientAddress",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "id": "432775ac-2c7d-4508-9a3b-4f818e3c6e44",
+          "name": "Client Host",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usersessionmodel-note-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.session.note": "clientHost",
+            "introspection.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "clientHost",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "id": "34dbd9e5-9d62-4f10-ab0c-f35ffd26d409",
+          "name": "Client ID",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usersessionmodel-note-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.session.note": "client_id",
+            "introspection.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "client_id",
+            "jsonType.label": "String"
+          }
+        }
+      ],
+      "defaultClientScopes": [
+        "web-origins",
+        "acr",
+        "profile",
+        "roles",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "microprofile-jwt"
+      ]
+    }
+  ],
+  "users" : [
+    {
+      "username" : "doctor",
+      "enabled": true,
+      "email" : "doctor@keycloak.org",
+      "firstName": "Doctor",
+      "lastName": "Doctor",
+      "credentials" : [
+        { "type" : "password",
+          "value" : "doctor" }
+      ],
+      "realmRoles": [ "doctor", "offline_access"  ],
+      "clientRoles": {
+        "account": [ "manage-account" ]
+      }
+    },
+    {
+      "username" : "alice",
+      "enabled": true,
+      "email" : "alice@keycloak.org",
+      "firstName": "Alice",
+      "lastName": "Liddel",
+      "credentials" : [
+        { "type" : "password",
+          "value" : "alice" }
+      ],
+      "realmRoles": [ "user", "offline_access"  ],
+      "clientRoles": {
+        "account": [ "manage-account" ]
+      }
+    },
+    {
+      "username" : "admin",
+      "enabled": true,
+      "email" : "test@admin.org",
+      "firstName": "Admin",
+      "lastName": "Test",
+      "credentials" : [
+        { "type" : "password",
+          "value" : "admin" }
+      ],
+      "realmRoles": [ "user","admin" ],
+      "clientRoles": {
+        "realm-management": [ "realm-admin" ],
+        "account": [ "manage-account" ]
+      }
+    }
+  ],
+  "roles" : {
+    "realm" : [
+      {
+        "name": "doctor",
+        "description": "Doctor privileges"
+      },
+      {
+        "name": "user",
+        "description": "User privileges"
+      },
+      {
+        "name": "admin",
+        "description": "Administrator privileges"
+      }
+    ]
+  }
+}
