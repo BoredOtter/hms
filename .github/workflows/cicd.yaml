@@ -69,17 +69,21 @@ jobs:
           git config --global user.email "🦝@users.noreply.github.com"
           git remote set-url --push origin https://github.com/BoredOtter/hms-manifests.git
 
-      - name: Bake Kustomization files
-        run: ls -la
-
         #maybe find . -n *.yaml and sed in all of them?
       - name: Bake Kustomization files
         run: |
-          mkdir ./temp
           export TAG=${{ github.sha }}
           BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//-/g')
           echo ./deployment/overlays/test/kustomization.yaml
           sed "s/__TAG__/$TAG/" ./deployment/overlays/test/kustomization.yaml > ./deployment/overlays/test/kustomization.yaml 
+
+      - name: ls -la
+        run: |
+          ls -la
+          cat ./deployment/overlays/test/kustomization.yaml
+
+      - name: Bake Kustomization files
+        run: |
           mkdir ./manifests/$BRANCH_NAME
           kustomize build ./deployment/overlays/test -o ./manifests/$BRANCH_NAME
 
