@@ -57,7 +57,7 @@ jobs:
       - name: Checkout manifest repository
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.REPO_TOKEN }}
           repository: BoredOtter/hms-manifests
           path: ./manifests
           ref: main
