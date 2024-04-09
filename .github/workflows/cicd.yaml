@@ -75,13 +75,8 @@ jobs:
           export TAG=${{ github.sha }}
           echo ./deployment/overlays/test/kustomization.yaml
           cat ./deployment/overlays/test/kustomization.yaml
-          sed "s/__TAG__/$TAG/" ./deployment/overlays/test/kustomization.yaml > ./deployment/overlays/test/kustomization.yaml
+          sed -i "s/__TAG__/$TAG/" ./deployment/overlays/test/kustomization.yaml
           cat ./deployment/overlays/test/kustomization.yaml 
-
-      - name: ls -la
-        run: |
-          ls -la
-          cat ./deployment/overlays/test/kustomization.yaml
 
       - name: Bake Kustomization files
         run: |
