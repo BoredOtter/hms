@@ -69,6 +69,9 @@ jobs:
           git config --global user.email "🦝@users.noreply.github.com"
           git remote set-url --push origin https://github.com/BoredOtter/hms-manifests.git
 
+      - name: Bake Kustomization files
+        run: ls -la
+
         #maybe find . -n *.yaml and sed in all of them?
       - name: Bake Kustomization files
         run: |
