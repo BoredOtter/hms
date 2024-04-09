@@ -1,0 +1,69 @@
+name: Build and Push to Docker Hub
+on:
+  push:
+    branches:
+      - cicd-test
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    strategy:
+      matrix: 
+        include:
+          - image: hms-client
+            context: client
+          - image: hms-kraken
+            context: kraken
+          - image: hms-validator
+            context: validator
+
+    name: Build and Push ${{ matrix.image }}
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+    
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+    
+      - name: Build and Push
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.image }}:${{ github.sha }}
+          context: ${{ matrix.context }}
+
+      #TODO
+      # - name: Checkout manifest repository
+      #   uses: actions/checkout@v4
+      #   with:
+      #     token: ${{ secrets.REPO_TOKEN }}
+      #     repository: BoredOtter/custom-images-manifests
+      #     path: ./temp
+      #     ref: main
+
+      # - name: Setup Git
+      #   working-directory: ./temp
+      #   if: steps.changes.outputs.image == 'true'
+      #   run: |
+      #     git config --global user.name "🦝"
+      #     git config --global user.email "🦝@users.noreply.github.com"
+      #     git remote set-url --push origin https://github.com/BoredOtter/custom-images-manifests.git
+
+      # - name: Render manifest template
+      #   if: steps.changes.outputs.image == 'true'
+      #   working-directory: ./temp
+      #   run: |
+      #     export TAG=${{ github.sha }}
+      #     sed "s/__TAG__/$TAG/" ./templates/${{ matrix.image }}/deployment.yaml > ./manifests/${{ matrix.image }}/deployment.yaml
+
+      # - name: Push updated manifest
+      #   if: steps.changes.outputs.image == 'true'
+      #   working-directory: ./temp
+      #   run: |
+      #     git add .
+      #     git commit -m "Updated ${{ matrix.image }} image tag to: ${{ github.sha }}"
+      #     git push
