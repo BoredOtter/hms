@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: kc-config
+  name: kc-client-config
 data:
   KC_URL: "http://keycloak"
   KC_PORT: "8080"

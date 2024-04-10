@@ -19,9 +19,9 @@ spec:
         - containerPort: 8000
         envFrom:
         - configMapRef:
-            name: kc-config
+            name: kc-client-config
         - secretRef:
-            name: kc-config
+            name: kc-client-config
 ---
 apiVersion: v1
 kind: Service

@@ -16,6 +16,8 @@ jobs:
             context: kraken
           - image: hms-validator
             context: validator
+          - image: hms-patients
+            context: patients
 
     name: Build and Push ${{ matrix.image }}
     runs-on: ubuntu-22.04
