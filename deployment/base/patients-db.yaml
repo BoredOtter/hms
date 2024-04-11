@@ -14,12 +14,25 @@ spec:
     spec:
       containers:
       - name: patients-db
-        image: mysql:latest
+        image: postgres:latest
         env:
-        - name: MYSQL_ROOT_PASSWORD
-          value: password
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                name: postgres-credentials-patients
+                key: POSTGRES_USER
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgres-credentials-patients
+                key: POSTGRES_PASSWORD
+          - name: POSTGRES_DB
+            valueFrom:
+              secretKeyRef:
+                name: postgres-credentials-patients
+                key: POSTGRES_DB
         ports:
-        - containerPort: 3306
+        - containerPort: 5432
         volumeMounts:
         - name: init-script
           mountPath: /docker-entrypoint-initdb.d
@@ -37,8 +50,8 @@ spec:
     app: patients-db
   ports:
     - protocol: TCP
-      port: 3306
-      targetPort: 3306
+      port: 5432
+      targetPort: 5432
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -46,40 +59,37 @@ metadata:
   name: init-script-configmap
 data:
   init.sql: |
-    CREATE DATABASE IF NOT EXISTS patientsdb;
-    USE patientsdb;
-    CREATE TABLE `Patients` (
-      `ID_patient` int PRIMARY KEY,
-      `First_name` varchar(255),
-      `Last_name` varchar(255),
-      `Date_of_birth` date,
-      `Gender` varchar(255),
-      `Contact_number` varchar(255),
-      `Address` varchar(255)
+    CREATE TABLE "Patients" (
+      "ID_patient" int PRIMARY KEY,
+      "First_name" varchar,
+      "Last_name" varchar,
+      "Date_of_birth" date,
+      "Gender" varchar,
+      "Contact_number" varchar,
+      "Address" varchar
     );
 
-    CREATE TABLE `Medical_History` (
-      `ID_entry` int PRIMARY KEY,
-      `ID_patient` int,
-      `Entry_date` date,
-      `Diagnosis` varchar(255),
-      `Description_of_disease_or_health_problem` varchar(255),
-      `Prescribed_medicines` varchar(255),
-      `Doctor_notes` varchar(255)
+    CREATE TABLE "Medical_History" (
+      "ID_entry" int PRIMARY KEY,
+      "ID_patient" int,
+      "Entry_date" date,
+      "Diagnosis" varchar,
+      "Description_of_disease_or_health_problem" varchar,
+      "Prescribed_medicines" varchar,
+      "Doctor_notes" varchar
     );
 
-    CREATE TABLE `Vital_Signs` (
-      `ID_measurement` int PRIMARY KEY,
-      `ID_patient` int,
-      `Date_and_time_of_measurement` datetime,
-      `Blood_pressure` varchar(255),
-      `Pulse` varchar(255),
-      `Body_temperature` varchar(255),
-      `Blood_sugar_level` varchar(255),
-      `Other_medical_parameters` varchar(255)
+    CREATE TABLE "Vital_Signs" (
+      "ID_measurement" int PRIMARY KEY,
+      "ID_patient" int,
+      "Date_and_time_of_measurement" timestamp,
+      "Blood_pressure" varchar,
+      "Pulse" varchar,
+      "Body_temperature" varchar,
+      "Blood_sugar_level" varchar,
+      "Other_medical_parameters" varchar
     );
 
-    ALTER TABLE `Medical_History` ADD FOREIGN KEY (`ID_patient`) REFERENCES `Patients` (`ID_patient`);
+    ALTER TABLE "Medical_History" ADD FOREIGN KEY ("ID_patient") REFERENCES "Patients" ("ID_patient");
 
-    ALTER TABLE `Vital_Signs` ADD FOREIGN KEY (`ID_patient`) REFERENCES `Patients` (`ID_patient`);
-
+    ALTER TABLE "Vital_Signs" ADD FOREIGN KEY ("ID_patient") REFERENCES "Patients" ("ID_patient");

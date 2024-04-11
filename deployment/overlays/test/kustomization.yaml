@@ -45,11 +45,13 @@ secretGenerator:
   - KC_CLIENT_ID="python"
   - KC_CLIENT_SECRET="olszak-sie-obrazi-jak-wpisze-tu-cos-smiesznego"
 
-- name: postgres-credentials
+- name: postgres-credentials-keycloak
   literals:
   - POSTGRES_USER=keycloak
   - POSTGRES_PASSWORD=keycloak
   - POSTGRES_DB=keycloak
+
+
 
 - name: keycloak-credentials
   literals:
