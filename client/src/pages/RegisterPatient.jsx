@@ -37,8 +37,8 @@ const RegisterPatient = () => {
     };
  
     return (
-    <div className='main-container bg-blue-50 px-4 py-10 '>
-            <div className="form-container">
+    <div className='main-container  '>
+            <div className="form-container bg-gray-200">
             <div className = "title mt-4  text-2xl">
                 <h3>Register Patient</h3>
             </div>

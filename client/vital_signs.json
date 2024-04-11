@@ -1,0 +1,25 @@
+{
+    "vital_signs" : [
+        {
+          "ID_measurement": 1,
+          "ID_patient": 1,
+          "Date_and_time_of_measurement": "2023-01-10T08:00:00",
+          "Blood_pressure": "120/80",
+          "Pulse": "70",
+          "Body_temperature": "37.0",
+          "Blood_sugar_level": "Normal",
+          "Other_medical_parameters": ""
+        },
+        {
+          "ID_measurement": 2,
+          "ID_patient": 2,
+          "Date_and_time_of_measurement": "2023-02-05T09:30:00",
+          "Blood_pressure": "140/90",
+          "Pulse": "80",
+          "Body_temperature": "36.8",
+          "Blood_sugar_level": "Normal",
+          "Other_medical_parameters": ""
+        }
+      ]
+      
+}

@@ -32,8 +32,8 @@ const Home = () => {
   }, []);
 
   return (
-    <div className='bg-gray-200 mt-20 rounded-lg shadow-lg p-8 mx-auto max-w-md'>
-      <h1 className='text-3xl font-bold mb-4'>Welcome to Home Page</h1>
+    <div className='form-container bg-gray-200'>
+      <h1 className='text-3xl mb-4'>Welcome to Home Page</h1>
       <div className='mb-4'>
         <p className='text-lg'>Logged User:</p>
         <p className='text-xl'>{loggedUser.firstName} {loggedUser.lastName}</p>

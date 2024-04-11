@@ -14,6 +14,8 @@ import {
   RouterProvider,
   Routes
 } from 'react-router-dom';
+import WardPage from './pages/WardPage';
+import PatientsPage from './pages/PatientsPage';
 
 const NurseDoctorRoutes = () => (
   <Routes>
@@ -25,16 +27,22 @@ const NurseDoctorRoutes = () => (
 
 const App = () => {
 
-  const [isLogin, roles] = useAuth();
-  // const roles = ['admin', 'doctor', 'nurse']
+  // const [isLogin, roles] = useAuth();
+  const roles = ['admin', 'doctor', 'nurse']
    const generateRoutes = () => {
     const routes = (
-      isLogin ? (
+      // isLogin ? (
         <Route path='/' element={<MainLayout />}>
-          {roles.includes('admin') && (
+          {roles.includes('nurse') && (
             <Route path='/register' element={<RegisterPatient />} />
           )}
-          {(roles.includes('admin') || roles.includes('user')) && (
+          {roles.includes('doctor') && (
+            <>
+              <Route path='/ward' element={<WardPage />} />
+              <Route path='/patients' element={<PatientsPage/>} />
+            </>
+          )}
+          {(roles.includes('admin') || roles.includes('doctor')) && (
             <>
               <Route path='/departments' element={<DepartmentsPage />} />
               <Route path='/departments/:id' element={<DepartmentPage />} />
@@ -44,7 +52,7 @@ const App = () => {
           <Route path='/unauthorized' element={<WarningInfo info="Unauthorized!" />} />
           <Route path='/*' element={<WarningInfo info="404 Not Found!" />} />
         </Route>
-      ) : <Route path='/' element={<WarningInfo info="AUTHORIZATION SERVER NOT RUNNING"/>}></Route>
+      // ) : <Route path='/' element={<WarningInfo info="AUTHORIZATION SERVER NOT RUNNING"/>}></Route>
     );
 
     return routes;

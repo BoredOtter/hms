@@ -24,6 +24,8 @@ const NavbarRoles = () => {
       : (CURRENT_USER_TYPE === "doctor") ?
       <>
       <NavLink to='/ward' className={linkClass}>Ward</NavLink>
+      <NavLink to='/patients' className={linkClass}>Patients</NavLink>
+
       </>
       : null
       }
