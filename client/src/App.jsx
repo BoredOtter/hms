@@ -5,7 +5,7 @@ import WarningInfo from './pages/WarningInfo';
 import DepartmentsPage from './pages/DepartmentsPage';
 import DepartmentPage from './pages/DepartmentPage';
 import Home from './pages/Home';
-// import useAuth from './auth/useAuth';
+import useAuth from './auth/useAuth';
 
 import {
   Route,
@@ -25,10 +25,11 @@ const NurseDoctorRoutes = () => (
 
 const App = () => {
 
-  const roles = ['admin', 'doctor', 'nurse']
+  const [isLogin, roles] = useAuth();
+  // const roles = ['admin', 'doctor', 'nurse']
    const generateRoutes = () => {
     const routes = (
-      // isLogin ? (
+      isLogin ? (
         <Route path='/' element={<MainLayout />}>
           {roles.includes('admin') && (
             <Route path='/register' element={<RegisterPatient />} />
@@ -43,7 +44,7 @@ const App = () => {
           <Route path='/unauthorized' element={<WarningInfo info="Unauthorized!" />} />
           <Route path='/*' element={<WarningInfo info="404 Not Found!" />} />
         </Route>
-      // ) : <Route path='/' element={<WarningInfo info="AUTHORIZATION SERVER NOT RUNNING"/>}></Route>
+      ) : <Route path='/' element={<WarningInfo info="AUTHORIZATION SERVER NOT RUNNING"/>}></Route>
     );
 
     return routes;
