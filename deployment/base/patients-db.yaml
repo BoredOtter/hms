@@ -37,7 +37,7 @@ spec:
         - name: init-script
           mountPath: /docker-entrypoint-initdb.d
       volumes:
-      - name: init-script
+      - name: init-script 
         configMap:
           name: init-script-configmap
 ---
@@ -51,7 +51,6 @@ spec:
   ports:
     - protocol: TCP
       port: 5432
-      targetPort: 5432
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -60,7 +59,7 @@ metadata:
 data:
   init.sql: |
     CREATE TABLE "Patients" (
-      "ID_patient" int PRIMARY KEY,
+      "Patient_uuid" varchar PRIMARY KEY,
       "First_name" varchar,
       "Last_name" varchar,
       "Date_of_birth" date,
@@ -71,7 +70,7 @@ data:
 
     CREATE TABLE "Medical_History" (
       "ID_entry" int PRIMARY KEY,
-      "ID_patient" int,
+      "Patient_uuid" varchar,
       "Entry_date" date,
       "Diagnosis" varchar,
       "Description_of_disease_or_health_problem" varchar,
@@ -81,7 +80,7 @@ data:
 
     CREATE TABLE "Vital_Signs" (
       "ID_measurement" int PRIMARY KEY,
-      "ID_patient" int,
+      "Patient_uuid" varchar,
       "Date_and_time_of_measurement" timestamp,
       "Blood_pressure" varchar,
       "Pulse" varchar,
@@ -90,6 +89,6 @@ data:
       "Other_medical_parameters" varchar
     );
 
-    ALTER TABLE "Medical_History" ADD FOREIGN KEY ("ID_patient") REFERENCES "Patients" ("ID_patient");
+    ALTER TABLE "Medical_History" ADD FOREIGN KEY ("Patient_uuid") REFERENCES "Patients" ("Patient_uuid");
 
-    ALTER TABLE "Vital_Signs" ADD FOREIGN KEY ("ID_patient") REFERENCES "Patients" ("ID_patient");
+    ALTER TABLE "Vital_Signs" ADD FOREIGN KEY ("Patient_uuid") REFERENCES "Patients" ("Patient_uuid");

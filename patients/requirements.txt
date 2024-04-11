@@ -1,5 +1,5 @@
 fastapi==0.110.0
-keycloak-client==0.15.4
+python-keycloak==3.12.0
 uvicorn==0.29.0
 requests==2.31.0
 sqlalchemy==2.0.29
