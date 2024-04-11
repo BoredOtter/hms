@@ -9,7 +9,7 @@
       "enabled": true,
       "publicClient": true,
       "directAccessGrantsEnabled": true,
-      "redirectUris": [ "https://hms.test/*"]
+      "redirectUris": [ "https://hms.test.boredotter.dev/*"]
     },
     {
       "id": "d2cd162a-b83f-4ca5-a223-4fbdd49a9b80",
@@ -25,10 +25,10 @@
       "clientAuthenticatorType": "client-secret",
       "secret": "olszak-sie-obrazi-jak-wpisze-tu-cos-smiesznego",
       "redirectUris": [
-        "https://hms.test/*"
+        "https://hms.test.boredotter.dev/*"
       ],
       "webOrigins": [
-        "https://hms.test"
+        "https://hms.test.boredotter.dev"
       ],
       "notBefore": 0,
       "bearerOnly": false,

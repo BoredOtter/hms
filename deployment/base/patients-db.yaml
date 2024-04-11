@@ -58,8 +58,8 @@ metadata:
   name: init-script-configmap
 data:
   init.sql: |
-    CREATE DATABASE IF NOT EXISTS patients_db
-    use patients_db
+    CREATE DATABASE IF NOT EXISTS patients_db;
+    USE patients_db;
     CREATE TABLE "Patients" (
       "Patient_uuid" varchar PRIMARY KEY,
       "First_name" varchar,
