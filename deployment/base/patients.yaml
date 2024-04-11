@@ -20,6 +20,8 @@ spec:
         envFrom:
         - configMapRef:
             name: kc-client-config
+        - secretRef:
+            name: kc-client-config
         - configMapRef:
             name: patients-db-configmap
         - secretRef:

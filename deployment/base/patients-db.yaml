@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: patients-db
-        image: postgres:latest
+        image: postgres:16.2-alpine3.19
         env:
           - name: POSTGRES_USER
             valueFrom:
@@ -58,6 +58,8 @@ metadata:
   name: init-script-configmap
 data:
   init.sql: |
+    CREATE DATABASE IF NOT EXISTS patients_db
+    use patients_db
     CREATE TABLE "Patients" (
       "Patient_uuid" varchar PRIMARY KEY,
       "First_name" varchar,

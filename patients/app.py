@@ -22,10 +22,10 @@ keycloak_connection = KeycloakOpenIDConnection(
     server_url=f"{KC_URL}:{KC_PORT}",
     username="admin",
     password="admin",
-    realm_name="hms",
-    user_realm_name="hms",
-    client_id="admin-cli",
-    client_secret_key="i5KiCB5XeenPLte59BEKcZiYzbDM2GKh",
+    realm_name=KC_REALM,
+    user_realm_name=KC_REALM,
+    client_id=KC_CLIENT_ID,
+    client_secret_key=KC_CLIENT_SECRET,
     verify=False,
 )
 

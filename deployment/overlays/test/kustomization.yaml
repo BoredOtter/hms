@@ -40,6 +40,10 @@ secretGenerator:
   literals:
   - KC_CLIENT_ID="python"
   - KC_CLIENT_SECRET="olszak-sie-obrazi-jak-wpisze-tu-cos-smiesznego"
+- name: kc-admin-client-config
+  literals:
+  - KC_CLIENT_ID="admin-cli"
+  - KC_CLIENT_SECRET="eryk-sie-obrazi-jak-wpisze-tu-cos-smiesznego"
 - name: validator
   literals:
   - KC_CLIENT_ID="python"
