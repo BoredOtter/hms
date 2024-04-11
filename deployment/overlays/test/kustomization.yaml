@@ -55,7 +55,11 @@ secretGenerator:
   - POSTGRES_PASSWORD=keycloak
   - POSTGRES_DB=keycloak
 
-
+- name: postgres-credentials-patients
+  literals:
+  - POSTGRES_USER=patients
+  - POSTGRES_PASSWORD=patients
+  - POSTGRES_DB=patients_db
 
 - name: keycloak-credentials
   literals:

@@ -41,7 +41,7 @@ secretGenerator:
   literals:
   - POSTGRES_USER=patients
   - POSTGRES_PASSWORD=patients
-  - POSTGRES_DB=patients
+  - POSTGRES_DB=patients_db
 
 - name: keycloak-credentials
   literals:
