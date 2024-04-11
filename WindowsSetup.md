@@ -14,19 +14,17 @@
 
 7. run `minikube addons enable ingress`
 
-8. run `minikube ip` ***this ip could change everytime you recreate minikube***
-
-9. Add this lines to `C:\Windows\System32\drivers\etc\hosts`
+8. Add this lines to `C:\Windows\System32\drivers\etc\hosts`
 ```
     127.0.0.1 auth.hms.test
     127.0.0.1 hms.test
 ```
 
-10. Run `tilt up`
+9. Run `tilt up`
 
-11. Run `minikube tunnel`
+10. Run `minikube tunnel`
 
-12. Hope that will work
+11. Hope that will work
 
 
 ### App Urls:

@@ -5,7 +5,7 @@ Base = declarative_base()
 
 class Patient(Base):
     __tablename__ = 'Patients'
-    ID_patient = Column(Integer, primary_key=True)
+    Patient_uuid = Column(String, primary_key=True)
     First_name = Column(String)
     Last_name = Column(String)
     Date_of_birth = Column(Date)
@@ -17,7 +17,7 @@ class Patient(Base):
 class MedicalHistory(Base):
     __tablename__ = 'Medical_History'
     ID_entry = Column(Integer, primary_key=True)
-    ID_patient = Column(Integer, ForeignKey('Patients.ID_patient'))
+    Patient_uuid = Column(String, ForeignKey('Patients.Patient_uuid'))
     Entry_date = Column(Date)
     Diagnosis = Column(String)
     Description_of_disease_or_health_problem = Column(String, nullable=True)
@@ -28,7 +28,7 @@ class MedicalHistory(Base):
 class VitalSigns(Base):
     __tablename__ = 'Vital_Signs'
     ID_measurement = Column(Integer, primary_key=True)
-    ID_patient = Column(Integer, ForeignKey('Patients.ID_patient'))
+    Patient_uuid = Column(String, ForeignKey('Patients.Patient_uuid'))
     Date_and_time_of_measurement = Column(String)
     Blood_pressure = Column(String, nullable=True)
     Pulse = Column(String, nullable=True)

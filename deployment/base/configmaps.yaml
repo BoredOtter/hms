@@ -14,7 +14,7 @@ metadata:
   name: patients-db-configmap
 data:
   DB_HOST: "patients-db"
-  DB_PORT: "3306"
-  DB_NAME: "patientsdb"
-  DB_USER: "root"
-  DB_PASSWORD: "password"
+  DB_PORT: "5432"
+  DB_NAME: "patients_db"
+  DB_USER: "patients"
+  DB_PASSWORD: "patients"
