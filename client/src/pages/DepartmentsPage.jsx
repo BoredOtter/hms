@@ -1,12 +1,17 @@
 import React from 'react'
-import DepartmentsListing from '../components/listing/DepartmentsListing'
-
+import departments from '../../departments.json'
+import ObjectsListing from '../components/listing/ObjectsListing';
 
 const DepartmentsPage = () => {
+
+  const departmentsData = departments.departments || [];
   return (
-    <>
-    <DepartmentsListing></DepartmentsListing>
-    </>
+    <ObjectsListing 
+      objectsData={departmentsData} 
+      objectsTitle={"Departments"}
+      objectLink="/departments"
+      display={["name"]}
+      />
   )
 }
 

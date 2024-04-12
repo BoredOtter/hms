@@ -2,7 +2,7 @@ import React from 'react'
 import { NavLink } from 'react-router-dom';
 import keycloak from '../../auth/keycloak';
 
-const CURRENT_USER_TYPE = "nurse";
+const CURRENT_USER_TYPE = "doctor";
 
 const NavbarRoles = () => {
     const linkClass = ({ isActive }) =>

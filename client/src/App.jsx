@@ -5,6 +5,9 @@ import WarningInfo from './pages/WarningInfo';
 import DepartmentsPage from './pages/DepartmentsPage';
 import DepartmentPage from './pages/DepartmentPage';
 import Home from './pages/Home';
+import WardPage from './pages/WardPage';
+import PatientsPage from './pages/PatientsPage';
+import PatientPage from './pages/PatientPage';
 import useAuth from './auth/useAuth';
 
 import {
@@ -14,8 +17,7 @@ import {
   RouterProvider,
   Routes
 } from 'react-router-dom';
-import WardPage from './pages/WardPage';
-import PatientsPage from './pages/PatientsPage';
+
 
 const NurseDoctorRoutes = () => (
   <Routes>
@@ -40,6 +42,8 @@ const App = () => {
             <>
               <Route path='/ward' element={<WardPage />} />
               <Route path='/patients' element={<PatientsPage/>} />
+              <Route path='/patients:id' element={<PatientPage/>} />
+
             </>
           )}
           {(roles.includes('admin') || roles.includes('doctor')) && (

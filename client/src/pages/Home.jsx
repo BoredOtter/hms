@@ -3,7 +3,8 @@ import "../styles/styles.css"
 
 const loggedUser = {
   firstName: "Marzena",
-  lastName: "Kowal"
+  lastName: "Kowal",
+  role: "Nurse"
 };
 
 const Home = () => {
@@ -21,13 +22,8 @@ const Home = () => {
       setCurrentTime(timeString);
     };
 
-    // Update time initially
     updateTime();
-
-    // Update time every minute
     const interval = setInterval(updateTime, 1000);
-
-    // Clean up interval
     return () => clearInterval(interval);
   }, []);
 
@@ -37,6 +33,7 @@ const Home = () => {
       <div className='mb-4'>
         <p className='text-lg'>Logged User:</p>
         <p className='text-xl'>{loggedUser.firstName} {loggedUser.lastName}</p>
+        <p className='text-l italic'>{loggedUser.role}</p>
       </div>
       <div>
         <p className='text-lg'>Current Time:</p>

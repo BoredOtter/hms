@@ -1,18 +1,18 @@
 {
     "patients" : [
         {
-          "ID_patient": 1,
-          "First_name": "John",
-          "Last_name": "Doe",
+          "id": 1,
+          "firstname": "John",
+          "lastname": "Doe",
           "Date_of_birth": "1990-05-15",
           "Gender": "Male",
           "Contact_number": "123-456-7890",
           "Address": "123 Main St"
         },
         {
-          "ID_patient": 2,
-          "First_name": "Jane",
-          "Last_name": "Smith",
+          "id": 2,
+          "firstname": "Jane",
+          "lastname": "Smith",
           "Date_of_birth": "1985-08-20",
           "Gender": "Female",
           "Contact_number": "987-654-3210",
