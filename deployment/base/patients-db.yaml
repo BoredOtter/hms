@@ -58,8 +58,6 @@ metadata:
   name: init-script-configmap
 data:
   init.sql: |
-    CREATE DATABASE patients_db;
-    USE patients_db;
     CREATE TABLE "Patients" (
       "Patient_uuid" varchar PRIMARY KEY,
       "First_name" varchar,
@@ -67,11 +65,12 @@ data:
       "Date_of_birth" date,
       "Gender" varchar,
       "Contact_number" varchar,
-      "Address" varchar
+      "Address" varchar,
+      "PESEL" varchar(11)
     );
 
     CREATE TABLE "Medical_History" (
-      "ID_entry" int PRIMARY KEY,
+      "ID_entry" serial PRIMARY KEY,
       "Patient_uuid" varchar,
       "Entry_date" date,
       "Diagnosis" varchar,
@@ -81,9 +80,9 @@ data:
     );
 
     CREATE TABLE "Vital_Signs" (
-      "ID_measurement" int PRIMARY KEY,
+      "ID_measurement" serial PRIMARY KEY,
       "Patient_uuid" varchar,
-      "Date_and_time_of_measurement" timestamp,
+      "Date_and_time_of_measurement" timestamp default current_timestamp,
       "Blood_pressure" varchar,
       "Pulse" varchar,
       "Body_temperature" varchar,

@@ -12,6 +12,7 @@ class Patient(Base):
     Gender = Column(String)
     Contact_number = Column(String, nullable=True)
     Address = Column(String, nullable=True)
+    PESEL = Column(String)
 
 
 class MedicalHistory(Base):
@@ -29,7 +30,7 @@ class VitalSigns(Base):
     __tablename__ = 'Vital_Signs'
     ID_measurement = Column(Integer, primary_key=True)
     Patient_uuid = Column(String, ForeignKey('Patients.Patient_uuid'))
-    Date_and_time_of_measurement = Column(String)
+    Date_and_time_of_measurement = Date
     Blood_pressure = Column(String, nullable=True)
     Pulse = Column(String, nullable=True)
     Body_temperature = Column(String, nullable=True)
