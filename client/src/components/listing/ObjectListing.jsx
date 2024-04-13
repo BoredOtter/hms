@@ -1,27 +1,14 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
+import ObjectSlicer from '../utils/ObjectSlicer';
 
-const ObjectListing = ({ object, objectLink, display }) => {
+const ObjectListing = ({ object, objectLink}) => {
   return (
-    <div className='bg-white rounded-xl shadow-md relative'>
-      <div className='text-center p-5'>
-        <div className='flex justify-center space-x-1'>
-          {display.map((property) => (
-            <h3 key={property} className='text-xl font-bold'>
-              {object[property]} 
-            </h3>
-          ))}
-        </div>
-        <div className='button mt-3'>
-          <Link
-            to={`${objectLink}/${object.id}`}
-            className='h-[36px] bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg text-center'
-          >
-            Check
-          </Link>
-        </div>
+    <NavLink to={`${objectLink}/${object.id}`}>
+      <div className='bg-sky-100 rounded-xl p-3.5 hover:bg-sky shadow-md hover:shadow-lg relative'>
+        <ObjectSlicer object={object}/>
       </div>
-    </div>
+    </NavLink>
   );
 };
 

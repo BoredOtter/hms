@@ -10,7 +10,6 @@ const DepartmentsPage = () => {
       objectsData={departmentsData} 
       objectsTitle={"Departments"}
       objectLink="/departments"
-      display={["name"]}
       />
   )
 }

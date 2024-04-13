@@ -2,6 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import "../styles/styles.css"
+import bodyButton from '../components/utils/bodyButton';
 
 function containsOnlyDigits(str) {
     return /^\d{11}$/.test(str);
@@ -37,7 +38,7 @@ const RegisterPatient = () => {
     };
  
     return (
-    <div className='main-container  '>
+    <>
             <div className="form-container bg-gray-200">
             <div className = "title mt-4  text-2xl">
                 <h3>Register Patient</h3>
@@ -96,13 +97,13 @@ const RegisterPatient = () => {
             )}
 
             {!valid && (
-                <button className="form-field bg-indigo-700 text-white rounded-lg" type="submit" >
+                <button className={bodyButton} type="submit" >
                 Register
                 </button>
             )}
             </form>
         </div>
-    </div>
+    </>
     );
 }
 

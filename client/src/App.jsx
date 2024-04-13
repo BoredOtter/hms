@@ -17,6 +17,8 @@ import {
   RouterProvider,
   Routes
 } from 'react-router-dom';
+import PatientVitals from './components/PatientVitals';
+import PatientHistory from './components/PatientHistory';
 
 
 const NurseDoctorRoutes = () => (
@@ -42,8 +44,9 @@ const App = () => {
             <>
               <Route path='/ward' element={<WardPage />} />
               <Route path='/patients' element={<PatientsPage/>} />
-              <Route path='/patients:id' element={<PatientPage/>} />
-
+              <Route path='/patients/:id' element={<PatientPage/>} />
+              <Route path='/patients/:id/vitals' element={<PatientVitals/>} />
+              <Route path='/patients/:id/history' element={<PatientHistory/>} />
             </>
           )}
           {(roles.includes('admin') || roles.includes('doctor')) && (
@@ -62,7 +65,6 @@ const App = () => {
     return routes;
   };
 
-  // Create router from generated routes
   const router = createBrowserRouter(createRoutesFromElements(generateRoutes()));
 
   return (  
