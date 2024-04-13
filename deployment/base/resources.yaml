@@ -1,38 +1,38 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: patients
+  name: resources
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: patients
+      app: resources
   template:
     metadata:
       labels:
-        app: patients
+        app: resources
     spec:
       containers:
-      - name: patients
-        image: patients
+      - name: resources
+        image: resources
         ports:
-        - containerPort: 8001
+        - containerPort: 8002
         envFrom:
         - configMapRef:
             name: kc-client-config
         - secretRef:
             name: kc-client-config
         - configMapRef:
-            name: patients-db-configmap
+            name: resources-db-configmap
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: patients
+  name: resources
 spec:
   selector:
-    app: patients
+    app: resources
   ports:
     - protocol: TCP
-      port: 8001
-      targetPort: 8001
+      port: 8002
+      targetPort: 8002

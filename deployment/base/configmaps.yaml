@@ -18,3 +18,14 @@ data:
   DB_NAME: "patients_db"
   DB_USER: "patients"
   DB_PASSWORD: "patients"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: resources-db-configmap
+data:
+  DB_HOST: "resources-db"
+  DB_PORT: "5432"
+  DB_NAME: "resources_db"
+  DB_USER: "resources"
+  DB_PASSWORD: "resources"

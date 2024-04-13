@@ -1,0 +1,145 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resources-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: resources-db
+  template:
+    metadata:
+      labels:
+        app: resources-db
+    spec:
+      containers:
+      - name: resources-db
+        image: postgres:16.2-alpine3.19
+        env:
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                name: postgres-credentials-resources
+                key: POSTGRES_USER
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgres-credentials-resources
+                key: POSTGRES_PASSWORD
+          - name: POSTGRES_DB
+            valueFrom:
+              secretKeyRef:
+                name: postgres-credentials-resources
+                key: POSTGRES_DB
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - name: init-script
+          mountPath: /docker-entrypoint-initdb.d
+      volumes:
+      - name: init-script 
+        configMap:
+          name: init-script-configmap-resource
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: resources-db
+spec:
+  selector:
+    app: resources-db
+  ports:
+    - protocol: TCP
+      port: 5432
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: init-script-configmap-resource
+data:
+  init.sql: |
+    CREATE TABLE "Departments" (
+      "ID_department" serial PRIMARY KEY,
+      "Department_name" varchar,
+      "Description" varchar,
+      "Contact_info" varchar
+    );
+
+    CREATE TABLE "Room" (
+      "ID_room" serial PRIMARY KEY,
+      "ID_department" int,
+      "Number_of_beds" int
+    );
+
+    CREATE TABLE "Bed_Reservations" (
+      "ID_reservation" serial PRIMARY KEY,
+      "ID_patient" varchar,
+      "ID_room" int,
+      "Start_date" date,
+      "End_date" date
+    );
+
+    CREATE TABLE "Employees" (
+      "ID_employee" serial PRIMARY KEY,
+      "First_name" varchar,
+      "Last_name" varchar,
+      "Employment_date" date,
+      "Position" varchar,
+      "Department_id" int
+    );
+
+    CREATE TABLE "Employee_Schedules" (
+      "ID_entry" serial PRIMARY KEY,
+      "ID_employee" int,
+      "Date" date,
+      "Start_time" time,
+      "End_time" time
+    );
+
+    CREATE TABLE "Medical_Procedures" (
+      "ID_procedure" serial PRIMARY KEY,
+      "Procedure_name" varchar,
+      "Description" varchar,
+      "Costs" varchar,
+      "Related_departments" varchar
+    );
+
+    CREATE TABLE "Surgical_Plans" (
+      "ID_plan" serial PRIMARY KEY,
+      "ID_procedure" int,
+      "Operation_date" date,
+      "Start_time" time,
+      "End_time" time,
+      "Operating_room" varchar,
+      "Medical_personnel_list" varchar
+    );
+
+    CREATE TABLE "Material_Resources" (
+      "ID_resource" serial PRIMARY KEY,
+      "Resource_name" varchar,
+      "Description" varchar,
+      "Available_quantity" int,
+      "Department_id" int
+    );
+
+    ALTER TABLE "Room" ADD FOREIGN KEY ("ID_department") REFERENCES "Departments" ("ID_department");
+
+    ALTER TABLE "Bed_Reservations" ADD FOREIGN KEY ("ID_room") REFERENCES "Room" ("ID_room");
+
+    ALTER TABLE "Employees" ADD FOREIGN KEY ("Department_id") REFERENCES "Departments" ("ID_department");
+
+    ALTER TABLE "Employee_Schedules" ADD FOREIGN KEY ("ID_employee") REFERENCES "Employees" ("ID_employee");
+
+    ALTER TABLE "Surgical_Plans" ADD FOREIGN KEY ("ID_procedure") REFERENCES "Medical_Procedures" ("ID_procedure");
+
+    ALTER TABLE "Material_Resources" ADD FOREIGN KEY ("Department_id") REFERENCES "Departments" ("ID_department");
+
+    ALTER TABLE "Material_Resources" ADD CONSTRAINT "unique_material_resource" UNIQUE ("Resource_name", "Department_id");
+
+    ALTER TABLE "Departments" ADD CONSTRAINT "unique_department" UNIQUE ("Department_name", "Description", "Contact_info");
+
+    ALTER TABLE "Material_Resources" ADD CHECK ("Available_quantity" >= 0);
+
+    ALTER TABLE "Bed_Reservations" ADD CHECK ("Start_date" <= "End_date");
+
+    ALTER TABLE "Room" ADD CHECK ("Number_of_beds" > 0);
