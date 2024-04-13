@@ -18,6 +18,9 @@ images:
   - name: patients
     newName: ksw2137/hms-patients
     newTag: __TAG__
+  - name: resources
+    newName: ksw2137/hms-resources
+    newTag: __TAG__
 
 patches:
 - target:
@@ -60,6 +63,12 @@ secretGenerator:
   - POSTGRES_USER=patients
   - POSTGRES_PASSWORD=patients
   - POSTGRES_DB=patients_db
+
+- name: postgres-credentials-resources
+  literals:
+  - POSTGRES_USER=resources
+  - POSTGRES_PASSWORD=resources
+  - POSTGRES_DB=resources_db
 
 - name: keycloak-credentials
   literals:

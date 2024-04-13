@@ -7,6 +7,8 @@ resources:
 - validator.yaml
 - patients.yaml
 - patients-db.yaml
+- resources.yaml
+- resources-db.yaml
 - kraken.yaml
 - postgres.yaml #postgres as StatefulSet in base - for 'prod' ideally would be to have DBs outside of cluster
 - configmaps.yaml

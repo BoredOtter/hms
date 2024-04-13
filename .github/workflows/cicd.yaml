@@ -18,6 +18,8 @@ jobs:
             context: validator
           - image: hms-patients
             context: patients
+          - image: hms-resources
+            context: resources
 
     name: Build and Push ${{ matrix.image }}
     runs-on: ubuntu-22.04

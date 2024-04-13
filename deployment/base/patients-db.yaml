@@ -39,7 +39,7 @@ spec:
       volumes:
       - name: init-script 
         configMap:
-          name: init-script-configmap
+          name: init-script-configmap-patients
 ---
 apiVersion: v1
 kind: Service
@@ -55,7 +55,7 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: init-script-configmap
+  name: init-script-configmap-patients
 data:
   init.sql: |
     CREATE TABLE "Patients" (
