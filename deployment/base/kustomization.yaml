@@ -7,6 +7,8 @@ resources:
 - validator.yaml
 - patients.yaml
 - patients-db.yaml
+- documents-db.yaml
+- documents.yaml
 - resources.yaml
 - resources-db.yaml
 - kraken.yaml

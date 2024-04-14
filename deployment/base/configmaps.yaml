@@ -29,3 +29,14 @@ data:
   DB_NAME: "resources_db"
   DB_USER: "resources"
   DB_PASSWORD: "resources"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: documents-db-configmap
+data:
+  MINIO_HOST: "documents-db:9000"
+  MINIO_ACCESS_KEY: "4B8QgvrGkyFKElzyUJrN"
+  MINIO_SECRET_KEY: "3g3Lpa1aOgwk8CXiimIX8wBnCrSFxgXyLHS5FjmD"
+  MINIO_BUCKET_NAME: "documents"
+---

@@ -70,6 +70,11 @@ secretGenerator:
   - POSTGRES_PASSWORD=resources
   - POSTGRES_DB=resources_db
 
+- name: documents-db-credentials
+  literals:
+  - MINIO_ROOT_USER=minio
+  - MINIO_ROOT_PASSWORD=miniosecret
+
 - name: keycloak-credentials
   literals:
   - KEYCLOAK_ADMIN=boredadmin
