@@ -7,7 +7,7 @@ import bodyButton from './utils/bodyButton'
 const Department = ({department}) => {
 
   return (
-    <ContainerDetails title={"Department"}>
+    <ContainerDetails title={"Department Details"}>
         <ObjectSlicer object={department}/>
         <div className='button space-x-2 text-center'>
             <NavLink

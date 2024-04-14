@@ -24,7 +24,7 @@ const Patient = ({patient}) => {
 
   return (
     <>
-      <ContainerDetails title={"Patient"}>
+      <ContainerDetails title={"Patient Details"}>
         <ObjectSlicer object={patient}/>
         <div className='space-x-2 text-center'>
           <button onClick={handleShowVitals} className={bodyButton}>Vitals</button>
