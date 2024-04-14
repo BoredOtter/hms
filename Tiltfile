@@ -24,6 +24,11 @@ docker_build('resources','resources/',
         sync('./resources/', '/app')
     ]
 )
+docker_build('documents','documents/',
+    live_update=[
+        sync('./documents/', '/app')
+    ]
+)
 
 docker_build('kraken','kraken/')
 
@@ -35,3 +40,5 @@ k8s_resource('kraken')
 k8s_resource('postgres')
 k8s_resource('patients-db')
 k8s_resource('resources-db')
+k8s_resource('documents-db')
+k8s_resource('documents')

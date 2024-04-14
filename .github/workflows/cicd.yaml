@@ -20,6 +20,8 @@ jobs:
             context: patients
           - image: hms-resources
             context: resources
+          - image: hms-documents
+            context: documents
 
     name: Build and Push ${{ matrix.image }}
     runs-on: ubuntu-22.04
