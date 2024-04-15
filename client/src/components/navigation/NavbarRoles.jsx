@@ -15,7 +15,7 @@ const NavbarRoles = () => {
       
   return (
     <>
-    <NavLink to='/' className={linkClass}>Home</NavLink>
+    <NavLink to='/home' className={linkClass}>Home</NavLink>
     <NavLink to='/departments' className={linkClass}>Departments</NavLink>
       {(CURRENT_USER_TYPE === "nurse") ? 
       <>
@@ -24,6 +24,8 @@ const NavbarRoles = () => {
       : (CURRENT_USER_TYPE === "doctor") ?
       <>
       <NavLink to='/ward' className={linkClass}>Ward</NavLink>
+      <NavLink to='/patients' className={linkClass}>Patients</NavLink>
+
       </>
       : null
       }
