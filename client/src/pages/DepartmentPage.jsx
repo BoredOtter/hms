@@ -1,29 +1,18 @@
 import React from 'react'
 import departments from '../../departments.json'
-import { useParams } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import Department from '../components/Department';
-import HospitalRoom from '../components/HospitalRoom';
+import { Link } from 'react-router-dom';
+import { useParams, useLoaderData, useNavigate } from 'react-router-dom';
 
 const DepartmentPage = () => {
-  const {id} = useParams();
-  const [department, setDepartment] = useState(null);
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    const foundDepartment = departments.departments.find(dep => dep.id === id);
-    if (foundDepartment) {
-      setDepartment(foundDepartment);
-      setLoading(false);
-    }
-  }, [id]);
 
+    // const navigate = useNavigate();
+    // const { id } = useParams();
+    // // const department = useLoaderData();
   return (
-    loading ? <p>Loading...</p>
-    : <>
-      <Department department={department}/>
-      <HospitalRoom/>
-    </>
-  );
-};
+    <div>
+      
+    </div>
+  )
+}
 
 export  { DepartmentPage as default}

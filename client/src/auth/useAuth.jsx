@@ -1,10 +1,10 @@
 import { useEffect, useState, useRef } from 'react';
 import keycloak from './keycloak';
-import httpClient from '../client/httpClient.jsx';
+import httpClient from '../client/HttpClient.jsx';
 
 const useAuth = () => {
     const isRun = useRef(false);
-    const [isLogin, setLogin] = useState(false);
+    const [isLogin, setLogin] = useState(false); // Move useState inside the custom hook
     const [roles, setRoles] = useState('');
     useEffect(() => {
         if(isRun.current) return;
