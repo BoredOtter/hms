@@ -21,6 +21,9 @@ images:
   - name: resources
     newName: ksw2137/hms-resources
     newTag: __TAG__
+  - name: documents
+    newName: ksw2137/hms-documents
+    newTag: __TAG__
 
 patches:
 - target:
