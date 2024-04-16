@@ -95,7 +95,11 @@ def get_patient_by_pesel(pesel: str, db=Depends(get_db)):
 
 @app.get("/getbyname/{first_name}/{last_name}", tags=["Patient"])
 def get_patient_by_name(first_name: str, last_name: str, db=Depends(get_db)):
-    return db.query(patient_model).filter(patient_model.First_name == first_name, patient_model.Last_name == last_name).all()
+    patient = db.query(patient_model).filter(patient_model.First_name == first_name, patient_model.Last_name == last_name).all()
+    if patient:
+        return patient
+    raise HTTPException(status_code=404, detail="Patient not found")
+
 
 @app.patch("/update/{patient_uuid}", tags=["Patient"])
 def update_patient(patient_uuid: str, patient: patient_update_schema, db=Depends(get_db)):

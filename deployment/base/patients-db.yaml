@@ -66,7 +66,7 @@ data:
       "Gender" varchar,
       "Contact_number" varchar,
       "Address" varchar,
-      "PESEL" varchar(11)
+      "PESEL" varchar(11) UNIQUE
     );
 
     CREATE TABLE "Medical_History" (
