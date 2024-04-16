@@ -64,10 +64,9 @@ class SurgicalPlan(Base):
     ID_plan = Column(Integer, primary_key=True)
     ID_procedure = Column(Integer, ForeignKey('Medical_Procedures.ID_procedure'))
     Operation_date = Column(Date)
-    Start_time = Column(Time)
-    End_time = Column(Time)
-    Operating_room = Column(String)
+    ID_operating_room = Column(Integer, ForeignKey('Operating_Room.ID_operating_room'))
     Medical_personnel_list = Column(String)
+    operating_room = relationship("OperatingRoom")
 
 
 class MaterialResource(Base):
@@ -80,21 +79,19 @@ class MaterialResource(Base):
     department = relationship("Department")
 
 
-class OperatingRooms(Base):
-    __tablename__ = 'Operating_Rooms'
-    ID_room = Column(Integer, primary_key=True)
+class OperatingRoom(Base):
+    __tablename__ = 'Operating_Room'
+    ID_operating_room = Column(Integer, primary_key=True)
     ID_department = Column(Integer, ForeignKey('Departments.ID_department'))
     Room_name = Column(String)
-    Capacity = Column(Integer)
     department = relationship("Department")
 
 
 class OperatingRoomReservations(Base):
     __tablename__ = 'Operating_Room_Reservations'
     ID_reservation = Column(Integer, primary_key=True)
-    ID_room = Column(Integer, ForeignKey('Operating_Rooms.ID_room'))
+    ID_operating_room = Column(Integer, ForeignKey('Operating_Room.ID_operating_room'))
     Reservation_date = Column(Date)
     Start_time = Column(Time)
     End_time = Column(Time)
-    Purpose = Column(String)
-    room = relationship("OperatingRooms")
+    room = relationship("OperatingRoom")
