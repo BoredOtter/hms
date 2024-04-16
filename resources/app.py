@@ -1,3 +1,4 @@
+from math import log
 from fastapi import FastAPI, Depends, HTTPException
 import logging
 from utils import token_validator
@@ -13,6 +14,8 @@ from models import OperatingRoomReservations as operating_room_reservations_mode
 
 from schemas import CreateDepartment as create_department_schema
 from schemas import CreateRoom as create_room_schema
+from schemas import UpdateBedInRoom as update_bed_number_room_schema
+from schemas import MoveRoom as move_room_schema
 from schemas import CreateBedReservation as create_bed_reservation_schema
 from schemas import UpdateBedReservationTime as update_bed_reservation_time_schema
 from schemas import UpdateMaterialResource as update_material_resource_schema
@@ -127,15 +130,12 @@ def delete_department(department_id: int, db=Depends(get_db)):
 
 
 # ======================== Room Management ========================
-@app.post("/create/room", tags=["Room"])
-def create_room(room: create_room_schema, db=Depends(get_db)):
-    room = room_model(**room.model_dump())
-    try:
-        db.add(room)
-        db.commit()
-    except Exception:
-        raise HTTPException(status_code=400, detail="Error while creating room.")
-    return {"message": "Room added successfully."}
+@app.get("/get/room/all", tags=["Room"])
+def get_rooms(db=Depends(get_db)):
+    rooms = db.query(room_model).all()
+    if rooms is None:
+        raise HTTPException(status_code=404, detail="Rooms not found")
+    return rooms
 
 
 @app.get("/get/room/id/{room_id}", tags=["Room"])
@@ -148,6 +148,55 @@ def get_room_by_id(room_id: int, db=Depends(get_db)):
     room.bed_reservations = db.query(bed_reservation_model).filter(bed_reservation_model.ID_room == room.ID_room).all()
     return room
 
+
+@app.post("/create/room", tags=["Room"])
+def create_room(room: create_room_schema, db=Depends(get_db)):
+    room = room_model(**room.model_dump())
+    try:
+        db.add(room)
+        db.commit()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Error while creating room.")
+    return {"message": "Room added successfully."}
+
+
+@app.patch("/update/bed_in_room/{room_id}", tags=["Room"])
+def update_bed_number_in_room(room_id: int, room: update_bed_number_room_schema, db=Depends(get_db)):
+    existing_room = db.query(room_model).filter(room_model.ID_room == room_id).first()
+    if existing_room is None:
+        raise HTTPException(status_code=404, detail="Room not found")
+    try:
+        db.query(room_model).filter(room_model.ID_room == room_id).update(room.model_dump())
+        db.commit()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Error while updating room.")
+    return {"message": "Room updated successfully."}
+
+
+@app.patch("/move/room/{room_id}", tags=["Room"])
+def move_room(room_id: int, room: move_room_schema, db=Depends(get_db)):
+    existing_room = db.query(room_model).filter(room_model.ID_room == room_id).first()
+    if existing_room is None:
+        raise HTTPException(status_code=404, detail="Room not found")
+    try:
+        db.query(room_model).filter(room_model.ID_room == room_id).update(room.model_dump())
+        db.commit()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Error while moving room.")
+    return {"message": "Room moved successfully."}
+
+
+@app.delete("/delete/room/{room_id}", tags=["Room"])
+def delete_room(room_id: int, db=Depends(get_db)):
+    room = db.query(room_model).filter(room_model.ID_room == room_id).first()
+    if room is None:
+        raise HTTPException(status_code=404, detail="Room not found")
+    try:
+        db.delete(room)
+        db.commit()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Error while deleting room.")
+    return {"message": "Room deleted successfully."}
 
 # ======================== Bed Reservation Management ========================
 @app.post("/create/bed_reservation", tags=["Bed Reservation"])
@@ -302,7 +351,6 @@ def create_operating_room(operating_room: create_operating_room_schema, db=Depen
         raise HTTPException(status_code=404, detail="Department not found")
     
     operating_room = operating_room_model(**operating_room.model_dump())
-    
     try:
         db.add(operating_room)
         db.commit()
@@ -310,3 +358,16 @@ def create_operating_room(operating_room: create_operating_room_schema, db=Depen
         raise HTTPException(status_code=400, detail=str(e))
     
     return {"message": "Operating room added successfully."}
+
+
+@app.delete("/delete/operating_room/{room_id}", tags=["Operating Room"])
+def delete_operating_room(room_id: int, db=Depends(get_db)):
+    operating_room = db.query(operating_room_model).filter(operating_room_model.ID_operating_room == room_id).first()
+    if operating_room is None:
+        raise HTTPException(status_code=404, detail="Operating room not found")
+    try:
+        db.delete(operating_room)
+        db.commit()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Error while deleting operating room.")
+    return {"message": "Operating room deleted successfully."}

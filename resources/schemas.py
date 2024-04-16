@@ -1,19 +1,29 @@
 from pydantic import BaseModel
-from datetime import date, datetime, time
-from typing import Optional
+from datetime import date, time
 
 
+# ======================== Department Management ========================
 class CreateDepartment(BaseModel):
     Department_name: str
     Description: str
     Contact_info: str
 
 
+# ======================== Room Management ========================
 class CreateRoom(BaseModel):
     ID_department: int
     Number_of_beds: int
 
 
+class UpdateBedInRoom(BaseModel):
+    Number_of_beds: int
+
+
+class MoveRoom(BaseModel):
+    ID_department: int
+
+
+# ======================== Bed Reservation Management ========================
 class CreateBedReservation(BaseModel):
     ID_patient: str
     ID_room: int
@@ -26,6 +36,7 @@ class UpdateBedReservationTime(BaseModel):
     End_date: date
 
 
+# ======================== Material Resource Management ========================
 class CreateMaterialResource(BaseModel):
     Resource_name: str
     Description: str
@@ -40,6 +51,8 @@ class UpdateMaterialResource(BaseModel):
     Department_id: int
 
 
+
+# ======================== Operating Room Management ========================
 class CreateOperatingRoom(BaseModel):
     ID_department: int
     Room_name: str
