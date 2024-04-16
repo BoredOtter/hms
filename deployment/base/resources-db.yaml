@@ -122,6 +122,27 @@ data:
       "Department_id" int
     );
 
+    # TODO CHECK
+    CREATE TABLE "Operating_Rooms" (
+      "ID_room" serial PRIMARY KEY,
+      "ID_department" int,
+      "Room_name" varchar,
+      "Capacity" int
+    );
+
+    CREATE TABLE "Operating_Room_Reservations" (
+      "ID_reservation" serial PRIMARY KEY,
+      "ID_room" int,
+      "Reservation_date" date,
+      "Start_time" time,
+      "End_time" time,
+      "Purpose" varchar
+    );
+
+    ALTER TABLE "Operating_Rooms" ADD FOREIGN KEY ("ID_department") REFERENCES "Departments" ("ID_department");
+
+    ALTER TABLE "Operating_Room_Reservations" ADD FOREIGN KEY ("ID_room") REFERENCES "Operating_Rooms" ("ID_room");
+
     ALTER TABLE "Room" ADD FOREIGN KEY ("ID_department") REFERENCES "Departments" ("ID_department");
 
     ALTER TABLE "Bed_Reservations" ADD FOREIGN KEY ("ID_room") REFERENCES "Room" ("ID_room");
