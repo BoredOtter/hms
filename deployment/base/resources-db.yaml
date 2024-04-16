@@ -60,7 +60,7 @@ data:
   init.sql: |
     CREATE TABLE "Departments" (
       "ID_department" serial PRIMARY KEY,
-      "Department_name" varchar,
+      "Department_name" varchar UNIQUE,
       "Description" varchar,
       "Contact_info" varchar
     );
