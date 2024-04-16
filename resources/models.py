@@ -2,7 +2,9 @@ from sqlalchemy import Column, Integer, String, Date, Time, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
+
 Base = declarative_base()
+
 
 class Department(Base):
     __tablename__ = 'Departments'
@@ -11,20 +13,22 @@ class Department(Base):
     Description = Column(String)
     Contact_info = Column(String)
 
+
 class Room(Base):
     __tablename__ = 'Room'
     ID_room = Column(Integer, primary_key=True)
     ID_department = Column(Integer, ForeignKey('Departments.ID_department'))
     Number_of_beds = Column(Integer)
 
-class BedReservation(Base):
 
+class BedReservation(Base):
     __tablename__ = 'Bed_Reservations'
     ID_reservation = Column(Integer, primary_key=True)
     ID_patient = Column(Integer)
     ID_room = Column(Integer, ForeignKey('Room.ID_room'))
     Start_date = Column(Date)
     End_date = Column(Date)
+
 
 class Employee(Base):
     __tablename__ = 'Employees'
@@ -36,6 +40,7 @@ class Employee(Base):
     Department_id = Column(Integer, ForeignKey('Departments.ID_department'))
     department = relationship("Department")
 
+
 class EmployeeSchedule(Base):
     __tablename__ = 'Employee_Schedules'
     ID_entry = Column(Integer, primary_key=True)
@@ -44,6 +49,7 @@ class EmployeeSchedule(Base):
     Start_time = Column(Time)
     End_time = Column(Time)
 
+
 class MedicalProcedure(Base):
     __tablename__ = 'Medical_Procedures'
     ID_procedure = Column(Integer, primary_key=True)
@@ -51,6 +57,7 @@ class MedicalProcedure(Base):
     Description = Column(String)
     Costs = Column(String)
     Related_departments = Column(String)
+
 
 class SurgicalPlan(Base):
     __tablename__ = 'Surgical_Plans'
@@ -62,6 +69,7 @@ class SurgicalPlan(Base):
     Operating_room = Column(String)
     Medical_personnel_list = Column(String)
 
+
 class MaterialResource(Base):
     __tablename__ = 'Material_Resources'
     ID_resource = Column(Integer, primary_key=True)
@@ -70,3 +78,23 @@ class MaterialResource(Base):
     Available_quantity = Column(Integer)
     Department_id = Column(Integer, ForeignKey('Departments.ID_department'))
     department = relationship("Department")
+
+
+class OperatingRooms(Base):
+    __tablename__ = 'Operating_Rooms'
+    ID_room = Column(Integer, primary_key=True)
+    ID_department = Column(Integer, ForeignKey('Departments.ID_department'))
+    Room_name = Column(String)
+    Capacity = Column(Integer)
+    department = relationship("Department")
+
+
+class OperatingRoomReservations(Base):
+    __tablename__ = 'Operating_Room_Reservations'
+    ID_reservation = Column(Integer, primary_key=True)
+    ID_room = Column(Integer, ForeignKey('Operating_Rooms.ID_room'))
+    Reservation_date = Column(Date)
+    Start_time = Column(Time)
+    End_time = Column(Time)
+    Purpose = Column(String)
+    room = relationship("OperatingRooms")
