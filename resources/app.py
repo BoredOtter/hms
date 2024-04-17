@@ -1,3 +1,4 @@
+from sqlalchemy import and_, or_
 from math import log
 from fastapi import FastAPI, Depends, HTTPException
 import logging
@@ -214,29 +215,40 @@ def create_bed_reservation(bed_reservation: create_bed_reservation_schema, db=De
         raise HTTPException(status_code=400, detail="Start date cannot be after end date")
     
     # check if patient already has a bed reservation this period
-    existing_bed_reservation = db.query(bed_reservation_model).filter(bed_reservation_model.ID_patient == patient_id).first()
-    if existing_bed_reservation is not None:
-        if existing_bed_reservation.Start_date <= bed_reservation.Start_date <= existing_bed_reservation.End_date:
+    existing_bed_reservations = db.query(bed_reservation_model).filter(bed_reservation_model.ID_patient == patient_id).all()
+    for existing_bed_reservation in existing_bed_reservations:
+        if (existing_bed_reservation.Start_date <= bed_reservation.Start_date <= existing_bed_reservation.End_date) or \
+        (existing_bed_reservation.Start_date <= bed_reservation.End_date <= existing_bed_reservation.End_date):
             raise HTTPException(status_code=400, detail="Patient already has a bed reservation for this period")
     
     # check if room has available beds this period
     room = db.query(room_model).filter(room_model.ID_room == bed_reservation.ID_room).first()
     if room is None:
         raise HTTPException(status_code=404, detail="Room not found")
-    
+
     bed_reservations = db.query(bed_reservation_model).filter(
         bed_reservation_model.ID_room == room.ID_room,
-        bed_reservation_model.Start_date > bed_reservation.End_date
-        ).all()
+        or_(
+            and_(
+                bed_reservation_model.Start_date <= bed_reservation.Start_date,
+                bed_reservation_model.End_date >= bed_reservation.Start_date
+            ),
+            and_(
+                bed_reservation_model.Start_date <= bed_reservation.End_date,
+                bed_reservation_model.End_date >= bed_reservation.End_date
+            )
+        )
+    ).all()
+
     if len(bed_reservations) >= room.Number_of_beds:
         raise HTTPException(status_code=400, detail="Room is full")
-
+    
     try:
-        # create bed reservation
         db.add(bed_reservation)
         db.commit()
     except Exception:
         raise HTTPException(status_code=400, detail="Error while creating bed reservation.")
+    
     return {"message": "Bed reservation added successfully."}
 
 
