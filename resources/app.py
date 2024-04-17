@@ -16,13 +16,13 @@ from models import OperatingRoomReservation as operating_room_reservation_model
 from schemas import CreateDepartment as create_department_schema
 from schemas import CreateRoom as create_room_schema
 from schemas import UpdateBedInRoom as update_bed_number_room_schema
-from schemas import MoveRoom as move_room_schema
 from schemas import CreateBedReservation as create_bed_reservation_schema
 from schemas import UpdateBedReservationTime as update_bed_reservation_time_schema
 from schemas import UpdateMaterialResource as update_material_resource_schema
 from schemas import CreateMaterialResource as create_material_resource_schema
 from schemas import CreateOperatingRoom as create_operating_room_schema
 from schemas import CreateOperatingRoomReservation as create_operating_room_reservation_schema
+from schemas import UpdateOperatingRoomReservation as update_operating_room_reservation_schema
 
 from database import get_db
 
@@ -174,19 +174,6 @@ def update_bed_number_in_room(room_id: int, room: update_bed_number_room_schema,
     return {"message": "Room updated successfully."}
 
 
-@app.patch("/move/room/{room_id}", tags=["Room"])
-def move_room(room_id: int, room: move_room_schema, db=Depends(get_db)):
-    existing_room = db.query(room_model).filter(room_model.ID_room == room_id).first()
-    if existing_room is None:
-        raise HTTPException(status_code=404, detail="Room not found")
-    try:
-        db.query(room_model).filter(room_model.ID_room == room_id).update(room.model_dump())
-        db.commit()
-    except Exception:
-        raise HTTPException(status_code=400, detail="Error while moving room.")
-    return {"message": "Room moved successfully."}
-
-
 @app.delete("/delete/room/{room_id}", tags=["Room"])
 def delete_room(room_id: int, db=Depends(get_db)):
     room = db.query(room_model).filter(room_model.ID_room == room_id).first()
@@ -258,6 +245,15 @@ def get_bed_reservation(patient_id: str, db=Depends(get_db)):
     if bed_reservation is None:
         raise HTTPException(status_code=404, detail="Bed reservation not found")
     return bed_reservation
+
+
+@app.get("/get/bed_reservations/room/{room_id}", tags=["Bed Reservation"])
+def get_bed_reservations_by_room(room_id: int, db=Depends(get_db)):
+    room = db.query(room_model).filter(room_model.ID_room == room_id).first()
+    if room is None:
+        raise HTTPException(status_code=404, detail="Room not found")
+    bed_reservations = db.query(bed_reservation_model).filter(bed_reservation_model.ID_room == room_id).all()
+    return bed_reservations
 
 
 @app.get("/get/bed_reservations/all", tags=["Bed Reservation"])
@@ -367,6 +363,18 @@ def update_material_resource(resource_id: int, material_resource: update_materia
     return {"message": "Material resource updated successfully."}
 
 
+@app.delete("/delete/material_resource/{resource_id}", tags=["Material Resource"])
+def delete_material_resource(resource_id: int, db=Depends(get_db)):
+    material_resource = db.query(material_resource_model).filter(material_resource_model.ID_resource == resource_id).first()
+    if material_resource is None:
+        raise HTTPException(status_code=404, detail="Material resource not found")
+    try:
+        db.delete(material_resource)
+        db.commit()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Error while deleting material resource.")
+    return {"message": "Material resource deleted successfully."}
+
 # ======================== Operating Room Management ========================
 @app.post("/create/operating_room", tags=["Operating Room"])
 def create_operating_room(operating_room: create_operating_room_schema, db=Depends(get_db)):
@@ -383,6 +391,22 @@ def create_operating_room(operating_room: create_operating_room_schema, db=Depen
         raise HTTPException(status_code=400, detail=str(e))
     
     return {"message": "Operating room added successfully."}
+
+
+@app.get("/get/operating_room/all", tags=["Operating Room"])
+def get_operating_rooms(db=Depends(get_db)):
+    operating_rooms = db.query(operating_room_model).all()
+    if operating_rooms is None:
+        raise HTTPException(status_code=404, detail="Operating rooms not found")
+    return operating_rooms
+
+
+@app.get("/get/operating_room/id/{room_id}", tags=["Operating Room"])
+def get_operating_room_by_id(room_id: int, db=Depends(get_db)):
+    operating_room = db.query(operating_room_model).filter(operating_room_model.ID_operating_room == room_id).first()
+    if operating_room is None:
+        raise HTTPException(status_code=404, detail="Operating room not found")
+    return operating_room
 
 
 @app.delete("/delete/operating_room/{room_id}", tags=["Operating Room"])
@@ -423,3 +447,64 @@ def create_operating_room_reservation(operating_room_reservation: create_operati
     except Exception:
         raise HTTPException(status_code=400, detail="Error while creating operating room reservation.")
     return {"message": "Operating room reservation added successfully."}
+
+
+@app.get("/get/operating_room_reservations/all", tags=["Operating Room Reservation"])
+def get_operating_room_reservations(db=Depends(get_db)):
+    operating_room_reservations = db.query(operating_room_reservation_model).all()
+    if operating_room_reservations is None:
+        raise HTTPException(status_code=404, detail="Operating room reservations not found")
+    return operating_room_reservations
+
+
+@app.get("/get/operating_room_reservation/{reservation_id}", tags=["Operating Room Reservation"])
+def get_operating_room_reservation(reservation_id: int, db=Depends(get_db)):
+    operating_room_reservation = db.query(operating_room_reservation_model).filter(operating_room_reservation_model.ID_reservation == reservation_id).first()
+    if operating_room_reservation is None:
+        raise HTTPException(status_code=404, detail="Operating room reservation not found")
+    return operating_room_reservation
+
+
+@app.get("/get/operating_room_reservations/room/{room_id}", tags=["Operating Room Reservation"])
+def get_operating_room_reservations_by_room(room_id: int, db=Depends(get_db)):
+    operating_room_reservations = db.query(operating_room_reservation_model).filter(operating_room_reservation_model.ID_operating_room == room_id).all()
+    if operating_room_reservations is None:
+        raise HTTPException(status_code=404, detail="Operating room reservations not found")
+    return operating_room_reservations
+
+
+@app.patch("/update/operating_room_reservation/{reservation_id}", tags=["Operating Room Reservation"])
+def update_operating_room_reservation(reservation_id: int, operating_room_reservation: update_operating_room_reservation_schema, db=Depends(get_db)):
+    existing_operating_room_reservation = db.query(operating_room_reservation_model).filter(operating_room_reservation_model.ID_reservation == reservation_id).first()
+    if existing_operating_room_reservation is None:
+        raise HTTPException(status_code=404, detail="Operating room reservation not found")
+    
+    # check if dates are valid
+    if operating_room_reservation.Start_time > operating_room_reservation.End_time:
+        raise HTTPException(status_code=400, detail="Start time cannot be after end time")
+    
+    # check if operating room is available this period
+    operating_room_reservations = db.query(operating_room_reservation_model).filter(operating_room_reservation_model.ID_operating_room == operating_room_reservation.ID_operating_room).all()
+    for reservation in operating_room_reservations:
+        if reservation.Start_time <= operating_room_reservation.Start_time <= reservation.End_time:
+            raise HTTPException(status_code=400, detail="Operating room is reserved for this period")
+    
+    try:
+        db.query(operating_room_reservation_model).filter(operating_room_reservation_model.ID_reservation == reservation_id).update(operating_room_reservation.model_dump())
+        db.commit()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Error while updating operating room reservation.")
+    return {"message": "Operating room reservation updated successfully."}
+
+
+@app.delete("/delete/operating_room_reservation/{reservation_id}", tags=["Operating Room Reservation"])
+def delete_operating_room_reservation(reservation_id: int, db=Depends(get_db)):
+    operating_room_reservation = db.query(operating_room_reservation_model).filter(operating_room_reservation_model.ID_reservation == reservation_id).first()
+    if operating_room_reservation is None:
+        raise HTTPException(status_code=404, detail="Operating room reservation not found")
+    try:
+        db.delete(operating_room_reservation)
+        db.commit()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Error while deleting operating room reservation.")
+    return {"message": "Operating room reservation deleted successfully."}

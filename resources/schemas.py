@@ -64,3 +64,9 @@ class CreateOperatingRoomReservation(BaseModel):
     Reservation_date: date
     Start_time: time
     End_time: time
+
+
+class UpdateOperatingRoomReservation(BaseModel):
+    Reservation_date: date
+    Start_time: time
+    End_time: time
