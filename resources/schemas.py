@@ -58,7 +58,9 @@ class CreateOperatingRoom(BaseModel):
     Room_name: str
 
 
-class CreateOperatingRoomReservations(BaseModel):
+# ======================== Operating Room Reservations Management ========================
+class CreateOperatingRoomReservation(BaseModel):
+    ID_operating_room: int
     Reservation_date: date
-    Start_time: time  
-    End_time: time  
+    Start_time: time
+    End_time: time

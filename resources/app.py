@@ -10,7 +10,7 @@ from models import Room as room_model
 from models import BedReservation as bed_reservation_model
 from models import MaterialResource as material_resource_model
 from models import OperatingRoom as operating_room_model
-from models import OperatingRoomReservations as operating_room_reservations_model
+from models import OperatingRoomReservation as operating_room_reservation_model
 
 from schemas import CreateDepartment as create_department_schema
 from schemas import CreateRoom as create_room_schema
@@ -21,7 +21,7 @@ from schemas import UpdateBedReservationTime as update_bed_reservation_time_sche
 from schemas import UpdateMaterialResource as update_material_resource_schema
 from schemas import CreateMaterialResource as create_material_resource_schema
 from schemas import CreateOperatingRoom as create_operating_room_schema
-from schemas import CreateOperatingRoomReservations as create_operating_room_reservations_schema
+from schemas import CreateOperatingRoomReservation as create_operating_room_reservation_schema
 
 from database import get_db
 
@@ -224,9 +224,13 @@ def create_bed_reservation(bed_reservation: create_bed_reservation_schema, db=De
     if room is None:
         raise HTTPException(status_code=404, detail="Room not found")
     
-    bed_reservations = db.query(bed_reservation_model).filter(bed_reservation_model.ID_room == room.ID_room).all()
+    bed_reservations = db.query(bed_reservation_model).filter(
+        bed_reservation_model.ID_room == room.ID_room,
+        bed_reservation_model.Start_date > bed_reservation.End_date
+        ).all()
     if len(bed_reservations) >= room.Number_of_beds:
         raise HTTPException(status_code=400, detail="Room is full")
+
     try:
         # create bed reservation
         db.add(bed_reservation)
@@ -235,12 +239,21 @@ def create_bed_reservation(bed_reservation: create_bed_reservation_schema, db=De
         raise HTTPException(status_code=400, detail="Error while creating bed reservation.")
     return {"message": "Bed reservation added successfully."}
 
+
 @app.get("/get/bed_reservation/{patient_id}", tags=["Bed Reservation"])
 def get_bed_reservation(patient_id: str, db=Depends(get_db)):
     bed_reservation = db.query(bed_reservation_model).filter(bed_reservation_model.ID_patient == patient_id).first()
     if bed_reservation is None:
         raise HTTPException(status_code=404, detail="Bed reservation not found")
     return bed_reservation
+
+
+@app.get("/get/bed_reservations/all", tags=["Bed Reservation"])
+def get_bed_reservations(db=Depends(get_db)):
+    bed_reservations = db.query(bed_reservation_model).all()
+    if bed_reservations is None:
+        raise HTTPException(status_code=404, detail="Bed reservations not found")
+    return bed_reservations
 
 
 @app.patch("/update/bed_reservation/{patient_id}", tags=["Bed Reservation"])
@@ -371,3 +384,30 @@ def delete_operating_room(room_id: int, db=Depends(get_db)):
     except Exception:
         raise HTTPException(status_code=400, detail="Error while deleting operating room.")
     return {"message": "Operating room deleted successfully."}
+
+ 
+# ======================== Operating Room Reservation Management ========================
+@app.post("/create/operating_room_reservation", tags=["Operating Room Reservation"])
+def create_operating_room_reservation(operating_room_reservation: create_operating_room_reservation_schema, db=Depends(get_db)):
+    # check if operating room exists
+    operating_room = db.query(operating_room_model).filter(operating_room_model.ID_operating_room == operating_room_reservation.ID_operating_room).first()
+    if operating_room is None:
+        raise HTTPException(status_code=404, detail="Operating room not found")
+    
+    # check if dates are valid
+    if operating_room_reservation.Start_time > operating_room_reservation.End_time:
+        raise HTTPException(status_code=400, detail="Start time cannot be after end time")
+    
+    # check if operating room is available this period
+    operating_room_reservations = db.query(operating_room_reservation_model).filter(operating_room_reservation_model.ID_operating_room == operating_room_reservation.ID_operating_room).all()
+    for reservation in operating_room_reservations:
+        if reservation.Start_time <= operating_room_reservation.Start_time <= reservation.End_time:
+            raise HTTPException(status_code=400, detail="Operating room is reserved for this period")
+    
+    operating_room_reservation = operating_room_reservation_model(**operating_room_reservation.model_dump())
+    try:
+        db.add(operating_room_reservation)
+        db.commit()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Error while creating operating room reservation.")
+    return {"message": "Operating room reservation added successfully."}

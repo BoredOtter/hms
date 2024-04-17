@@ -87,7 +87,7 @@ class OperatingRoom(Base):
     department = relationship("Department")
 
 
-class OperatingRoomReservations(Base):
+class OperatingRoomReservation(Base):
     __tablename__ = 'Operating_Room_Reservations'
     ID_reservation = Column(Integer, primary_key=True)
     ID_operating_room = Column(Integer, ForeignKey('Operating_Room.ID_operating_room'))
