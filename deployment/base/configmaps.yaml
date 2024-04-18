@@ -33,6 +33,17 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
+  name: pharmacy-db-configmap
+data:
+  DB_HOST: "pharmacy-db"
+  DB_PORT: "5432"
+  DB_NAME: "pharmacy_db"
+  DB_USER: "pharmacy"
+  DB_PASSWORD: "pharmacy"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
   name: documents-db-configmap
 data:
   MINIO_HOST: "documents-db:9000"

@@ -22,6 +22,8 @@ jobs:
             context: resources
           - image: hms-documents
             context: documents
+          - image: hms-pharmacy
+            context: pharmacy
 
     name: Build and Push ${{ matrix.image }}
     runs-on: ubuntu-22.04
