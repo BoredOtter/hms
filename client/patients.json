@@ -1,7 +1,7 @@
 {
   "patients": [
     {
-      "id": "1",
+      "PESEL": "1",
       "first_name": "John",
       "last_name": "Doe",
       "Date_of_birth": "1990-05-15",
@@ -9,11 +9,10 @@
       "Contact_number": "123-456-7890",
       "Address": "123 Main ",
       "department": "Cardiology",
-      "room_number": "101",
-      "pesel" : "90051512345"
+      "room_number": "101"
     },
     {
-      "id": "2",
+      "PESEL": "2",
       "first_name": "Jane",
       "last_name": "Smith",
       "Date_of_birth": "1985-08-20",
@@ -21,11 +20,10 @@
       "Contact_number": "987-654-3210",
       "Address": "456 Elm St",
       "department": "Orthopedics",
-      "room_number": "202",
-      "pesel" : "85082098765"
+      "room_number": "202"
     },
     {
-      "id": "3",
+      "PESEL": "3",
       "first_name": "Michael",
       "last_name": "Johnson",
       "Date_of_birth": "1978-03-10",
@@ -33,11 +31,10 @@
       "Contact_number": "555-123-4567",
       "Address": "789 Oak St",
       "department": "Neurology",
-      "room_number": "303",
-      "pesel" : "78031055567"
+      "room_number": "303"
     },
     {
-      "id": "4",
+      "PESEL": "4",
       "first_name": "Emily",
       "last_name": "Williams",
       "Date_of_birth": "1995-11-25",
@@ -45,23 +42,21 @@
       "Contact_number": "333-888-9999",
       "Address": "101 Pine St",
       "department": "Oncology",
-      "room_number": "404",
-      "pesel" : "95112533388"
+      "room_number": "404"
     },
     {
-      "id": "5",
-      "first_name": "David",
+      "PESEL": "5",
+      "first_name": "DavPESEL",
       "last_name": "Brown",
       "Date_of_birth": "1982-09-08",
       "Gender": "Male",
       "Contact_number": "777-444-3333",
       "Address": "202 Cedar St",
       "department": "Pediatrics",
-      "room_number": "505",
-      "pesel" : "82090877744"
+      "room_number": "505"
     },
     {
-      "id": "6",
+      "PESEL": "6",
       "first_name": "Sarah",
       "last_name": "Anderson",
       "Date_of_birth": "1993-07-12",
@@ -69,11 +64,10 @@
       "Contact_number": "222-333-4444",
       "Address": "303 Maple St",
       "department": "Dermatology",
-      "room_number": "606",
-      "pesel" : "93071222333"
+      "room_number": "606"
     },
     {
-      "id": "7",
+      "PESEL": "7",
       "first_name": "Christopher",
       "last_name": "Martinez",
       "Date_of_birth": "1987-12-03",
@@ -81,11 +75,10 @@
       "Contact_number": "666-999-8888",
       "Address": "404 Walnut St",
       "department": "Gynecology",
-      "room_number": "707",
-      "pesel" : "93071222333"
+      "room_number": "707"
     },
     {
-      "id": "8",
+      "PESEL": "8",
       "first_name": "Amanda",
       "last_name": "Taylor",
       "Date_of_birth": "1998-01-30",
@@ -93,11 +86,10 @@
       "Contact_number": "555-777-1111",
       "Address": "505 Birch St",
       "department": "Urology",
-      "room_number": "808",
-      "pesel" : "98013055577"
+      "room_number": "808"
     },
     {
-      "id": "9",
+      "PESEL": "9",
       "first_name": "Daniel",
       "last_name": "Garcia",
       "Date_of_birth": "1980-04-18",
@@ -105,11 +97,10 @@
       "Contact_number": "999-333-2222",
       "Address": "606 Oak St",
       "department": "Psychiatry",
-      "room_number": "909",
-      "pesel" : "80041899933"
+      "room_number": "909"
     },
     {
-      "id": "10",
+      "PESEL": "10",
       "first_name": "Jennifer",
       "last_name": "Rodriguez",
       "Date_of_birth": "1989-06-22",
@@ -117,11 +108,10 @@
       "Contact_number": "777-111-5555",
       "Address": "707 Elm St",
       "department": "Psychiatry",
-      "room_number": "1010",
-      "pesel" : "89062277711"
+      "room_number": "1010"
     },
     {
-      "id": "11",
+      "PESEL": "11",
       "first_name": "Matthew",
       "last_name": "Hernandez",
       "Date_of_birth": "1975-02-14",
@@ -129,11 +119,10 @@
       "Contact_number": "444-666-7777",
       "Address": "808 Maple St",
       "department": "Cardiology",
-      "room_number": "1111",
-      "pesel" : "75021444466"
+      "room_number": "1111"
     },
     {
-      "id": "12",
+      "PESEL": "12",
       "first_name": "Laura",
       "last_name": "Lopez",
       "Date_of_birth": "1991-10-09",
@@ -141,11 +130,10 @@
       "Contact_number": "888-222-4444",
       "Address": "909 Pine St",
       "department": "Orthopedics",
-      "room_number": "1212",
-      "pesel" : "91100988822"
+      "room_number": "1212"
     },
     {
-      "id": "13",
+      "PESEL": "13",
       "first_name": "Kevin",
       "last_name": "Harris",
       "Date_of_birth": "1973-08-17",
@@ -153,11 +141,10 @@
       "Contact_number": "111-555-9999",
       "Address": "1010 Cedar St",
       "department": "Neurology",
-      "room_number": "1313",
-      "pesel" : "73081711155"
+      "room_number": "1313"
     },
     {
-      "id": "14",
+      "PESEL": "14",
       "first_name": "Stephanie",
       "last_name": "Clark",
       "Date_of_birth": "1997-05-28",
@@ -165,11 +152,10 @@
       "Contact_number": "222-888-7777",
       "Address": "1111 Oak St",
       "department": "Oncology",
-      "room_number": "1414",
-      "pesel" : "97052822288"
+      "room_number": "1414"
     },
     {
-      "id": "15",
+      "PESEL": "15",
       "first_name": "Jason",
       "last_name": "Young",
       "Date_of_birth": "1984-11-03",
@@ -177,11 +163,10 @@
       "Contact_number": "777-333-1111",
       "Address": "1212 Elm St",
       "department": "Pediatrics",
-      "room_number": "1515",
-      "pesel" : "84110377733"
+      "room_number": "1515"
     },
     {
-      "id": "16",
+      "PESEL": "16",
       "first_name": "Kimberly",
       "last_name": "Walker",
       "Date_of_birth": "1994-03-16",
@@ -189,11 +174,10 @@
       "Contact_number": "999-111-2222",
       "Address": "1313 Maple St",
       "department": "Dermatology",
-      "room_number": "1616",
-      "pesel" : "94031699911"
+      "room_number": "1616"
     },
     {
-      "id": "17",
+      "PESEL": "17",
       "first_name": "Eric",
       "last_name": "Perez",
       "Date_of_birth": "1986-09-20",
@@ -201,11 +185,10 @@
       "Contact_number": "333-777-8888",
       "Address": "1414 Pine St",
       "department": "Gynecology",
-      "room_number": "1717",
-      "pesel" : "86092033377"
+      "room_number": "1717"
     },
     {
-      "id": "18",
+      "PESEL": "18",
       "first_name": "Michelle",
       "last_name": "King",
       "Date_of_birth": "1996-07-11",
@@ -213,11 +196,10 @@
       "Contact_number": "666-444-5555",
       "Address": "1515 Cedar St",
       "department": "Urology",
-      "room_number": "1818",
-      "pesel" : "96071166644"
+      "room_number": "1818"
     },
     {
-      "id": "19",
+      "PESEL": "19",
       "first_name": "Steven",
       "last_name": "Wright",
       "Date_of_birth": "1983-12-25",
@@ -225,11 +207,10 @@
       "Contact_number": "222-666-7777",
       "Address": "1616 Oak St",
       "department": "Psychiatry",
-      "room_number": "1919",
-      "pesel" : "83122522266"
+      "room_number": "1919"
     },
     {
-      "id": "20",
+      "PESEL": "20",
       "first_name": "Melissa",
       "last_name": "Scott",
       "Date_of_birth": "1992-06-18",
@@ -237,8 +218,7 @@
       "Contact_number": "888-777-3333",
       "Address": "1717 Elm St",
       "department": "Urology",
-      "room_number": "2020",
-      "pesel" : "92061888777"
+      "room_number": "2020"
     }
   ]
 }

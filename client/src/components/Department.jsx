@@ -1,7 +1,7 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 import ObjectSlicer from './utils/ObjectSlicer'
-import ContainerDetails from './utils/ContainerDetails'
+import ContainerDetails from './utils/ObjectDetails'
 import bodyButton from './utils/bodyButton'
 
 const Department = ({department}) => {
@@ -11,12 +11,12 @@ const Department = ({department}) => {
         <ObjectSlicer object={department}/>
         <div className='button space-x-2 text-center'>
             <NavLink
-                to={`/assortment/`}
+                to={'/assortment/'}
                 className={bodyButton}>
                 Assortment
             </NavLink>
             <NavLink
-                to={`/departments/`}
+                to={'/departments/'}
                 className={bodyButton}>
                 Back
             </NavLink>

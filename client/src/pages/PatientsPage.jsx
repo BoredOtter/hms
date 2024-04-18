@@ -16,11 +16,12 @@ const PatientsPage = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <SearchBar searchTerm={searchTerm} onSearch={setSearchTerm} /> {/* Use the SearchBar component */}
+      <SearchBar searchTerm={searchTerm} onSearch={setSearchTerm} />
       <ObjectsListing 
         objectsData={filteredPatients} 
         objectsTitle={"Patients"}
         objectLink={"/patients"}
+        objectKey={"PESEL"}
       />
     </div>
   )

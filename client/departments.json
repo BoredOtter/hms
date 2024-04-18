@@ -1,7 +1,7 @@
 {
   "departments": [
     {
-      "id": "1",
+      "ida": "1",
       "name": "Cardiology",
       "head": "Dr. Smith",
       "location": "Building A, Floor 2",

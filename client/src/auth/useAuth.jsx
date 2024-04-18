@@ -1,11 +1,12 @@
 import { useEffect, useState, useRef } from 'react';
 import keycloak from './keycloak';
-import httpClient from '../client/httpClient.jsx';
+import httpClient from '../client/httpClient';
 
 const useAuth = () => {
     const isRun = useRef(false);
     const [isLogin, setLogin] = useState(false);
     const [roles, setRoles] = useState('');
+    
     useEffect(() => {
         if(isRun.current) return;
         isRun.current = true;

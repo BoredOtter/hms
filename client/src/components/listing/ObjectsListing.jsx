@@ -1,10 +1,6 @@
-import departments from '../../../departments.json'
 import ObjectListing from './ObjectListing';
 
-const ObjectsListing = ({objectsData, objectsTitle, objectLink}) => {
-
-  // const departmentsData = departments.departments || [];
-
+const ObjectsListing = ({ objectsData, objectsTitle, objectLink, objectKey }) => {
   return (
     <section className='px-4 py-8'>
       <div className='container-xl lg:container m-auto'>
@@ -12,11 +8,12 @@ const ObjectsListing = ({objectsData, objectsTitle, objectLink}) => {
           {objectsTitle}
         </h2>
         <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-5'>
-          {objectsData.map((object) => (
-            <div key={object.id} className="col-span-1">
+          {objectsData.map((object, index) => (
+            <div key={object[objectKey] || index} className="col-span-1">
               <ObjectListing 
                 object={object} 
                 objectLink={objectLink}
+                objectKey={objectKey}
               />
             </div>
           ))}

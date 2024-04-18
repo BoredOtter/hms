@@ -9,7 +9,8 @@ const DepartmentsPage = () => {
     <ObjectsListing 
       objectsData={departmentsData} 
       objectsTitle={"Departments"}
-      objectLink="/departments"
+      objectLink={"/departments"}
+      objectKey={"id"}
       />
   )
 }
