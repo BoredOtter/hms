@@ -19,11 +19,11 @@ spec:
         - containerPort: 8001
         envFrom:
         - configMapRef:
-            name: kc-config
+            name: kc-client-config
+        - secretRef:
+            name: kc-client-config
         - configMapRef:
             name: patients-db-configmap
-        - secretRef:
-            name: kc-config
 ---
 apiVersion: v1
 kind: Service

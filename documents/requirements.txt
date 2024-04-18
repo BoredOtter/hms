@@ -2,6 +2,6 @@ fastapi==0.110.0
 python-keycloak==3.12.0
 uvicorn==0.29.0
 requests==2.31.0
-sqlalchemy==2.0.29
 pydantic==2.6.3
-psycopg2==2.9.3
+minio==7.2.5
+python-multipart==0.0.9

@@ -15,6 +15,12 @@ images:
   - name: validator
     newName: ksw2137/hms-validator
     newTag: __TAG__
+  - name: patients
+    newName: ksw2137/hms-patients
+    newTag: __TAG__
+  - name: resources
+    newName: ksw2137/hms-resources
+    newTag: __TAG__
 
 patches:
 - target:
@@ -33,16 +39,41 @@ configMapGenerator:
 
 # In dev env idk about creds in repo
 secretGenerator:
+- name: kc-client-config
+  literals:
+  - KC_CLIENT_ID="python"
+  - KC_CLIENT_SECRET="olszak-sie-obrazi-jak-wpisze-tu-cos-smiesznego"
+- name: kc-admin-client-config
+  literals:
+  - KC_CLIENT_ID="admin-cli"
+  - KC_CLIENT_SECRET="eryk-sie-obrazi-jak-wpisze-tu-cos-smiesznego"
 - name: validator
   literals:
   - KC_CLIENT_ID="python"
   - KC_CLIENT_SECRET="olszak-sie-obrazi-jak-wpisze-tu-cos-smiesznego"
 
-- name: postgres-credentials
+- name: postgres-credentials-keycloak
   literals:
   - POSTGRES_USER=keycloak
   - POSTGRES_PASSWORD=keycloak
   - POSTGRES_DB=keycloak
+
+- name: postgres-credentials-patients
+  literals:
+  - POSTGRES_USER=patients
+  - POSTGRES_PASSWORD=patients
+  - POSTGRES_DB=patients_db
+
+- name: postgres-credentials-resources
+  literals:
+  - POSTGRES_USER=resources
+  - POSTGRES_PASSWORD=resources
+  - POSTGRES_DB=resources_db
+
+- name: documents-db-credentials
+  literals:
+  - MINIO_ROOT_USER=minio
+  - MINIO_ROOT_PASSWORD=miniosecret
 
 - name: keycloak-credentials
   literals:

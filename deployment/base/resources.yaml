@@ -1,36 +1,38 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: validator
+  name: resources
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: validator
+      app: resources
   template:
     metadata:
       labels:
-        app: validator
+        app: resources
     spec:
       containers:
-      - name: validator
-        image: validator
+      - name: resources
+        image: resources
         ports:
-        - containerPort: 8000
+        - containerPort: 8002
         envFrom:
         - configMapRef:
             name: kc-client-config
         - secretRef:
             name: kc-client-config
+        - configMapRef:
+            name: resources-db-configmap
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: validator
+  name: resources
 spec:
   selector:
-    app: validator
+    app: resources
   ports:
     - protocol: TCP
-      port: 8000
-      targetPort: 8000
+      port: 8002
+      targetPort: 8002
