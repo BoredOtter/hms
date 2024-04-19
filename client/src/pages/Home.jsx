@@ -1,13 +1,7 @@
 import { useState, useEffect } from 'react';
 import "../styles/styles.css"
 
-const loggedUser = {
-  firstName: "Marzena",
-  lastName: "Kowal",
-  role: "Nurse"
-};
-
-const Home = () => {
+const Home = ({userName}) => {
   const [currentTime, setCurrentTime] = useState('');
   const [currentDate, setCurrentDate] = useState('');
 
@@ -32,8 +26,7 @@ const Home = () => {
       <h1 className='text-3xl mb-4'>Welcome to Home Page</h1>
       <div className='mb-4'>
         <p className='text-lg'>Logged User:</p>
-        <p className='text-xl'>{loggedUser.firstName} {loggedUser.lastName}</p>
-        <p className='text-l italic'>{loggedUser.role}</p>
+        <p className='text-xl'>{userName}</p>
       </div>
       <div>
         <p className='text-lg'>Current Time:</p>

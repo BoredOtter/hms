@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import keycloak from '../../auth/keycloak';
 
 
-const CURRENT_USER_TYPE = "doctor";
+// const CURRENT_USER_TYPE = "doctor";
 
 const handleLogout = () => {
       
@@ -11,7 +11,8 @@ const handleLogout = () => {
  
 };
 
-const NavbarRoles = () => {
+const NavbarRoles = ({loggedUser}) => {
+  const CURRENT_USER_TYPE = loggedUser
   const linkClass = ({ isActive }) =>
     isActive
       ? 'bg-black text-white hover:bg-gray-900 hover:text-white rounded-md px-3 py-2'
@@ -28,7 +29,7 @@ const NavbarRoles = () => {
           <>
             <NavLink to='/register' className={linkClass} exact="true">Register patient</NavLink>
           </>
-          : (CURRENT_USER_TYPE === "doctor") ?
+          : (CURRENT_USER_TYPE.includes("doctor")) ?
             <>
               <NavLink to='/patients' className={linkClass} exact="true">Patients</NavLink>
             </>

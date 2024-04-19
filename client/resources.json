@@ -1,0 +1,23 @@
+[
+    {
+      "Available_quantity": 5,
+      "ID_resource": 1,
+      "Resource_name": "Strzykawki",
+      "Description": "beka",
+      "Department_id": 1
+    },
+    {
+      "Available_quantity": 10,
+      "ID_resource": 2,
+      "Resource_name": "Maseczki",
+      "Description": "ochrona przed wirusami",
+      "Department_id": 2
+    },
+    {
+      "Available_quantity": 20,
+      "ID_resource": 3,
+      "Resource_name": "Rękawiczki",
+      "Description": "ochrona rąk",
+      "Department_id": 1
+    }
+  ]

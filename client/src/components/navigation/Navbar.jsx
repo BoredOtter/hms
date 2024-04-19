@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import hospital from '../../assets/hospital.jpg';
 import NavbarRoles from './NavbarRoles';
 
-const Navbar = () => {
+const Navbar = ({loggedUser}) => {
   return (
     <nav className='bg-indigo-700 pt-2 border-b border-indigo-700'>
       <div className='mx-auto  px-1 sm:px-5 lg:px-8'>
@@ -17,7 +17,7 @@ const Navbar = () => {
             </NavLink>
             <div className='md:ml-auto '>
               <div className='flex space-x-2 mb-1'>
-                <NavbarRoles />
+                <NavbarRoles loggedUser={loggedUser} />
               </div>
             </div>
           </div>

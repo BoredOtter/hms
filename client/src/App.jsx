@@ -11,6 +11,7 @@ import PatientPage from './pages/PatientPage';
 import useAuth from './auth/useAuth';
 import PatientVitals from './components/PatientVitals';
 import PatientHistory from './components/PatientHistory';
+import httpClient from './client/httpClient';
 
 import {
   Route,
@@ -36,15 +37,15 @@ const generateDoctorRoutes = () => (
 );
 
 const App = () => {
-  const [isLogin, roles] = useAuth();
+  const [isLogin, roles, name] = useAuth();
 
   const generateRoutes = () => {
     const routes = (
       isLogin ? (
-        <Route path='/' element={<MainLayout />}>
+        <Route path='/' element={<MainLayout loggedUser={roles}/>}>
           {roles.includes('nurse') && generateNurseRoutes()}
           {roles.includes('doctor') && generateDoctorRoutes()}
-          <Route path='/home' element={<Home />} />
+          <Route path='/home' element={<Home userName={name}/>} />
           <Route path='/unauthorized' element={<WarningInfo info="Unauthorized!" />} />
           <Route path='/*' element={<WarningInfo info="404 Not Found!" />} />
         </Route>

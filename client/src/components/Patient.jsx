@@ -1,16 +1,18 @@
 import React from 'react'
 import ObjectSlicer from './utils/ObjectSlicer'
-import ContainerDetails from './utils/ObjectDetails'
+import ObjectDetails from './utils/ObjectDetails'
 import PatientHistory from './PatientHistory'
 import PatientVitals from './PatientVitals'
 import { NavLink } from 'react-router-dom'
 import bodyButton from './utils/bodyButton'
 import { useState } from 'react'
+import formInput from './utils/formInput'
+import formLabel from './utils/formLabel'
+
+
 
 const Patient = ({patient}) => {
 
-  const formLabel = 'block font-semibold text-gray-700 mb-1 mt-2';
-  const formInput = 'w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 px-4 py-2';
 
   const [showVitals, setShowVitals] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
@@ -50,7 +52,7 @@ const Patient = ({patient}) => {
 
   return (
     <>
-      <ContainerDetails title={"Patient Details"}>
+      <ObjectDetails title={"Patient Details"}>
         {editing ? (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className='space-y-4'>
@@ -136,13 +138,13 @@ const Patient = ({patient}) => {
         ) : (
           <>
             <ObjectSlicer object={patient}/>
-            <div className='space-x-2 text-center'>
+            <div className='space-x-2 space-y-2 text-center'>
               <button onClick={handleShowVitals} className={bodyButton}>Vitals</button>
               <button onClick={handleShowHistory} className={bodyButton}>History</button>
               <button onClick={handleEditing} className={bodyButton}>Change Info</button>
               <NavLink
                 to={`/patients`}
-                className={`${bodyButton} pt-3`}
+                className={`${bodyButton} pt-3 `}
               >
                 Back
               </NavLink>
@@ -150,7 +152,7 @@ const Patient = ({patient}) => {
             
           </>
         )}
-      </ContainerDetails>
+      </ObjectDetails>
       
       {showVitals && <PatientVitals patient={patient} />}
       {showHistory && <PatientHistory patient_id={patient.PESEL} />}
