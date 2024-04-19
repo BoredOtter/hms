@@ -60,7 +60,7 @@ data:
   init.sql: |
     CREATE TABLE "Departments" (
       "ID_department" serial PRIMARY KEY,
-      "Department_name" varchar,
+      "Department_name" varchar UNIQUE,
       "Description" varchar,
       "Contact_info" varchar
     );
@@ -107,10 +107,7 @@ data:
     CREATE TABLE "Surgical_Plans" (
       "ID_plan" serial PRIMARY KEY,
       "ID_procedure" int,
-      "Operation_date" date,
-      "Start_time" time,
-      "End_time" time,
-      "Operating_room" varchar,
+      "ID_operating_room" int,
       "Medical_personnel_list" varchar
     );
 
@@ -121,6 +118,26 @@ data:
       "Available_quantity" int,
       "Department_id" int
     );
+ 
+    CREATE TABLE "Operating_Room" (
+      "ID_operating_room" serial PRIMARY KEY,
+      "ID_department" int,
+      "Room_name" varchar
+    );
+
+    CREATE TABLE "Operating_Room_Reservation" (
+      "ID_reservation" serial PRIMARY KEY,
+      "ID_operating_room" int,
+      "Reservation_date" date,
+      "Start_time" time,
+      "End_time" time
+    );
+
+    ALTER TABLE "Surgical_Plans" ADD FOREIGN KEY ("ID_operating_room") REFERENCES "Operating_Room" ("ID_operating_room");
+
+    ALTER TABLE "Operating_Room" ADD FOREIGN KEY ("ID_department") REFERENCES "Departments" ("ID_department");
+
+    ALTER TABLE "Operating_Room_Reservation" ADD FOREIGN KEY ("ID_operating_room") REFERENCES "Operating_Room" ("ID_operating_room");
 
     ALTER TABLE "Room" ADD FOREIGN KEY ("ID_department") REFERENCES "Departments" ("ID_department");
 
