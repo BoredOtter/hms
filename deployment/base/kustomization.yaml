@@ -8,6 +8,8 @@ resources:
 - patients.yaml
 - patients-db.yaml
 - documents-db.yaml
+- pharmacy.yaml
+- pharmacy-db.yaml
 - documents.yaml
 - resources.yaml
 - resources-db.yaml

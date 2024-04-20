@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pharmacy-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pharmacy-db
+  template:
+    metadata:
+      labels:
+        app: pharmacy-db
+    spec:
+      containers:
+      - name: pharmacy-db
+        image: postgres:16.2-alpine3.19
+        env:
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                name: postgres-credentials-pharmacy
+                key: POSTGRES_USER
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgres-credentials-pharmacy
+                key: POSTGRES_PASSWORD
+          - name: POSTGRES_DB
+            valueFrom:
+              secretKeyRef:
+                name: postgres-credentials-pharmacy
+                key: POSTGRES_DB
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - name: init-script
+          mountPath: /docker-entrypoint-initdb.d
+      volumes:
+      - name: init-script 
+        configMap:
+          name: init-script-configmap-pharmacy
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pharmacy-db
+spec:
+  selector:
+    app: pharmacy-db
+  ports:
+    - protocol: TCP
+      port: 5432
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: init-script-configmap-pharmacy
+data:
+  init.sql: |
+    CREATE TABLE "Medications" (
+      "ID_medication" serial PRIMARY KEY,
+      "Medication_name" varchar UNIQUE,
+      "Active_substance" varchar,
+      "Form" varchar,
+      "Manufacturer" varchar,
+      "Price" decimal
+    );
+
+    CREATE TABLE "Prescriptions" (
+      "ID_prescription" serial PRIMARY KEY,
+      "ID_patient" varchar,
+      "ID_doctor" varchar,
+      "Prescription_date" date default current_date
+    );
+
+    CREATE TABLE "Prescription_Medications" (
+      "ID_prescription" int,
+      "ID_medication" int,
+      "Quantity" int,
+      "Dosage" varchar
+    );
+
+    ALTER TABLE "Prescription_Medications" ADD FOREIGN KEY ("ID_prescription") REFERENCES "Prescriptions" ("ID_prescription");
+
+    ALTER TABLE "Prescription_Medications" ADD FOREIGN KEY ("ID_medication") REFERENCES "Medications" ("ID_medication");
+

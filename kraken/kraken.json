@@ -96,6 +96,25 @@
         "url_pattern": "/api/v1"
       }
     ]
-  }  
+  },
+  {
+    "endpoint": "api/v1/pharmacy",
+    "input_headers":[
+        "*"
+    ],
+    "extra_config": {
+      "auth/resources": {
+        "alg": "RS256",
+        "jwk_url": "http://keycloak:8080/realms/hms/protocol/openid-connect/certs",
+        "disable_jwk_security": true
+      }
+    },
+    "backend": [
+      {
+        "host":["http://pharmacy:8004"],
+        "url_pattern": "/api/v1"
+      }
+    ]
+  }   
   ]
 }

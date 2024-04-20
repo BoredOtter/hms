@@ -67,6 +67,12 @@ secretGenerator:
   - POSTGRES_PASSWORD=patients
   - POSTGRES_DB=patients_db
 
+- name: postgres-credentials-pharmacy
+  literals:
+  - POSTGRES_USER=pharmacy
+  - POSTGRES_PASSWORD=pharmacy
+  - POSTGRES_DB=pharmacy_db
+
 - name: postgres-credentials-resources
   literals:
   - POSTGRES_USER=resources

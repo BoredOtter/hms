@@ -30,6 +30,12 @@ docker_build('documents','documents/',
     ]
 )
 
+docker_build('pharmacy','pharmacy/',
+    live_update=[
+        sync('./pharmacy/', '/app')
+    ]
+)
+
 docker_build('kraken','kraken/')
 
 k8s_resource('client')
@@ -42,3 +48,5 @@ k8s_resource('patients-db')
 k8s_resource('resources-db')
 k8s_resource('documents-db')
 k8s_resource('documents')
+k8s_resource('pharmacy-db')
+k8s_resource('pharmacy')

@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pharmacy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pharmacy
+  template:
+    metadata:
+      labels:
+        app: pharmacy
+    spec:
+      containers:
+      - name: pharmacy
+        image: pharmacy
+        ports:
+        - containerPort: 8004
+        envFrom:
+        - configMapRef:
+            name: kc-client-config
+        - secretRef:
+            name: kc-client-config
+        - configMapRef:
+            name: pharmacy-db-configmap
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pharmacy
+spec:
+  selector:
+    app: pharmacy
+  ports:
+    - protocol: TCP
+      port: 8004
+      targetPort: 8004

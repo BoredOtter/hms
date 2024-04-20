@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from datetime import date, time
+from typing import Optional
 
 
 # ======================== Department Management ========================
@@ -49,7 +50,6 @@ class UpdateMaterialResource(BaseModel):
     Description: str
     Available_quantity: int
     Department_id: int
-
 
 
 # ======================== Operating Room Management ========================
