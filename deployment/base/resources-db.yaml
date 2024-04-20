@@ -76,7 +76,8 @@ data:
       "ID_patient" varchar,
       "ID_room" int,
       "Start_date" date,
-      "End_date" date
+      "End_date" date,
+      "Bed_number" int
     );
 
     CREATE TABLE "Employees" (
@@ -101,7 +102,7 @@ data:
       "Procedure_name" varchar,
       "Description" varchar,
       "Costs" varchar,
-      "Related_departments" varchar
+      "Related_department" int
     );
 
     CREATE TABLE "Surgical_Plans" (
