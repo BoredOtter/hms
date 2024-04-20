@@ -11,10 +11,9 @@ from models import PrescriptionMedication
 from schemas import CreateMedication as create_medication_schema
 from schemas import UpdateMedication as update_medication_schema
 from schemas import CreatePrescription as create_prescription_schema
+from schemas import UpdatePrescriptionMedicationList as update_prescription_medication_list_schema
 
 from database import get_db
-from typing import Optional
-from sqlalchemy.orm import joinedload
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -130,8 +129,8 @@ def add_prescription(prescription: create_prescription_schema, db=Depends(get_db
     db.add(prescription)
     db.commit()
     
-    # get the prescription ID
-    inserted_prescription = db.query(Prescription).filter(Prescription.ID_patient == prescription_data.get("ID_patient")).filter(Prescription.ID_doctor == prescription_data.get("ID_doctor")).first()
+    # get last inserted prescription
+    inserted_prescription = db.query(Prescription).order_by(Prescription.ID_prescription.desc()).first()
     
     # get list from prescription schema and add to PrescriptionMedication
     for medication in medication_list:
@@ -170,7 +169,24 @@ def get_prescription(patient_id: str, prescription_id: int, db=Depends(get_db)):
     
     return prescription
 
-@app.get("/get/prescriptions/medications/{prescription_id}", tags=["Prescription"])
-def get_prescription_medications(prescription_id: int, db=Depends(get_db)):
-    prescription_medications = db.query(PrescriptionMedication).filter(PrescriptionMedication.ID_prescription == prescription_id).all()
-    return prescription_medications
+@app.delete("/delete/prescription/{prescription_id}/{medication_id}", tags=["Prescription"])
+def delete_prescription_medication(prescription_id: int, medication_id: int, db=Depends(get_db)):
+    try:
+        db.query(PrescriptionMedication).filter(PrescriptionMedication.ID_prescription == prescription_id).filter(PrescriptionMedication.ID_medication == medication_id).delete()
+        db.commit()
+    except:
+        raise HTTPException(status_code=400, detail="Error deleting prescription medication")
+    return {"message": "Prescription medication deleted successfully"}
+
+@app.patch("/update/prescription/{prescription_id}", tags=["Prescription"])
+def update_prescription_medication_list(prescription_id: int, medication_list: update_prescription_medication_list_schema, db=Depends(get_db)):
+    updated_fields = {}
+    for medication in medication_list.Medication_list:
+        updated_fields["Quantity"] = medication.Quantity
+        updated_fields["Dosage"] = medication.Dosage
+        try:
+            db.query(PrescriptionMedication).filter(PrescriptionMedication.ID_prescription == prescription_id).filter(PrescriptionMedication.ID_medication == medication.ID_medication).update(updated_fields)
+            db.commit()
+        except:
+            raise HTTPException(status_code=400, detail="Error updating prescription medication")
+    return {"message": "Prescription medication updated successfully"}

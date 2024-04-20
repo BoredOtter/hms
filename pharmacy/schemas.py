@@ -27,3 +27,6 @@ class UpdateMedication(CreateMedication):
 class CreatePrescription(BaseModel):
     Prescription_data: CreatePrescriptionUserData
     Medication_list: List[CreatePrescriptionMedication]
+    
+class UpdatePrescriptionMedicationList(BaseModel):
+    Medication_list: List[CreatePrescriptionMedication]
