@@ -13,6 +13,8 @@ from schemas import UpdateMedication as update_medication_schema
 from schemas import CreatePrescription as create_prescription_schema
 
 from database import get_db
+from typing import Optional
+from sqlalchemy.orm import joinedload
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -70,8 +72,26 @@ def add_medication(medication: create_medication_schema, db=Depends(get_db)):
 
 @app.patch("/update/medication/{medication_id}", tags=["Medication"])
 def update_medication(medication_id: int, medication: update_medication_schema, db=Depends(get_db)):
-    db.query(Medication).filter(Medication.ID_medication == medication_id).update(medication.dict())
-    db.commit()
+    updated_fields = {}
+    if medication.Medication_name:
+        updated_fields["Medication_name"] = medication.Medication_name
+    if medication.Form:
+        updated_fields["Form"] = medication.Fosage
+    if medication.Active_substance:
+        updated_fields["Active_substance"] = medication.Active_substance
+    if medication.Manufacturer:
+        updated_fields["Manufacturer"] = medication.Manufacturer
+    if medication.Price:
+        updated_fields["Price"] = medication.Price
+    
+    if updated_fields:
+        try:
+            db.query(Medication).filter(Medication.ID_medication == medication_id).update(updated_fields)
+            db.commit()
+        except:
+            raise HTTPException(status_code=400, detail="Error updating medication")
+    else:
+        raise HTTPException(status_code=400, detail="No fields to update")
     return {"message": "Medication updated successfully"}
 
 # ================== Prescription ==================
@@ -115,10 +135,8 @@ def add_prescription(prescription: create_prescription_schema, db=Depends(get_db
     
     # get list from prescription schema and add to PrescriptionMedication
     for medication in medication_list:
-        dict_medication = medication.model_dump()
-        dict_medication["ID_prescription"] = inserted_prescription.ID_prescription
-        
-        prescription_medication = PrescriptionMedication(**dict_medication)
+        medication["ID_prescription"] = inserted_prescription.ID_prescription
+        prescription_medication = PrescriptionMedication(**medication)
         db.add(prescription_medication)
         db.commit()
 
@@ -128,10 +146,6 @@ def add_prescription(prescription: create_prescription_schema, db=Depends(get_db
 def get_prescriptions(patient_id: str, db=Depends(get_db)):
     # get the prescriptions for the patient
     prescriptions = db.query(Prescription).filter(Prescription.ID_patient == patient_id).all()
-    # to every prescription, get the medications
-    for prescription in prescriptions:
-        prescription_medications = db.query(PrescriptionMedication).filter(PrescriptionMedication.ID_prescription == prescription.ID_prescription).all()
-        prescription.medications = prescription_medications
     return prescriptions
 
 @app.get("/get/prescriptions/{patient_id}/{prescription_id}", tags=["Prescription"])
@@ -140,9 +154,20 @@ def get_prescription(patient_id: str, prescription_id: int, db=Depends(get_db)):
     prescription = db.query(Prescription).filter(Prescription.ID_patient == patient_id).filter(Prescription.ID_prescription == prescription_id).first()
     
     # get the medications for the prescription
-    prescription_medications = db.query(PrescriptionMedication).filter(PrescriptionMedication.ID_prescription == prescription.ID_prescription).all()
+    prescription_medications = db.query(PrescriptionMedication).filter(PrescriptionMedication.ID_prescription == prescription_id).all()
     
-    prescription.medications = prescription_medications
+    # get medication details
+    medications = []
+    for prescription_medication in prescription_medications:
+        medication = db.query(Medication).filter(Medication.ID_medication == prescription_medication.ID_medication).first()
+        medications.append(medication)
+
+        prescription_medication.medication = medication
+    prescription.prescription_medications = prescription_medications
+    
+    if not prescription:
+        raise HTTPException(status_code=404, detail="Prescription not found")
+    
     return prescription
 
 @app.get("/get/prescriptions/medications/{prescription_id}", tags=["Prescription"])

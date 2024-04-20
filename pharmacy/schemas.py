@@ -17,13 +17,12 @@ class CreatePrescriptionUserData(BaseModel):
     ID_patient: str
     ID_doctor: str
       
-class UpdateMedication(BaseModel):
-    Medication_name: Optional[str]
-    Form: Optional[str]
-    Dosage: Optional[str]
-    Manufacturer: Optional[str]
-    Price: Optional[float]
-    Available_quantity: Optional[int]
+class UpdateMedication(CreateMedication):
+    Medication_name: Optional[str] = None
+    Active_substance: Optional[str] = None
+    Form: Optional[str] = None
+    Manufacturer: Optional[str] = None
+    Price: Optional[float] = None
     
 class CreatePrescription(BaseModel):
     Prescription_data: CreatePrescriptionUserData
