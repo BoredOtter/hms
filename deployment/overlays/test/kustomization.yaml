@@ -24,6 +24,9 @@ images:
   - name: documents
     newName: ksw2137/hms-documents
     newTag: __TAG__
+  - name: pharmacy
+    newName: ksw2137/hms-pharmacy
+    newTag: __TAG__
 
 patches:
 - target:
