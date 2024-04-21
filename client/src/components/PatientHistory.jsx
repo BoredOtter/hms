@@ -10,7 +10,7 @@ const PatientHistory = ({patient_id}) => {
   const inputStyle = "w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 px-4 py-2";
   const labelStyle = "block font-semibold text-gray-700 mb-1";
 
-  const historyData = history|| [];
+  const historyData = history || [];
 
   const [formData, setFormData] = useState({
     Diagnosis: '',

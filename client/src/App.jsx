@@ -4,13 +4,12 @@ import RegisterPatient from './pages/RegisterPatient';
 import WarningInfo from './pages/WarningInfo';
 import DepartmentsPage from './pages/DepartmentsPage';
 import DepartmentPage from './pages/DepartmentPage';
+import MedicationsPage from './pages/MedicationPages';
 import Home from './pages/Home';
-import WardPage from './pages/WardPage';
 import PatientsPage from './pages/PatientsPage';
 import PatientPage from './pages/PatientPage';
 import useAuth from './auth/useAuth';
-import PatientVitals from './components/PatientVitals';
-import PatientHistory from './components/PatientHistory';
+import MedicationPage from './pages/MedicationPage';
 import httpClient from './client/httpClient';
 
 import {
@@ -20,17 +19,17 @@ import {
   RouterProvider,
 } from 'react-router-dom';
 
+
 const generateNurseRoutes = () => (
   <Route path='/register' element={<RegisterPatient />} />
 );
 
 const generateDoctorRoutes = () => (
   <>
-    <Route path='/ward' element={<WardPage />} />
+    <Route path='/medications' element={<MedicationsPage/>} />
+    <Route path='/medications:id' element={<MedicationPage/>} />
     <Route path='/patients' element={<PatientsPage />} />
     <Route path='/patients/:id' element={<PatientPage />} />
-    <Route path='/patients/:id/vitals' element={<PatientVitals />} />
-    <Route path='/patients/:id/history' element={<PatientHistory />} />
     <Route path='/departments' element={<DepartmentsPage />} />
     <Route path='/departments/:id' element={<DepartmentPage />} />
   </>

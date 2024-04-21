@@ -23,18 +23,10 @@ const NavbarRoles = ({loggedUser}) => {
 
   return (
       <>
-        <NavLink to='/home' className={linkClass} exact="true" >Home</NavLink>
         <NavLink to='/departments' className={linkClass}>Departments</NavLink>
-        {(CURRENT_USER_TYPE === "nurse") ? 
-          <>
-            <NavLink to='/register' className={linkClass} exact="true">Register patient</NavLink>
-          </>
-          : (CURRENT_USER_TYPE.includes("doctor")) ?
-            <>
-              <NavLink to='/patients' className={linkClass} exact="true">Patients</NavLink>
-            </>
-            : null
-        }
+        <NavLink to='/register' className={linkClass} exact="true">Register</NavLink>
+        <NavLink to='/patients' className={linkClass} exact="true">Patients</NavLink>
+        <NavLink to='/medications' className={linkClass} exact="false">Medications</NavLink>
         <NavLink className={logoutClass} onClick={handleLogout} exact="true">Logout</NavLink>
       </>
     );

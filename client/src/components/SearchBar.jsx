@@ -7,7 +7,7 @@ const SearchBar = ({ searchTerm, onSearch }) => {
   <div className="max-w-[500px] mx-auto relative">
     <input
       type="text"
-      placeholder="Search patient"
+      placeholder="Search"
       value={searchTerm}
       onChange={(e) => onSearch(e.target.value)}
       className="w-full bg-stone-100 px-10 py-2 rounded-md border border-gray-300 focus:outline-none focus:border-blue-500 text-black pl-8"

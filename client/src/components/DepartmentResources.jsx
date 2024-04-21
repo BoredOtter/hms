@@ -5,7 +5,6 @@ import { useState } from 'react';
 const DepartmentResources = ({ resources }) => {
     const [editedResource, setEditedResource] = useState(null);
   
-    // Function to handle changes in the edited resource
     const handleChange = (event) => {
       const { name, value } = event.target;
       setEditedResource(prevState => ({
@@ -14,20 +13,17 @@ const DepartmentResources = ({ resources }) => {
       }));
     };
   
-    // Function to save changes made to the edited resource
     const handleSaveChanges = (resourceId) => {
-      // Here you can handle saving the changes to the database or sending them to the server
       console.log("Saved changes for resource with ID:", resourceId);
-      // After saving changes, reset the editedResource state
       setEditedResource(null);
     };
   
-    // Function to cancel editing and revert any changes made
     const handleCancelEdit = () => {
       setEditedResource(null);
     };
   
     return (
+      <div className='container-xl lg:container m-auto'>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {resources.map((resource, index) => (
             <div key={index} className="bg-sky-100 rounded-xl p-3.5 hover:bg-sky shadow-md hover:shadow-lg relative mb-10">
@@ -54,7 +50,7 @@ const DepartmentResources = ({ resources }) => {
                 </div>
                 <div className="flex flex-col justify-end md:justify-start md:items-end mt-2 md:mt-0">
                   {editedResource && editedResource['ID_resource'] === resource['ID_resource'] ? (
-                    <div className="mt-2 md:mt-0 space-x-2">
+                    <div className="mt-2 md:mt-0 space-x-2 space-y-2">
                       <button className={bodyButton} onClick={handleSaveChanges}>Save Changes</button>
                       <button className={bodyButton} onClick={handleCancelEdit}>Cancel</button>
                     </div>
@@ -65,6 +61,7 @@ const DepartmentResources = ({ resources }) => {
               </div>
             </div>
           ))}
+          </div>
         </div>
       );
       

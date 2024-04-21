@@ -10,7 +10,7 @@ const PatientPage = () => {
   const [patient, setPatient] = useState(null);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    const foundPatient = patients.patients.find(patient => patient.PESEL === id);
+    const foundPatient = patients.find(patient => patient.PESEL === id);
     if (foundPatient) {
       setPatient(foundPatient);
       setLoading(false);

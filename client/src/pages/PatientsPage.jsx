@@ -3,12 +3,10 @@ import patients from '../../patients.json';
 import ObjectsListing from '../components/listing/ObjectsListing';
 import SearchBar from '../components/SearchBar';
 
-const patientsData = patients.patients || [];
-
 const PatientsPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredPatients = patientsData.filter(patient => {
+  const filteredPatients = patients.filter(patient => {
     const fullName = `${patient.first_name} ${patient.last_name}`.toLowerCase();
     const search = searchTerm.toLowerCase();
 

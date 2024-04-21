@@ -1,5 +1,4 @@
-{
-  "patients": [
+[
     {
       "PESEL": "1",
       "first_name": "John",
@@ -220,5 +219,5 @@
       "department": "Urology",
       "room_number": "2020"
     }
-  ]
-}
+]
+
