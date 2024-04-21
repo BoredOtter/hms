@@ -24,6 +24,9 @@ images:
   - name: documents
     newName: ksw2137/hms-documents
     newTag: __TAG__
+  - name: pharmacy
+    newName: ksw2137/hms-pharmacy
+    newTag: __TAG__
 
 patches:
 - target:
@@ -66,6 +69,12 @@ secretGenerator:
   - POSTGRES_USER=patients
   - POSTGRES_PASSWORD=patients
   - POSTGRES_DB=patients_db
+
+- name: postgres-credentials-pharmacy
+  literals:
+  - POSTGRES_USER=pharmacy
+  - POSTGRES_PASSWORD=pharmacy
+  - POSTGRES_DB=pharmacy_db
 
 - name: postgres-credentials-resources
   literals:
