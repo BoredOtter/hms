@@ -4,13 +4,14 @@ import RegisterPatient from './pages/RegisterPatient';
 import WarningInfo from './pages/WarningInfo';
 import DepartmentsPage from './pages/DepartmentsPage';
 import DepartmentPage from './pages/DepartmentPage';
-import MedicationsPage from './pages/MedicationPages';
+import MedicationsPage from './pages/MedicationsPage';
+import MedicationPage from './pages/MedicationPage';
 import Home from './pages/Home';
 import PatientsPage from './pages/PatientsPage';
 import PatientPage from './pages/PatientPage';
 import useAuth from './auth/useAuth';
-import MedicationPage from './pages/MedicationPage';
 import httpClient from './client/httpClient';
+import { useState, useEffect } from 'react';
 
 import {
   Route,
@@ -26,8 +27,9 @@ const generateNurseRoutes = () => (
 
 const generateDoctorRoutes = () => (
   <>
+    <Route path='/register' element={<RegisterPatient />} />
     <Route path='/medications' element={<MedicationsPage/>} />
-    <Route path='/medications:id' element={<MedicationPage/>} />
+    <Route path='/medications/:id' element={<MedicationPage/>} />
     <Route path='/patients' element={<PatientsPage />} />
     <Route path='/patients/:id' element={<PatientPage />} />
     <Route path='/departments' element={<DepartmentsPage />} />
@@ -36,7 +38,23 @@ const generateDoctorRoutes = () => (
 );
 
 const App = () => {
+
   const [isLogin, roles, name] = useAuth();
+
+  const [patients, setPatients] = useState([]);
+
+  useEffect(() => {
+    const fetchPatients = async () => {
+      try {
+        const response = await httpClient.get('/getall/db');
+        setPatients(response.data);
+      } catch (error) {
+        console.error('Error fetching patients:', error);
+      }
+    };
+
+    fetchPatients();
+  }, []);
 
   const generateRoutes = () => {
     const routes = (

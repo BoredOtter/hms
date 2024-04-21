@@ -7,8 +7,6 @@ import { useState } from 'react'
 
 const DepartmentCreation = () => {
 
-    
-
     const [department, setDepartment] = useState({
     Department_name: '',
     Description: '',

@@ -4,18 +4,20 @@ import medications from '../../medications.json'
 import SearchBar from '../components/SearchBar';
 import ObjectsListing from '../components/listing/ObjectsListing';
 import bodyButton from '../components/utils/bodyButton';
+import MedicationCreation from '../components/MedicationCreation';
 
 const MedicationsPage = () => {
 
     const [searchTerm, setSearchTerm] = useState('');
-    const [searchById, setSearchById] = useState(false); // State to toggle search by ID or name
+    const [searchById, setSearchById] = useState(false); 
+    const [createMedication, setCreateMedication] = useState(false);
 
     const handleToggleSearch = () => {
         setSearchById(!searchById); // Toggle search by ID
     };
 
-    const createMedication = () => {
-
+    const handleCreateMedication = () => {
+        setCreateMedication(!createMedication);
     }
 
     const filteredMedications = medications.filter(medication => {
@@ -28,11 +30,15 @@ const MedicationsPage = () => {
 
 
     <div className="container mx-auto px-4 py-8 text-center space-y-10">
-        <button onClick={createMedication} className={bodyButton}> Add Medication</button>
-        <div className='grid grid-cols-2 gap-10'>
+        
+        <div className='grid grid-cols-3 gap-10'>
+        <button onClick={handleCreateMedication} className={bodyButton}> Add Medication</button>
         <SearchBar searchTerm={searchTerm} onSearch={setSearchTerm} />
-        <button onClick={handleToggleSearch} className={bodyButton}>Searching by {searchById ? 'ID' : 'Name'}</button>
+        <button onClick={handleToggleSearch} className={`${bodyButton} `}>Searching by {searchById ? 'ID' : 'Name'}</button>
         </div>
+        {
+          createMedication && (<MedicationCreation/>)
+        }
         <ObjectsListing
             objectsData={filteredMedications}
             objectsTitle={"Medications"}
