@@ -196,6 +196,14 @@ def get_room_by_id(room_id: int, db=Depends(get_db)):
     return room
 
 
+@app.get("/get/room/department/{department_id}", tags=["Room"])
+def get_room_by_department(department_id: int, db=Depends(get_db)):
+    rooms = db.query(room_model).filter(room_model.ID_department == department_id).all()
+    if not rooms:
+        raise HTTPException(status_code=404, detail="Rooms not found")
+    return rooms
+
+
 @app.post("/create/room", tags=["Room"])
 def create_room(room: create_room_schema, db=Depends(get_db)):
     room = room_model(**room.model_dump())
@@ -721,18 +729,18 @@ def create_surgical_plan(
 ):
     surgical_plan = surgical_plan_model(**surgical_plan.model_dump())
     medical_personnel_string = " ".join(surgical_plan.Medical_personnel_list)
-    
+
     medical_personnel_list = medical_personnel_string.split(" ")
-    
+
     users = keycloak_admin.get_users()
     users_id_list = []
     for user in users:
         users_id_list.append(user["id"])
-    
+
     for medical_personnel in medical_personnel_list:
         if medical_personnel not in users_id_list:
-            raise HTTPException(status_code=404, detail="Medical personnel not found") 
-    
+            raise HTTPException(status_code=404, detail="Medical personnel not found")
+
     surgical_plan.Medical_personnel_list = medical_personnel_string
 
     # check if medical procedure exists
