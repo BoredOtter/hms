@@ -32,8 +32,6 @@ from schemas import (
 )
 from schemas import CreateMedicalProcedure as create_medical_procedure_schema
 from schemas import UpdateMedicalProcedure as update_medical_procedure_schema
-from schemas import CreateEmployee as create_employee_schema
-from schemas import UpdateEmployee as update_employee_schema
 from schemas import CreateEmployeeSchedule as create_employee_schedule_schema
 from schemas import UpdateEmployeeSchedule as update_employee_schedule_schema
 from schemas import CreateSurgicalPlan as create_surgical_plan_schema
@@ -513,75 +511,6 @@ def get_employee_by_department(department_id: int, db=Depends(get_db)):
     return employees
 
 
-@app.post("/create/employee", tags=["Employee"])
-def create_employee(employee: create_employee_schema, db=Depends(get_db)):
-    employee = employee_model(**employee.model_dump())
-
-    # check if department exists
-    department = (
-        db.query(department_model)
-        .filter(department_model.ID_department == employee.Department_id)
-        .first()
-    )
-    if department is None:
-        raise HTTPException(status_code=404, detail="Department not found")
-
-    try:
-        db.add(employee)
-        db.commit()
-    except Exception:
-        raise HTTPException(status_code=400, detail="Error while adding employee.")
-    return {"message": "Employee added successfully."}
-
-
-@app.patch("/update/employee/{employee_id}", tags=["Employee"])
-def update_employee(
-    employee_id: int, employee: update_employee_schema, db=Depends(get_db)
-):
-    existing_employee = (
-        db.query(employee_model)
-        .filter(employee_model.ID_employee == employee_id)
-        .first()
-    )
-    if existing_employee is None:
-        raise HTTPException(status_code=404, detail="Employee not found")
-
-    # check if department exists
-    department = (
-        db.query(department_model)
-        .filter(department_model.ID_department == employee.Department_id)
-        .first()
-    )
-    if department is None:
-        raise HTTPException(status_code=404, detail="Department not found")
-
-    try:
-        db.query(employee_model).filter(
-            employee_model.ID_employee == employee_id
-        ).update(employee.model_dump())
-        db.commit()
-    except Exception:
-        raise HTTPException(status_code=400, detail="Error while updating employee.")
-    return {"message": "Employee updated successfully."}
-
-
-@app.delete("/delete/employee/{employee_id}", tags=["Employee"])
-def delete_employee(employee_id: int, db=Depends(get_db)):
-    employee = (
-        db.query(employee_model)
-        .filter(employee_model.ID_employee == employee_id)
-        .first()
-    )
-    if employee is None:
-        raise HTTPException(status_code=404, detail="Employee not found")
-    try:
-        db.delete(employee)
-        db.commit()
-    except Exception:
-        raise HTTPException(status_code=400, detail="Error while deleting employee.")
-    return {"message": "Employee deleted successfully."}
-
-
 # ======================== Employee Schedule Management ========================
 @app.get("/get/employee_schedule/all", tags=["Employee Schedule"])
 def get_employee_schedules(db=Depends(get_db)):
@@ -711,16 +640,6 @@ def create_medical_procedure(
     medical_procedure: create_medical_procedure_schema, db=Depends(get_db)
 ):
     medical_procedure = medical_procedure_model(**medical_procedure.model_dump())
-
-    # check if department exists
-    department = (
-        db.query(department_model)
-        .filter(department_model.ID_department == medical_procedure.Related_department)
-        .first()
-    )
-    if department is None:
-        raise HTTPException(status_code=404, detail="Department not found")
-
     try:
         db.add(medical_procedure)
         db.commit()
@@ -744,16 +663,6 @@ def update_medical_procedure(
     )
     if existing_medical_procedure is None:
         raise HTTPException(status_code=404, detail="Medical procedure not found")
-
-    # check if department exists
-    department = (
-        db.query(department_model)
-        .filter(department_model.ID_department == medical_procedure.Related_department)
-        .first()
-    )
-    if department is None:
-        raise HTTPException(status_code=404, detail="Department not found")
-
     try:
         db.query(medical_procedure_model).filter(
             medical_procedure_model.ID_procedure == procedure_id
@@ -811,6 +720,8 @@ def create_surgical_plan(
     surgical_plan: create_surgical_plan_schema, db=Depends(get_db)
 ):
     surgical_plan = surgical_plan_model(**surgical_plan.model_dump())
+    medical_personnel_string = " ".join(surgical_plan.Medical_personnel_list)
+    surgical_plan.Medical_personnel_list = medical_personnel_string
 
     # check if medical procedure exists
     medical_procedure = (
@@ -820,11 +731,6 @@ def create_surgical_plan(
     )
     if medical_procedure is None:
         raise HTTPException(status_code=404, detail="Medical procedure not found")
-
-    # check if patient exists
-    patient = keycloak_admin.get_user(surgical_plan.ID_patient)
-    if patient is None:
-        raise HTTPException(status_code=404, detail="Patient not found")
 
     try:
         db.add(surgical_plan)
@@ -845,21 +751,6 @@ def update_surgical_plan(
     )
     if existing_surgical_plan is None:
         raise HTTPException(status_code=404, detail="Surgical plan not found")
-
-    # check if medical procedure exists
-    medical_procedure = (
-        db.query(medical_procedure_model)
-        .filter(medical_procedure_model.ID_procedure == surgical_plan.ID_procedure)
-        .first()
-    )
-    if medical_procedure is None:
-        raise HTTPException(status_code=404, detail="Medical procedure not found")
-
-    # check if patient exists
-    patient = keycloak_admin.get_user(surgical_plan.ID_patient)
-    if patient is None:
-        raise HTTPException(status_code=404, detail="Patient not found")
-
     try:
         db.query(surgical_plan_model).filter(
             surgical_plan_model.ID_plan == plan_id
@@ -1139,6 +1030,10 @@ def create_operating_room_reservation(
     operating_room_reservation: create_operating_room_reservation_schema,
     db=Depends(get_db),
 ):
+    operating_room_reservation = operating_room_reservation_model(
+        **operating_room_reservation.model_dump()
+    )
+
     # check if operating room exists
     operating_room = (
         db.query(operating_room_model)
@@ -1148,6 +1043,10 @@ def create_operating_room_reservation(
         )
         .first()
     )
+
+    operating_room_model.Start_time = operating_room_reservation.Start_time.strftime('%H:%M')
+    operating_room_model.End_time = operating_room_reservation.End_time.strftime('%H:%M')
+    
     if operating_room is None:
         raise HTTPException(status_code=404, detail="Operating room not found")
 
@@ -1176,9 +1075,6 @@ def create_operating_room_reservation(
                 status_code=400, detail="Operating room is reserved for this period"
             )
 
-    operating_room_reservation = operating_room_reservation_model(
-        **operating_room_reservation.model_dump()
-    )
     try:
         db.add(operating_room_reservation)
         db.commit()
@@ -1192,7 +1088,7 @@ def create_operating_room_reservation(
 @app.get("/get/operating_room_reservations/all", tags=["Operating Room Reservation"])
 def get_operating_room_reservations(db=Depends(get_db)):
     operating_room_reservations = db.query(operating_room_reservation_model).all()
-    if operating_room_reservations is None:
+    if not operating_room_reservations:
         raise HTTPException(
             status_code=404, detail="Operating room reservations not found"
         )
@@ -1263,7 +1159,7 @@ def update_operating_room_reservation(
         db.query(operating_room_reservation_model)
         .filter(
             operating_room_reservation_model.ID_operating_room
-            == operating_room_reservation.ID_operating_room
+            == existing_operating_room_reservation.ID_operating_room
         )
         .all()
     )

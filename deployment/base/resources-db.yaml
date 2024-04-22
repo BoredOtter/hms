@@ -108,7 +108,6 @@ data:
     CREATE TABLE "Surgical_Plans" (
       "ID_plan" serial PRIMARY KEY,
       "ID_procedure" int,
-      "ID_operating_room" int,
       "Medical_personnel_list" varchar
     );
 
@@ -128,13 +127,15 @@ data:
 
     CREATE TABLE "Operating_Room_Reservation" (
       "ID_reservation" serial PRIMARY KEY,
+      "ID_plan" int,
       "ID_operating_room" int,
       "Reservation_date" date,
       "Start_time" time,
       "End_time" time
     );
 
-    ALTER TABLE "Surgical_Plans" ADD FOREIGN KEY ("ID_operating_room") REFERENCES "Operating_Room" ("ID_operating_room");
+
+    ALTER TABLE "Operating_Room_Reservation" ADD FOREIGN KEY ("ID_plan") REFERENCES "Surgical_Plans" ("ID_plan");
 
     ALTER TABLE "Operating_Room" ADD FOREIGN KEY ("ID_department") REFERENCES "Departments" ("ID_department");
 

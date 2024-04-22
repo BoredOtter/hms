@@ -1,6 +1,8 @@
+from re import M
+from webbrowser import Opera
 from pydantic import BaseModel
 from datetime import date, time
-from typing import Optional
+from typing import Optional, List
 
 
 # ======================== Department Management ========================
@@ -20,10 +22,6 @@ class UpdateBedInRoom(BaseModel):
     Number_of_beds: int
 
 
-class MoveRoom(BaseModel):
-    ID_department: int
-
-
 # ======================== Bed Reservation Management ========================
 class CreateBedReservation(BaseModel):
     ID_patient: str
@@ -35,21 +33,6 @@ class CreateBedReservation(BaseModel):
 class UpdateBedReservationTime(BaseModel):
     Start_date: date
     End_date: date
-
-
-# ======================== Employee Management========================
-class CreateEmployee(BaseModel):
-    First_name: str
-    Last_name: str
-    Employment_date: date
-    Position: str
-    Department_id: int
-
-
-class UpdateEmployee(BaseModel):
-    Last_name: str
-    Position: str
-    Department_id: int
 
 
 # ======================== Employee Schedule Management ========================
@@ -71,29 +54,22 @@ class CreateMedicalProcedure(BaseModel):
     Procedure_name: str
     Description: str
     Costs: str
-    Related_department: int
 
 
 class UpdateMedicalProcedure(BaseModel):
     Procedure_name: str
     Description: str
     Costs: str
-    Related_department: int
 
 
 # ======================== Surgical Plan Management ========================
 class CreateSurgicalPlan(BaseModel):
     ID_procedure: int
-    Date: date
-    Start_time: time
-    End_time: time
-    ID_patient: int
+    Medical_personnel_list: List[str]
 
 
 class UpdateSurgicalPlan(BaseModel):
-    Date: date
-    Start_time: time
-    End_time: time
+    Medical_personnel_list: List[str]
 
 
 # ======================== Material Resource Management ========================
@@ -119,6 +95,7 @@ class CreateOperatingRoom(BaseModel):
 
 # ======================== Operating Room Reservations Management ========================
 class CreateOperatingRoomReservation(BaseModel):
+    ID_plan: int
     ID_operating_room: int
     Reservation_date: date
     Start_time: time
@@ -126,6 +103,7 @@ class CreateOperatingRoomReservation(BaseModel):
 
 
 class UpdateOperatingRoomReservation(BaseModel):
+    ID_operating_room: int
     Reservation_date: date
     Start_time: time
     End_time: time
