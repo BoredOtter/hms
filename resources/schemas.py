@@ -37,7 +37,7 @@ class UpdateBedReservationTime(BaseModel):
     End_date: date
 
 
-# ======================== Employee ========================
+# ======================== Employee Management========================
 class CreateEmployee(BaseModel):
     First_name: str
     Last_name: str
@@ -52,7 +52,7 @@ class UpdateEmployee(BaseModel):
     Department_id: int
 
 
-# ======================== Employee Schedule ========================
+# ======================== Employee Schedule Management ========================
 class CreateEmployeeSchedule(BaseModel):
     ID_employee: int
     Date: date
@@ -66,7 +66,7 @@ class UpdateEmployeeSchedule(BaseModel):
     End_time: time
 
 
-# ======================== Medical Procedure ========================
+# ======================== Medical Procedure Management ========================
 class CreateMedicalProcedure(BaseModel):
     Procedure_name: str
     Description: str
@@ -79,6 +79,21 @@ class UpdateMedicalProcedure(BaseModel):
     Description: str
     Costs: str
     Related_department: int
+
+
+# ======================== Surgical Plan Management ========================
+class CreateSurgicalPlan(BaseModel):
+    ID_procedure: int
+    Date: date
+    Start_time: time
+    End_time: time
+    ID_patient: int
+
+
+class UpdateSurgicalPlan(BaseModel):
+    Date: date
+    Start_time: time
+    End_time: time
 
 
 # ======================== Material Resource Management ========================

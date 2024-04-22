@@ -36,6 +36,8 @@ from schemas import CreateEmployee as create_employee_schema
 from schemas import UpdateEmployee as update_employee_schema
 from schemas import CreateEmployeeSchedule as create_employee_schedule_schema
 from schemas import UpdateEmployeeSchedule as update_employee_schedule_schema
+from schemas import CreateSurgicalPlan as create_surgical_plan_schema
+from schemas import UpdateSurgicalPlan as update_surgical_plan_schema
 
 
 from database import get_db
@@ -478,7 +480,7 @@ def delete_bed_reservation(patient_id: str, db=Depends(get_db)):
     return {"message": "Bed reservation deleted successfully."}
 
 
-# ======================== Employee ========================
+# ======================== Employee Management ========================
 @app.get("/get/employee/all", tags=["Employee"])
 def get_employees(db=Depends(get_db)):
     employees = db.query(employee_model).all()
@@ -580,7 +582,7 @@ def delete_employee(employee_id: int, db=Depends(get_db)):
     return {"message": "Employee deleted successfully."}
 
 
-# ======================== Employee Schedule ========================
+# ======================== Employee Schedule Management ========================
 @app.get("/get/employee_schedule/all", tags=["Employee Schedule"])
 def get_employee_schedules(db=Depends(get_db)):
     employee_schedules = db.query(employee_schedule_model).all()
@@ -683,7 +685,7 @@ def delete_employee_schedule(schedule_id: int, db=Depends(get_db)):
     return {"message": "Employee schedule deleted successfully."}
 
 
-# ======================== Medical Procedure ========================
+# ======================== Medical Procedure Management ========================
 @app.get("/get/medical_procedure/all", tags=["Medical Procedure"])
 def get_medical_procedures(db=Depends(get_db)):
     medical_procedures = db.query(medical_procedure_model).all()
@@ -781,6 +783,112 @@ def delete_medical_procedure(procedure_id: int, db=Depends(get_db)):
             status_code=400, detail="Error while deleting medical procedure."
         )
     return {"message": "Medical procedure deleted successfully."}
+
+
+# ======================== Surgical Plan Management ========================
+@app.get("/get/surgical_plan/all", tags=["Surgical Plan"])
+def get_surgical_plans(db=Depends(get_db)):
+    surgical_plans = db.query(surgical_plan_model).all()
+    if not surgical_plans:
+        raise HTTPException(status_code=404, detail="Surgical plans not found")
+    return surgical_plans
+
+
+@app.get("/get/surgical_plan/id/{plan_id}", tags=["Surgical Plan"])
+def get_surgical_plan(plan_id: int, db=Depends(get_db)):
+    surgical_plan = (
+        db.query(surgical_plan_model)
+        .filter(surgical_plan_model.ID_plan == plan_id)
+        .first()
+    )
+    if surgical_plan is None:
+        raise HTTPException(status_code=404, detail="Surgical plan not found")
+    return surgical_plan
+
+
+@app.post("/create/surgical_plan", tags=["Surgical Plan"])
+def create_surgical_plan(
+    surgical_plan: create_surgical_plan_schema, db=Depends(get_db)
+):
+    surgical_plan = surgical_plan_model(**surgical_plan.model_dump())
+
+    # check if medical procedure exists
+    medical_procedure = (
+        db.query(medical_procedure_model)
+        .filter(medical_procedure_model.ID_procedure == surgical_plan.ID_procedure)
+        .first()
+    )
+    if medical_procedure is None:
+        raise HTTPException(status_code=404, detail="Medical procedure not found")
+
+    # check if patient exists
+    patient = keycloak_admin.get_user(surgical_plan.ID_patient)
+    if patient is None:
+        raise HTTPException(status_code=404, detail="Patient not found")
+
+    try:
+        db.add(surgical_plan)
+        db.commit()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Error while adding surgical plan.")
+    return {"message": "Surgical plan added successfully."}
+
+
+@app.patch("/update/surgical_plan/{plan_id}", tags=["Surgical Plan"])
+def update_surgical_plan(
+    plan_id: int, surgical_plan: update_surgical_plan_schema, db=Depends(get_db)
+):
+    existing_surgical_plan = (
+        db.query(surgical_plan_model)
+        .filter(surgical_plan_model.ID_plan == plan_id)
+        .first()
+    )
+    if existing_surgical_plan is None:
+        raise HTTPException(status_code=404, detail="Surgical plan not found")
+
+    # check if medical procedure exists
+    medical_procedure = (
+        db.query(medical_procedure_model)
+        .filter(medical_procedure_model.ID_procedure == surgical_plan.ID_procedure)
+        .first()
+    )
+    if medical_procedure is None:
+        raise HTTPException(status_code=404, detail="Medical procedure not found")
+
+    # check if patient exists
+    patient = keycloak_admin.get_user(surgical_plan.ID_patient)
+    if patient is None:
+        raise HTTPException(status_code=404, detail="Patient not found")
+
+    try:
+        db.query(surgical_plan_model).filter(
+            surgical_plan_model.ID_plan == plan_id
+        ).update(surgical_plan.model_dump())
+        db.commit()
+    except Exception:
+        raise HTTPException(
+            status_code=400, detail="Error while updating surgical plan."
+        )
+    return {"message": "Surgical plan updated successfully."}
+
+
+@app.delete("/delete/surgical_plan/{plan_id}", tags=["Surgical Plan"])
+def delete_surgical_plan(plan_id: int, db=Depends(get_db)):
+    surgical_plan = (
+        db.query(surgical_plan_model)
+        .filter(surgical_plan_model.ID_plan == plan_id)
+        .first()
+    )
+    if surgical_plan is None:
+        raise HTTPException(status_code=404, detail="Surgical plan not found")
+    try:
+        db.delete(surgical_plan)
+        db.commit()
+    except Exception:
+        raise HTTPException(
+            status_code=400, detail="Error while deleting surgical plan."
+        )
+    return {"message": "Surgical plan deleted successfully."}
 
 
 # ======================== Material Resource Management ========================
