@@ -170,10 +170,7 @@ def add_prescription(prescription: create_prescription_schema, db=Depends(get_db
 
 @app.get("/get/prescriptions/{patient_id}", tags=["Prescription"])
 def get_prescriptions(patient_id: str, db=Depends(get_db)):
-    # get the prescriptions for the patient
-    prescriptions = (
-        db.query(Prescription).filter(Prescription.ID_patient == patient_id).all()
-    )
+    prescriptions = db.query(Prescription).filter(Prescription.ID_patient == patient_id)
     return prescriptions
 
 

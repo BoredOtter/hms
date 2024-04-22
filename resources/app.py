@@ -721,6 +721,18 @@ def create_surgical_plan(
 ):
     surgical_plan = surgical_plan_model(**surgical_plan.model_dump())
     medical_personnel_string = " ".join(surgical_plan.Medical_personnel_list)
+    
+    medical_personnel_list = medical_personnel_string.split(" ")
+    
+    users = keycloak_admin.get_users()
+    users_id_list = []
+    for user in users:
+        users_id_list.append(user["id"])
+    
+    for medical_personnel in medical_personnel_list:
+        if medical_personnel not in users_id_list:
+            raise HTTPException(status_code=404, detail="Medical personnel not found") 
+    
     surgical_plan.Medical_personnel_list = medical_personnel_string
 
     # check if medical procedure exists
@@ -1044,9 +1056,13 @@ def create_operating_room_reservation(
         .first()
     )
 
-    operating_room_model.Start_time = operating_room_reservation.Start_time.strftime('%H:%M')
-    operating_room_model.End_time = operating_room_reservation.End_time.strftime('%H:%M')
-    
+    operating_room_model.Start_time = operating_room_reservation.Start_time.strftime(
+        "%H:%M"
+    )
+    operating_room_model.End_time = operating_room_reservation.End_time.strftime(
+        "%H:%M"
+    )
+
     if operating_room is None:
         raise HTTPException(status_code=404, detail="Operating room not found")
 
