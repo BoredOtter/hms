@@ -25,6 +25,7 @@ minio_client = Minio(
     secure=False,
 )
 
+
 # ================== Bucket Management ==================
 @app.post("/buckets/create{bucket_name}", tags=["bucket"])
 def create_bucket(bucket_name: str):

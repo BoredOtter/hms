@@ -57,7 +57,6 @@ class MedicalProcedure(Base):
     Procedure_name = Column(String)
     Description = Column(String)
     Costs = Column(String)
-    Related_department = Integer(String)
 
 
 class SurgicalPlan(Base):

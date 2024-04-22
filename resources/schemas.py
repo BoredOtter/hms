@@ -37,6 +37,35 @@ class UpdateBedReservationTime(BaseModel):
     End_date: date
 
 
+# ======================== Employee ========================
+class CreateEmployee(BaseModel):
+    First_name: str
+    Last_name: str
+    Employment_date: date
+    Position: str
+    Department_id: int
+
+
+class UpdateEmployee(BaseModel):
+    Last_name: str
+    Position: str
+    Department_id: int
+
+
+# ======================== Employee Schedule ========================
+class CreateEmployeeSchedule(BaseModel):
+    ID_employee: int
+    Date: date
+    Start_time: time
+    End_time: time
+
+
+class UpdateEmployeeSchedule(BaseModel):
+    Date: date
+    Start_time: time
+    End_time: time
+
+
 # ======================== Medical Procedure ========================
 class CreateMedicalProcedure(BaseModel):
     Procedure_name: str

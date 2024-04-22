@@ -12,6 +12,8 @@ from models import MaterialResource as material_resource_model
 from models import OperatingRoom as operating_room_model
 from models import OperatingRoomReservation as operating_room_reservation_model
 from models import MedicalProcedure as medical_procedure_model
+from models import Employee as employee_model
+from models import EmployeeSchedule as employee_schedule_model
 from models import SurgicalPlan as surgical_plan_model
 
 from schemas import CreateDepartment as create_department_schema
@@ -30,6 +32,11 @@ from schemas import (
 )
 from schemas import CreateMedicalProcedure as create_medical_procedure_schema
 from schemas import UpdateMedicalProcedure as update_medical_procedure_schema
+from schemas import CreateEmployee as create_employee_schema
+from schemas import UpdateEmployee as update_employee_schema
+from schemas import CreateEmployeeSchedule as create_employee_schedule_schema
+from schemas import UpdateEmployeeSchedule as update_employee_schedule_schema
+
 
 from database import get_db
 
@@ -471,6 +478,211 @@ def delete_bed_reservation(patient_id: str, db=Depends(get_db)):
     return {"message": "Bed reservation deleted successfully."}
 
 
+# ======================== Employee ========================
+@app.get("/get/employee/all", tags=["Employee"])
+def get_employees(db=Depends(get_db)):
+    employees = db.query(employee_model).all()
+    if not employees:
+        raise HTTPException(status_code=404, detail="Employees not found")
+    return employees
+
+
+@app.get("/get/employee/id/{employee_id}", tags=["Employee"])
+def get_employee(employee_id: int, db=Depends(get_db)):
+    employee = (
+        db.query(employee_model)
+        .filter(employee_model.ID_employee == employee_id)
+        .first()
+    )
+    if employee is None:
+        raise HTTPException(status_code=404, detail="Employee not found")
+    return employee
+
+
+@app.get("/get/employee/department/{department_id}", tags=["Employee"])
+def get_employee_by_department(department_id: int, db=Depends(get_db)):
+    employees = (
+        db.query(employee_model)
+        .filter(employee_model.Department_id == department_id)
+        .all()
+    )
+    if not employees:
+        raise HTTPException(status_code=404, detail="Employees not found")
+    return employees
+
+
+@app.post("/create/employee", tags=["Employee"])
+def create_employee(employee: create_employee_schema, db=Depends(get_db)):
+    employee = employee_model(**employee.model_dump())
+
+    # check if department exists
+    department = (
+        db.query(department_model)
+        .filter(department_model.ID_department == employee.Department_id)
+        .first()
+    )
+    if department is None:
+        raise HTTPException(status_code=404, detail="Department not found")
+
+    try:
+        db.add(employee)
+        db.commit()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Error while adding employee.")
+    return {"message": "Employee added successfully."}
+
+
+@app.patch("/update/employee/{employee_id}", tags=["Employee"])
+def update_employee(
+    employee_id: int, employee: update_employee_schema, db=Depends(get_db)
+):
+    existing_employee = (
+        db.query(employee_model)
+        .filter(employee_model.ID_employee == employee_id)
+        .first()
+    )
+    if existing_employee is None:
+        raise HTTPException(status_code=404, detail="Employee not found")
+
+    # check if department exists
+    department = (
+        db.query(department_model)
+        .filter(department_model.ID_department == employee.Department_id)
+        .first()
+    )
+    if department is None:
+        raise HTTPException(status_code=404, detail="Department not found")
+
+    try:
+        db.query(employee_model).filter(
+            employee_model.ID_employee == employee_id
+        ).update(employee.model_dump())
+        db.commit()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Error while updating employee.")
+    return {"message": "Employee updated successfully."}
+
+
+@app.delete("/delete/employee/{employee_id}", tags=["Employee"])
+def delete_employee(employee_id: int, db=Depends(get_db)):
+    employee = (
+        db.query(employee_model)
+        .filter(employee_model.ID_employee == employee_id)
+        .first()
+    )
+    if employee is None:
+        raise HTTPException(status_code=404, detail="Employee not found")
+    try:
+        db.delete(employee)
+        db.commit()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Error while deleting employee.")
+    return {"message": "Employee deleted successfully."}
+
+
+# ======================== Employee Schedule ========================
+@app.get("/get/employee_schedule/all", tags=["Employee Schedule"])
+def get_employee_schedules(db=Depends(get_db)):
+    employee_schedules = db.query(employee_schedule_model).all()
+    if not employee_schedules:
+        raise HTTPException(status_code=404, detail="Employee schedules not found")
+    return employee_schedules
+
+
+@app.get("/get/employee_schedule/id/{schedule_id}", tags=["Employee Schedule"])
+def get_employee_schedule(schedule_id: int, db=Depends(get_db)):
+    employee_schedule = (
+        db.query(employee_schedule_model)
+        .filter(employee_schedule_model.ID_entry == schedule_id)
+        .first()
+    )
+    if employee_schedule is None:
+        raise HTTPException(status_code=404, detail="Employee schedule not found")
+    return employee_schedule
+
+
+@app.get("/get/employee_schedule/employee/{employee_id}", tags=["Employee Schedule"])
+def get_employee_schedule_by_employee(employee_id: int, db=Depends(get_db)):
+    employee_schedules = (
+        db.query(employee_schedule_model)
+        .filter(employee_schedule_model.ID_employee == employee_id)
+        .all()
+    )
+    if not employee_schedules:
+        raise HTTPException(status_code=404, detail="Employee schedules not found")
+    return employee_schedules
+
+
+@app.post("/create/employee_schedule", tags=["Employee Schedule"])
+def create_employee_schedule(
+    employee_schedule: create_employee_schedule_schema, db=Depends(get_db)
+):
+    employee_schedule = employee_schedule_model(**employee_schedule.model_dump())
+
+    # check if employee exists
+    employee = (
+        db.query(employee_model)
+        .filter(employee_model.ID_employee == employee_schedule.ID_employee)
+        .first()
+    )
+    if employee is None:
+        raise HTTPException(status_code=404, detail="Employee not found")
+
+    try:
+        db.add(employee_schedule)
+        db.commit()
+    except Exception:
+        raise HTTPException(
+            status_code=400, detail="Error while adding employee schedule."
+        )
+    return {"message": "Employee schedule added successfully."}
+
+
+@app.patch("/update/employee_schedule/{schedule_id}", tags=["Employee Schedule"])
+def update_employee_schedule(
+    schedule_id: int,
+    employee_schedule: update_employee_schedule_schema,
+    db=Depends(get_db),
+):
+    existing_employee_schedule = (
+        db.query(employee_schedule_model)
+        .filter(employee_schedule_model.ID_entry == schedule_id)
+        .first()
+    )
+    if existing_employee_schedule is None:
+        raise HTTPException(status_code=404, detail="Employee schedule not found")
+
+    try:
+        db.query(employee_schedule_model).filter(
+            employee_schedule_model.ID_entry == schedule_id
+        ).update(employee_schedule.model_dump())
+        db.commit()
+    except Exception:
+        raise HTTPException(
+            status_code=400, detail="Error while updating employee schedule."
+        )
+    return {"message": "Employee schedule updated successfully."}
+
+
+@app.delete("/delete/employee_schedule/{schedule_id}", tags=["Employee Schedule"])
+def delete_employee_schedule(schedule_id: int, db=Depends(get_db)):
+    employee_schedule = (
+        db.query(employee_schedule_model)
+        .filter(employee_schedule_model.ID_entry == schedule_id)
+        .first()
+    )
+    if employee_schedule is None:
+        raise HTTPException(status_code=404, detail="Employee schedule not found")
+    try:
+        db.delete(employee_schedule)
+        db.commit()
+    except Exception:
+        raise HTTPException(
+            status_code=400, detail="Error while deleting employee schedule."
+        )
+    return {"message": "Employee schedule deleted successfully."}
+
+
 # ======================== Medical Procedure ========================
 @app.get("/get/medical_procedure/all", tags=["Medical Procedure"])
 def get_medical_procedures(db=Depends(get_db)):
@@ -490,18 +702,6 @@ def get_medical_procedure(procedure_id: int, db=Depends(get_db)):
     if medical_procedure is None:
         raise HTTPException(status_code=404, detail="Medical procedure not found")
     return medical_procedure
-
-
-@app.get("/get/medical_procedure/dept/{department_id}", tags=["Medical Procedure"])
-def get_medical_procedure_by_department(department_id: int, db=Depends(get_db)):
-    medical_procedures = (
-        db.query(medical_procedure_model)
-        .filter(medical_procedure_model.Related_department == department_id)
-        .all()
-    )
-    if not medical_procedures:
-        raise HTTPException(status_code=404, detail="Medical procedures not found")
-    return medical_procedures
 
 
 @app.post("/create/medical_procedure", tags=["Medical Procedure"])
