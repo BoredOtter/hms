@@ -1,5 +1,8 @@
+from typing import List, Optional
+
 from pydantic import BaseModel
-from typing import Optional, List
+
+# ================== Medication Management ==================
 
 
 class CreateMedication(BaseModel):
@@ -10,17 +13,6 @@ class CreateMedication(BaseModel):
     Price: float
 
 
-class CreatePrescriptionMedication(BaseModel):
-    ID_medication: int
-    Quantity: int
-    Dosage: str
-
-
-class CreatePrescriptionUserData(BaseModel):
-    ID_patient: str
-    ID_doctor: str
-
-
 class UpdateMedication(CreateMedication):
     Medication_name: Optional[str] = None
     Active_substance: Optional[str] = None
@@ -29,10 +21,27 @@ class UpdateMedication(CreateMedication):
     Price: Optional[float] = None
 
 
-class CreatePrescription(BaseModel):
-    Prescription_data: CreatePrescriptionUserData
-    Medication_list: List[CreatePrescriptionMedication]
+# ================== Prescription Medication Management ==================
+
+
+class CreatePrescriptionMedication(BaseModel):
+    ID_medication: int
+    Quantity: int
+    Dosage: str
 
 
 class UpdatePrescriptionMedicationList(BaseModel):
+    Medication_list: List[CreatePrescriptionMedication]
+
+
+# ================== Prescription Management ==================
+
+
+class CreatePrescriptionUserData(BaseModel):
+    ID_patient: str
+    ID_doctor: str
+
+
+class CreatePrescription(BaseModel):
+    Prescription_data: CreatePrescriptionUserData
     Medication_list: List[CreatePrescriptionMedication]

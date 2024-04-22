@@ -1,7 +1,10 @@
-from fastapi import FastAPI, HTTPException, Request
-from keycloak import KeycloakOpenID
-from os import environ
 import logging
+from os import environ
+
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
+
+from keycloak import KeycloakOpenID
 
 KC_URL = environ.get("KC_URL", "http://keycloak")
 KC_PORT = environ.get("KC_PORT", "8080")
@@ -22,6 +25,14 @@ keycloak_openid = KeycloakOpenID(
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
 
 
 @app.get("/api/v1")

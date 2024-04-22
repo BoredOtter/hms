@@ -1,38 +1,54 @@
-from sqlalchemy import and_, or_
-from fastapi import FastAPI, Depends, HTTPException
 import logging
-from utils import token_validator
 from os import environ
-from keycloak import KeycloakAdmin, KeycloakOpenIDConnection
-
-from models import Department as department_model
-from models import Room as room_model
-from models import BedReservation as bed_reservation_model
-from models import MaterialResource as material_resource_model
-from models import OperatingRoom as operating_room_model
-from models import OperatingRoomReservation as operating_room_reservation_model
-
-from schemas import CreateDepartment as create_department_schema
-from schemas import CreateRoom as create_room_schema
-from schemas import UpdateBedInRoom as update_bed_number_room_schema
-from schemas import CreateBedReservation as create_bed_reservation_schema
-from schemas import UpdateBedReservationTime as update_bed_reservation_time_schema
-from schemas import UpdateMaterialResource as update_material_resource_schema
-from schemas import CreateMaterialResource as create_material_resource_schema
-from schemas import CreateOperatingRoom as create_operating_room_schema
-from schemas import (
-    CreateOperatingRoomReservation as create_operating_room_reservation_schema,
-)
-from schemas import (
-    UpdateOperatingRoomReservation as update_operating_room_reservation_schema,
-)
 
 from database import get_db
+from fastapi import Depends, FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from models import BedReservation as bed_reservation_model
+from models import Department as department_model
+from models import Employee as employee_model
+from models import EmployeeSchedule as employee_schedule_model
+from models import MaterialResource as material_resource_model
+from models import MedicalProcedure as medical_procedure_model
+from models import OperatingRoom as operating_room_model
+from models import OperatingRoomReservation as operating_room_reservation_model
+from models import Room as room_model
+from models import SurgicalPlan as surgical_plan_model
+from schemas import CreateBedReservation as create_bed_reservation_schema
+from schemas import CreateDepartment as create_department_schema
+from schemas import CreateEmployeeSchedule as create_employee_schedule_schema
+from schemas import CreateMaterialResource as create_material_resource_schema
+from schemas import CreateMedicalProcedure as create_medical_procedure_schema
+from schemas import CreateOperatingRoom as create_operating_room_schema
+from schemas import \
+    CreateOperatingRoomReservation as create_operating_room_reservation_schema
+from schemas import CreateRoom as create_room_schema
+from schemas import CreateSurgicalPlan as create_surgical_plan_schema
+from schemas import UpdateBedInRoom as update_bed_number_room_schema
+from schemas import \
+    UpdateBedReservationTime as update_bed_reservation_time_schema
+from schemas import UpdateEmployeeSchedule as update_employee_schedule_schema
+from schemas import UpdateMaterialResource as update_material_resource_schema
+from schemas import UpdateMedicalProcedure as update_medical_procedure_schema
+from schemas import \
+    UpdateOperatingRoomReservation as update_operating_room_reservation_schema
+from schemas import UpdateSurgicalPlan as update_surgical_plan_schema
+from sqlalchemy import and_, or_
+from utils import token_validator
 
+from keycloak import KeycloakAdmin, KeycloakOpenIDConnection
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
 
 KC_URL = environ.get("KC_URL", "http://keycloak")
 KC_PORT = environ.get("KC_PORT", "8080")
@@ -183,6 +199,14 @@ def get_room_by_id(room_id: int, db=Depends(get_db)):
         raise HTTPException(status_code=404, detail="Room not found")
 
     return room
+
+
+@app.get("/get/room/department/{department_id}", tags=["Room"])
+def get_room_by_department(department_id: int, db=Depends(get_db)):
+    rooms = db.query(room_model).filter(room_model.ID_department == department_id).all()
+    if not rooms:
+        raise HTTPException(status_code=404, detail="Rooms not found")
+    return rooms
 
 
 @app.post("/create/room", tags=["Room"])
@@ -366,6 +390,88 @@ def get_bed_reservations(db=Depends(get_db)):
     return bed_reservations
 
 
+@app.patch("/update/bed_reservation_time/{reservation_id}", tags=["Bed Reservation"])
+def update_bed_reservation_time(
+    reservation_id: int,
+    bed_reservation: update_bed_reservation_time_schema,
+    db=Depends(get_db),
+):
+    existing_bed_reservation = (
+        db.query(bed_reservation_model)
+        .filter(bed_reservation_model.ID_reservation == reservation_id)
+        .first()
+    )
+    if existing_bed_reservation is None:
+        raise HTTPException(status_code=404, detail="Bed reservation not found")
+
+    # check if dates are valid
+    if bed_reservation.Start_date > bed_reservation.End_date:
+        raise HTTPException(
+            status_code=400, detail="Start date cannot be after end date"
+        )
+
+    # check if patient already has a bed reservation this period
+    existing_bed_reservations = (
+        db.query(bed_reservation_model)
+        .filter(bed_reservation_model.ID_patient == existing_bed_reservation.ID_patient)
+        .all()
+    )
+    for existing_bed_reservation in existing_bed_reservations:
+        if (
+            existing_bed_reservation.Start_date
+            <= bed_reservation.Start_date
+            <= existing_bed_reservation.End_date
+        ) or (
+            existing_bed_reservation.Start_date
+            <= bed_reservation.End_date
+            <= existing_bed_reservation.End_date
+        ):
+            raise HTTPException(
+                status_code=400,
+                detail="Patient already has a bed reservation for this period",
+            )
+
+    # check if room has available beds this period
+    room = (
+        db.query(room_model)
+        .filter(room_model.ID_room == existing_bed_reservation.ID_room)
+        .first()
+    )
+    if room is None:
+        raise HTTPException(status_code=404, detail="Room not found")
+
+    bed_reservations = (
+        db.query(bed_reservation_model)
+        .filter(
+            bed_reservation_model.ID_room == room.ID_room,
+            or_(
+                and_(
+                    bed_reservation_model.Start_date <= bed_reservation.Start_date,
+                    bed_reservation_model.End_date >= bed_reservation.Start_date,
+                ),
+                and_(
+                    bed_reservation_model.Start_date <= bed_reservation.End_date,
+                    bed_reservation_model.End_date >= bed_reservation.End_date,
+                ),
+            ),
+        )
+        .all()
+    )
+
+    if len(bed_reservations) >= room.Number_of_beds:
+        raise HTTPException(status_code=400, detail="Room is full")
+
+    try:
+        db.query(bed_reservation_model).filter(
+            bed_reservation_model.ID_reservation == reservation_id
+        ).update(bed_reservation.model_dump())
+        db.commit()
+    except Exception:
+        raise HTTPException(
+            status_code=400, detail="Error while updating bed reservation."
+        )
+
+
 @app.delete("/delete/bed_reservation/{patient_id}", tags=["Bed Reservation"])
 def delete_bed_reservation(patient_id: str, db=Depends(get_db)):
     bed_reservation = (
@@ -383,6 +489,322 @@ def delete_bed_reservation(patient_id: str, db=Depends(get_db)):
             status_code=400, detail="Error while deleting bed reservation."
         )
     return {"message": "Bed reservation deleted successfully."}
+
+
+# ======================== Employee Management ========================
+@app.get("/get/employee/all", tags=["Employee"])
+def get_employees(db=Depends(get_db)):
+    employees = db.query(employee_model).all()
+    if not employees:
+        raise HTTPException(status_code=404, detail="Employees not found")
+    return employees
+
+
+@app.get("/get/employee/id/{employee_id}", tags=["Employee"])
+def get_employee(employee_id: int, db=Depends(get_db)):
+    employee = (
+        db.query(employee_model)
+        .filter(employee_model.ID_employee == employee_id)
+        .first()
+    )
+    if employee is None:
+        raise HTTPException(status_code=404, detail="Employee not found")
+    return employee
+
+
+@app.get("/get/employee/department/{department_id}", tags=["Employee"])
+def get_employee_by_department(department_id: int, db=Depends(get_db)):
+    employees = (
+        db.query(employee_model)
+        .filter(employee_model.Department_id == department_id)
+        .all()
+    )
+    if not employees:
+        raise HTTPException(status_code=404, detail="Employees not found")
+    return employees
+
+
+# ======================== Employee Schedule Management ========================
+@app.get("/get/employee_schedule/all", tags=["Employee Schedule"])
+def get_employee_schedules(db=Depends(get_db)):
+    employee_schedules = db.query(employee_schedule_model).all()
+    if not employee_schedules:
+        raise HTTPException(status_code=404, detail="Employee schedules not found")
+    return employee_schedules
+
+
+@app.get("/get/employee_schedule/id/{schedule_id}", tags=["Employee Schedule"])
+def get_employee_schedule(schedule_id: int, db=Depends(get_db)):
+    employee_schedule = (
+        db.query(employee_schedule_model)
+        .filter(employee_schedule_model.ID_entry == schedule_id)
+        .first()
+    )
+    if employee_schedule is None:
+        raise HTTPException(status_code=404, detail="Employee schedule not found")
+    return employee_schedule
+
+
+@app.get("/get/employee_schedule/employee/{employee_id}", tags=["Employee Schedule"])
+def get_employee_schedule_by_employee(employee_id: int, db=Depends(get_db)):
+    employee_schedules = (
+        db.query(employee_schedule_model)
+        .filter(employee_schedule_model.ID_employee == employee_id)
+        .all()
+    )
+    if not employee_schedules:
+        raise HTTPException(status_code=404, detail="Employee schedules not found")
+    return employee_schedules
+
+
+@app.post("/create/employee_schedule", tags=["Employee Schedule"])
+def create_employee_schedule(
+    employee_schedule: create_employee_schedule_schema, db=Depends(get_db)
+):
+    employee_schedule = employee_schedule_model(**employee_schedule.model_dump())
+
+    # check if employee exists
+    employee = (
+        db.query(employee_model)
+        .filter(employee_model.ID_employee == employee_schedule.ID_employee)
+        .first()
+    )
+    if employee is None:
+        raise HTTPException(status_code=404, detail="Employee not found")
+
+    try:
+        db.add(employee_schedule)
+        db.commit()
+    except Exception:
+        raise HTTPException(
+            status_code=400, detail="Error while adding employee schedule."
+        )
+    return {"message": "Employee schedule added successfully."}
+
+
+@app.patch("/update/employee_schedule/{schedule_id}", tags=["Employee Schedule"])
+def update_employee_schedule(
+    schedule_id: int,
+    employee_schedule: update_employee_schedule_schema,
+    db=Depends(get_db),
+):
+    existing_employee_schedule = (
+        db.query(employee_schedule_model)
+        .filter(employee_schedule_model.ID_entry == schedule_id)
+        .first()
+    )
+    if existing_employee_schedule is None:
+        raise HTTPException(status_code=404, detail="Employee schedule not found")
+
+    try:
+        db.query(employee_schedule_model).filter(
+            employee_schedule_model.ID_entry == schedule_id
+        ).update(employee_schedule.model_dump())
+        db.commit()
+    except Exception:
+        raise HTTPException(
+            status_code=400, detail="Error while updating employee schedule."
+        )
+    return {"message": "Employee schedule updated successfully."}
+
+
+@app.delete("/delete/employee_schedule/{schedule_id}", tags=["Employee Schedule"])
+def delete_employee_schedule(schedule_id: int, db=Depends(get_db)):
+    employee_schedule = (
+        db.query(employee_schedule_model)
+        .filter(employee_schedule_model.ID_entry == schedule_id)
+        .first()
+    )
+    if employee_schedule is None:
+        raise HTTPException(status_code=404, detail="Employee schedule not found")
+    try:
+        db.delete(employee_schedule)
+        db.commit()
+    except Exception:
+        raise HTTPException(
+            status_code=400, detail="Error while deleting employee schedule."
+        )
+    return {"message": "Employee schedule deleted successfully."}
+
+
+# ======================== Medical Procedure Management ========================
+@app.get("/get/medical_procedure/all", tags=["Medical Procedure"])
+def get_medical_procedures(db=Depends(get_db)):
+    medical_procedures = db.query(medical_procedure_model).all()
+    if not medical_procedures:
+        raise HTTPException(status_code=404, detail="Medical procedures not found")
+    return medical_procedures
+
+
+@app.get("/get/medical_procedure/id/{procedure_id}", tags=["Medical Procedure"])
+def get_medical_procedure(procedure_id: int, db=Depends(get_db)):
+    medical_procedure = (
+        db.query(medical_procedure_model)
+        .filter(medical_procedure_model.ID_procedure == procedure_id)
+        .first()
+    )
+    if medical_procedure is None:
+        raise HTTPException(status_code=404, detail="Medical procedure not found")
+    return medical_procedure
+
+
+@app.post("/create/medical_procedure", tags=["Medical Procedure"])
+def create_medical_procedure(
+    medical_procedure: create_medical_procedure_schema, db=Depends(get_db)
+):
+    medical_procedure = medical_procedure_model(**medical_procedure.model_dump())
+    try:
+        db.add(medical_procedure)
+        db.commit()
+    except Exception:
+        raise HTTPException(
+            status_code=400, detail="Error while adding medical procedure."
+        )
+    return {"message": "Medical procedure added successfully."}
+
+
+@app.patch("/update/medical_procedure/{procedure_id}", tags=["Medical Procedure"])
+def update_medical_procedure(
+    procedure_id: int,
+    medical_procedure: update_medical_procedure_schema,
+    db=Depends(get_db),
+):
+    existing_medical_procedure = (
+        db.query(medical_procedure_model)
+        .filter(medical_procedure_model.ID_procedure == procedure_id)
+        .first()
+    )
+    if existing_medical_procedure is None:
+        raise HTTPException(status_code=404, detail="Medical procedure not found")
+    try:
+        db.query(medical_procedure_model).filter(
+            medical_procedure_model.ID_procedure == procedure_id
+        ).update(medical_procedure.model_dump())
+        db.commit()
+    except Exception:
+        raise HTTPException(
+            status_code=400, detail="Error while updating medical procedure."
+        )
+    return {"message": "Medical procedure updated successfully."}
+
+
+@app.delete("/delete/medical_procedure/{procedure_id}", tags=["Medical Procedure"])
+def delete_medical_procedure(procedure_id: int, db=Depends(get_db)):
+    medical_procedure = (
+        db.query(medical_procedure_model)
+        .filter(medical_procedure_model.ID_procedure == procedure_id)
+        .first()
+    )
+    if medical_procedure is None:
+        raise HTTPException(status_code=404, detail="Medical procedure not found")
+    try:
+        db.delete(medical_procedure)
+        db.commit()
+    except Exception:
+        raise HTTPException(
+            status_code=400, detail="Error while deleting medical procedure."
+        )
+    return {"message": "Medical procedure deleted successfully."}
+
+
+# ======================== Surgical Plan Management ========================
+@app.get("/get/surgical_plan/all", tags=["Surgical Plan"])
+def get_surgical_plans(db=Depends(get_db)):
+    surgical_plans = db.query(surgical_plan_model).all()
+    if not surgical_plans:
+        raise HTTPException(status_code=404, detail="Surgical plans not found")
+    return surgical_plans
+
+
+@app.get("/get/surgical_plan/id/{plan_id}", tags=["Surgical Plan"])
+def get_surgical_plan(plan_id: int, db=Depends(get_db)):
+    surgical_plan = (
+        db.query(surgical_plan_model)
+        .filter(surgical_plan_model.ID_plan == plan_id)
+        .first()
+    )
+    if surgical_plan is None:
+        raise HTTPException(status_code=404, detail="Surgical plan not found")
+    return surgical_plan
+
+
+@app.post("/create/surgical_plan", tags=["Surgical Plan"])
+def create_surgical_plan(
+    surgical_plan: create_surgical_plan_schema, db=Depends(get_db)
+):
+    surgical_plan = surgical_plan_model(**surgical_plan.model_dump())
+    medical_personnel_string = " ".join(surgical_plan.Medical_personnel_list)
+
+    medical_personnel_list = medical_personnel_string.split(" ")
+
+    users = keycloak_admin.get_users()
+    users_id_list = []
+    for user in users:
+        users_id_list.append(user["id"])
+
+    for medical_personnel in medical_personnel_list:
+        if medical_personnel not in users_id_list:
+            raise HTTPException(status_code=404, detail="Medical personnel not found")
+
+    surgical_plan.Medical_personnel_list = medical_personnel_string
+
+    # check if medical procedure exists
+    medical_procedure = (
+        db.query(medical_procedure_model)
+        .filter(medical_procedure_model.ID_procedure == surgical_plan.ID_procedure)
+        .first()
+    )
+    if medical_procedure is None:
+        raise HTTPException(status_code=404, detail="Medical procedure not found")
+
+    try:
+        db.add(surgical_plan)
+        db.commit()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Error while adding surgical plan.")
+    return {"message": "Surgical plan added successfully."}
+
+
+@app.patch("/update/surgical_plan/{plan_id}", tags=["Surgical Plan"])
+def update_surgical_plan(
+    plan_id: int, surgical_plan: update_surgical_plan_schema, db=Depends(get_db)
+):
+    existing_surgical_plan = (
+        db.query(surgical_plan_model)
+        .filter(surgical_plan_model.ID_plan == plan_id)
+        .first()
+    )
+    if existing_surgical_plan is None:
+        raise HTTPException(status_code=404, detail="Surgical plan not found")
+    try:
+        db.query(surgical_plan_model).filter(
+            surgical_plan_model.ID_plan == plan_id
+        ).update(surgical_plan.model_dump())
+        db.commit()
+    except Exception:
+        raise HTTPException(
+            status_code=400, detail="Error while updating surgical plan."
+        )
+    return {"message": "Surgical plan updated successfully."}
+
+
+@app.delete("/delete/surgical_plan/{plan_id}", tags=["Surgical Plan"])
+def delete_surgical_plan(plan_id: int, db=Depends(get_db)):
+    surgical_plan = (
+        db.query(surgical_plan_model)
+        .filter(surgical_plan_model.ID_plan == plan_id)
+        .first()
+    )
+    if surgical_plan is None:
+        raise HTTPException(status_code=404, detail="Surgical plan not found")
+    try:
+        db.delete(surgical_plan)
+        db.commit()
+    except Exception:
+        raise HTTPException(
+            status_code=400, detail="Error while deleting surgical plan."
+        )
+    return {"message": "Surgical plan deleted successfully."}
 
 
 # ======================== Material Resource Management ========================
@@ -633,6 +1055,10 @@ def create_operating_room_reservation(
     operating_room_reservation: create_operating_room_reservation_schema,
     db=Depends(get_db),
 ):
+    operating_room_reservation = operating_room_reservation_model(
+        **operating_room_reservation.model_dump()
+    )
+
     # check if operating room exists
     operating_room = (
         db.query(operating_room_model)
@@ -642,6 +1068,14 @@ def create_operating_room_reservation(
         )
         .first()
     )
+
+    operating_room_model.Start_time = operating_room_reservation.Start_time.strftime(
+        "%H:%M"
+    )
+    operating_room_model.End_time = operating_room_reservation.End_time.strftime(
+        "%H:%M"
+    )
+
     if operating_room is None:
         raise HTTPException(status_code=404, detail="Operating room not found")
 
@@ -670,9 +1104,6 @@ def create_operating_room_reservation(
                 status_code=400, detail="Operating room is reserved for this period"
             )
 
-    operating_room_reservation = operating_room_reservation_model(
-        **operating_room_reservation.model_dump()
-    )
     try:
         db.add(operating_room_reservation)
         db.commit()
@@ -686,7 +1117,7 @@ def create_operating_room_reservation(
 @app.get("/get/operating_room_reservations/all", tags=["Operating Room Reservation"])
 def get_operating_room_reservations(db=Depends(get_db)):
     operating_room_reservations = db.query(operating_room_reservation_model).all()
-    if operating_room_reservations is None:
+    if not operating_room_reservations:
         raise HTTPException(
             status_code=404, detail="Operating room reservations not found"
         )
@@ -757,7 +1188,7 @@ def update_operating_room_reservation(
         db.query(operating_room_reservation_model)
         .filter(
             operating_room_reservation_model.ID_operating_room
-            == operating_room_reservation.ID_operating_room
+            == existing_operating_room_reservation.ID_operating_room
         )
         .all()
     )

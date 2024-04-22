@@ -1,25 +1,31 @@
-from fastapi import FastAPI, Depends, HTTPException
 import logging
-from utils import token_validator
 from os import environ
-from keycloak import KeycloakAdmin, KeycloakOpenIDConnection
-
-from models import Medication
-from models import Prescription
-from models import PrescriptionMedication
-
-from schemas import CreateMedication as create_medication_schema
-from schemas import UpdateMedication as update_medication_schema
-from schemas import CreatePrescription as create_prescription_schema
-from schemas import (
-    UpdatePrescriptionMedicationList as update_prescription_medication_list_schema,
-)
 
 from database import get_db
+from fastapi import Depends, FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from models import Medication, Prescription, PrescriptionMedication
+from schemas import CreateMedication as create_medication_schema
+from schemas import CreatePrescription as create_prescription_schema
+from schemas import UpdateMedication as update_medication_schema
+from schemas import \
+    UpdatePrescriptionMedicationList as \
+    update_prescription_medication_list_schema
+from utils import token_validator
+
+from keycloak import KeycloakAdmin, KeycloakOpenIDConnection
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
 
 KC_URL = environ.get("KC_URL", "http://keycloak")
 KC_PORT = environ.get("KC_PORT", "8080")
@@ -76,9 +82,22 @@ def get_medication(medication_id: int, db=Depends(get_db)):
 
 @app.post("/add/medication", tags=["Medication"])
 def add_medication(medication: create_medication_schema, db=Depends(get_db)):
+    existing_medication = (
+        db.query(Medication)
+        .filter(Medication.Medication_name == medication.Medication_name)
+        .first()
+    )
+    if existing_medication:
+        raise HTTPException(
+            status_code=400, detail="Medication with this name already exists"
+        )
+
     medication = Medication(**medication.model_dump())
-    db.add(medication)
-    db.commit()
+    try:
+        db.add(medication)
+        db.commit()
+    except:
+        raise HTTPException(status_code=400, detail="Error while adding medication")
     return {"message": "Medication added successfully"}
 
 
@@ -105,7 +124,9 @@ def update_medication(
             ).update(updated_fields)
             db.commit()
         except:
-            raise HTTPException(status_code=400, detail="Error updating medication")
+            raise HTTPException(
+                status_code=400, detail="Error while updating medication"
+            )
     else:
         raise HTTPException(status_code=400, detail="No fields to update")
     return {"message": "Medication updated successfully"}
@@ -150,8 +171,12 @@ def add_prescription(prescription: create_prescription_schema, db=Depends(get_db
 
     # get the prescription data
     prescription = Prescription(**prescription_data)
-    db.add(prescription)
-    db.commit()
+
+    try:
+        db.add(prescription)
+        db.commit()
+    except:
+        raise HTTPException(status_code=400, detail="Error while adding prescription")
 
     # get last inserted prescription
     inserted_prescription = (
@@ -162,18 +187,20 @@ def add_prescription(prescription: create_prescription_schema, db=Depends(get_db
     for medication in medication_list:
         medication["ID_prescription"] = inserted_prescription.ID_prescription
         prescription_medication = PrescriptionMedication(**medication)
-        db.add(prescription_medication)
-        db.commit()
+        try:
+            db.add(prescription_medication)
+            db.commit()
+        except:
+            raise HTTPException(
+                status_code=400, detail="Error while adding prescription medication"
+            )
 
     return {"message": "Prescription added successfully"}
 
 
 @app.get("/get/prescriptions/{patient_id}", tags=["Prescription"])
 def get_prescriptions(patient_id: str, db=Depends(get_db)):
-    # get the prescriptions for the patient
-    prescriptions = (
-        db.query(Prescription).filter(Prescription.ID_patient == patient_id).all()
-    )
+    prescriptions = db.query(Prescription).filter(Prescription.ID_patient == patient_id)
     return prescriptions
 
 
@@ -213,6 +240,7 @@ def get_prescription(patient_id: str, prescription_id: int, db=Depends(get_db)):
     return prescription
 
 
+# ================== Prescription Medication ==================
 @app.delete(
     "/delete/prescription/{prescription_id}/{medication_id}", tags=["Prescription"]
 )

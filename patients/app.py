@@ -1,24 +1,32 @@
-from fastapi import FastAPI, Depends, HTTPException
 import logging
 from os import environ
-from utils import token_validator
-
-from models import Patient as patient_model
-from models import MedicalHistory as medical_history_model
-from models import VitalSigns as vital_signs_model
-
-from schemas import PatientRequest as patient_request_schema
-from schemas import PatientUpdate as patient_update_schema
-from schemas import MedicalHistory as medical_history_schema
-from schemas import VitalSigns as vital_signs_schema
 
 from database import get_db
-from keycloak import KeycloakAdmin, KeycloakOpenIDConnection
+from fastapi import Depends, FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from keycloak.exceptions import KeycloakPostError
+from models import MedicalHistory as medical_history_model
+from models import Patient as patient_model
+from models import VitalSigns as vital_signs_model
+from schemas import MedicalHistory as medical_history_schema
+from schemas import PatientRequest as patient_request_schema
+from schemas import PatientUpdate as patient_update_schema
+from schemas import VitalSigns as vital_signs_schema
+from utils import token_validator
+
+from keycloak import KeycloakAdmin, KeycloakOpenIDConnection
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
 
 KC_URL = environ.get("KC_URL", "http://keycloak")
 KC_PORT = environ.get("KC_PORT", "8080")

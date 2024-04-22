@@ -1,7 +1,6 @@
-from sqlalchemy import Column, Integer, String, Date, Time, ForeignKey
+from sqlalchemy import Column, Date, ForeignKey, Integer, String, Time
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-
 
 Base = declarative_base()
 
@@ -57,17 +56,13 @@ class MedicalProcedure(Base):
     Procedure_name = Column(String)
     Description = Column(String)
     Costs = Column(String)
-    Related_department = Integer(String)
 
 
 class SurgicalPlan(Base):
     __tablename__ = "Surgical_Plans"
     ID_plan = Column(Integer, primary_key=True)
     ID_procedure = Column(Integer, ForeignKey("Medical_Procedures.ID_procedure"))
-    Operation_date = Column(Date)
-    ID_operating_room = Column(Integer, ForeignKey("Operating_Room.ID_operating_room"))
     Medical_personnel_list = Column(String)
-    operating_room = relationship("OperatingRoom")
 
 
 class MaterialResource(Base):
@@ -91,6 +86,7 @@ class OperatingRoom(Base):
 class OperatingRoomReservation(Base):
     __tablename__ = "Operating_Room_Reservation"
     ID_reservation = Column(Integer, primary_key=True)
+    ID_plan = Column(Integer, ForeignKey("Surgical_Plans.ID_plan"))
     ID_operating_room = Column(Integer, ForeignKey("Operating_Room.ID_operating_room"))
     Reservation_date = Column(Date)
     Start_time = Column(Time)
