@@ -1,15 +1,27 @@
-from fastapi import FastAPI, HTTPException, UploadFile, File
-from fastapi.responses import FileResponse
+import datetime
 import logging
 from os import environ, fstat
+
+from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from minio import Minio
 from minio.error import InvalidResponseError, S3Error
 from utils import token_validator
-import datetime
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 app = FastAPI()
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
+
 
 MINIO_HOST = environ.get("MINIO_HOST")
 MINIO_ACCESS_KEY = environ.get("MINIO_ACCESS_KEY")
@@ -24,6 +36,7 @@ minio_client = Minio(
     secret_key=MINIO_SECRET_KEY,
     secure=False,
 )
+
 
 # ================== Bucket Management ==================
 @app.post("/buckets/create{bucket_name}", tags=["bucket"])
