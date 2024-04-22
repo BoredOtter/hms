@@ -1,25 +1,31 @@
-from fastapi import FastAPI, Depends, HTTPException
 import logging
-from utils import token_validator
 from os import environ
-from keycloak import KeycloakAdmin, KeycloakOpenIDConnection
-
-from models import Medication
-from models import Prescription
-from models import PrescriptionMedication
-
-from schemas import CreateMedication as create_medication_schema
-from schemas import UpdateMedication as update_medication_schema
-from schemas import CreatePrescription as create_prescription_schema
-from schemas import (
-    UpdatePrescriptionMedicationList as update_prescription_medication_list_schema,
-)
 
 from database import get_db
+from fastapi import Depends, FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from models import Medication, Prescription, PrescriptionMedication
+from schemas import CreateMedication as create_medication_schema
+from schemas import CreatePrescription as create_prescription_schema
+from schemas import UpdateMedication as update_medication_schema
+from schemas import \
+    UpdatePrescriptionMedicationList as \
+    update_prescription_medication_list_schema
+from utils import token_validator
+
+from keycloak import KeycloakAdmin, KeycloakOpenIDConnection
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
 
 KC_URL = environ.get("KC_URL", "http://keycloak")
 KC_PORT = environ.get("KC_PORT", "8080")

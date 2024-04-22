@@ -1,7 +1,8 @@
-from fastapi import Request, HTTPException
 from os import environ
-from keycloak import KeycloakOpenID
 
+from fastapi import HTTPException, Request
+
+from keycloak import KeycloakOpenID
 
 KC_URL = environ.get("KC_URL", "http://keycloak")
 KC_PORT = environ.get("KC_PORT", "8080")

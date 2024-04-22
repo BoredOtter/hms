@@ -1,8 +1,9 @@
-from re import M
-from webbrowser import Opera
-from pydantic import BaseModel
 from datetime import date, time
-from typing import Optional, List
+from re import M
+from typing import List, Optional
+from webbrowser import Opera
+
+from pydantic import BaseModel
 
 
 # ======================== Department Management ========================

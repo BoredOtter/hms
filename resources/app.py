@@ -1,49 +1,54 @@
-from sqlalchemy import and_, or_
-from fastapi import FastAPI, Depends, HTTPException
 import logging
-from utils import token_validator
 from os import environ
-from keycloak import KeycloakAdmin, KeycloakOpenIDConnection
-
-from models import Department as department_model
-from models import Room as room_model
-from models import BedReservation as bed_reservation_model
-from models import MaterialResource as material_resource_model
-from models import OperatingRoom as operating_room_model
-from models import OperatingRoomReservation as operating_room_reservation_model
-from models import MedicalProcedure as medical_procedure_model
-from models import Employee as employee_model
-from models import EmployeeSchedule as employee_schedule_model
-from models import SurgicalPlan as surgical_plan_model
-
-from schemas import CreateDepartment as create_department_schema
-from schemas import CreateRoom as create_room_schema
-from schemas import UpdateBedInRoom as update_bed_number_room_schema
-from schemas import CreateBedReservation as create_bed_reservation_schema
-from schemas import UpdateBedReservationTime as update_bed_reservation_time_schema
-from schemas import UpdateMaterialResource as update_material_resource_schema
-from schemas import CreateMaterialResource as create_material_resource_schema
-from schemas import CreateOperatingRoom as create_operating_room_schema
-from schemas import (
-    CreateOperatingRoomReservation as create_operating_room_reservation_schema,
-)
-from schemas import (
-    UpdateOperatingRoomReservation as update_operating_room_reservation_schema,
-)
-from schemas import CreateMedicalProcedure as create_medical_procedure_schema
-from schemas import UpdateMedicalProcedure as update_medical_procedure_schema
-from schemas import CreateEmployeeSchedule as create_employee_schedule_schema
-from schemas import UpdateEmployeeSchedule as update_employee_schedule_schema
-from schemas import CreateSurgicalPlan as create_surgical_plan_schema
-from schemas import UpdateSurgicalPlan as update_surgical_plan_schema
-
 
 from database import get_db
+from fastapi import Depends, FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from models import BedReservation as bed_reservation_model
+from models import Department as department_model
+from models import Employee as employee_model
+from models import EmployeeSchedule as employee_schedule_model
+from models import MaterialResource as material_resource_model
+from models import MedicalProcedure as medical_procedure_model
+from models import OperatingRoom as operating_room_model
+from models import OperatingRoomReservation as operating_room_reservation_model
+from models import Room as room_model
+from models import SurgicalPlan as surgical_plan_model
+from schemas import CreateBedReservation as create_bed_reservation_schema
+from schemas import CreateDepartment as create_department_schema
+from schemas import CreateEmployeeSchedule as create_employee_schedule_schema
+from schemas import CreateMaterialResource as create_material_resource_schema
+from schemas import CreateMedicalProcedure as create_medical_procedure_schema
+from schemas import CreateOperatingRoom as create_operating_room_schema
+from schemas import \
+    CreateOperatingRoomReservation as create_operating_room_reservation_schema
+from schemas import CreateRoom as create_room_schema
+from schemas import CreateSurgicalPlan as create_surgical_plan_schema
+from schemas import UpdateBedInRoom as update_bed_number_room_schema
+from schemas import \
+    UpdateBedReservationTime as update_bed_reservation_time_schema
+from schemas import UpdateEmployeeSchedule as update_employee_schedule_schema
+from schemas import UpdateMaterialResource as update_material_resource_schema
+from schemas import UpdateMedicalProcedure as update_medical_procedure_schema
+from schemas import \
+    UpdateOperatingRoomReservation as update_operating_room_reservation_schema
+from schemas import UpdateSurgicalPlan as update_surgical_plan_schema
+from sqlalchemy import and_, or_
+from utils import token_validator
 
+from keycloak import KeycloakAdmin, KeycloakOpenIDConnection
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
 
 KC_URL = environ.get("KC_URL", "http://keycloak")
 KC_PORT = environ.get("KC_PORT", "8080")
