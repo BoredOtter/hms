@@ -11,6 +11,8 @@ from models import BedReservation as bed_reservation_model
 from models import MaterialResource as material_resource_model
 from models import OperatingRoom as operating_room_model
 from models import OperatingRoomReservation as operating_room_reservation_model
+from models import MedicalProcedure as medical_procedure_model
+from models import SurgicalPlan as surgical_plan_model
 
 from schemas import CreateDepartment as create_department_schema
 from schemas import CreateRoom as create_room_schema
@@ -26,6 +28,8 @@ from schemas import (
 from schemas import (
     UpdateOperatingRoomReservation as update_operating_room_reservation_schema,
 )
+from schemas import CreateMedicalProcedure as create_medical_procedure_schema
+from schemas import UpdateMedicalProcedure as update_medical_procedure_schema
 
 from database import get_db
 
@@ -366,6 +370,88 @@ def get_bed_reservations(db=Depends(get_db)):
     return bed_reservations
 
 
+@app.patch("/update/bed_reservation_time/{reservation_id}", tags=["Bed Reservation"])
+def update_bed_reservation_time(
+    reservation_id: int,
+    bed_reservation: update_bed_reservation_time_schema,
+    db=Depends(get_db),
+):
+    existing_bed_reservation = (
+        db.query(bed_reservation_model)
+        .filter(bed_reservation_model.ID_reservation == reservation_id)
+        .first()
+    )
+    if existing_bed_reservation is None:
+        raise HTTPException(status_code=404, detail="Bed reservation not found")
+
+    # check if dates are valid
+    if bed_reservation.Start_date > bed_reservation.End_date:
+        raise HTTPException(
+            status_code=400, detail="Start date cannot be after end date"
+        )
+
+    # check if patient already has a bed reservation this period
+    existing_bed_reservations = (
+        db.query(bed_reservation_model)
+        .filter(bed_reservation_model.ID_patient == existing_bed_reservation.ID_patient)
+        .all()
+    )
+    for existing_bed_reservation in existing_bed_reservations:
+        if (
+            existing_bed_reservation.Start_date
+            <= bed_reservation.Start_date
+            <= existing_bed_reservation.End_date
+        ) or (
+            existing_bed_reservation.Start_date
+            <= bed_reservation.End_date
+            <= existing_bed_reservation.End_date
+        ):
+            raise HTTPException(
+                status_code=400,
+                detail="Patient already has a bed reservation for this period",
+            )
+
+    # check if room has available beds this period
+    room = (
+        db.query(room_model)
+        .filter(room_model.ID_room == existing_bed_reservation.ID_room)
+        .first()
+    )
+    if room is None:
+        raise HTTPException(status_code=404, detail="Room not found")
+
+    bed_reservations = (
+        db.query(bed_reservation_model)
+        .filter(
+            bed_reservation_model.ID_room == room.ID_room,
+            or_(
+                and_(
+                    bed_reservation_model.Start_date <= bed_reservation.Start_date,
+                    bed_reservation_model.End_date >= bed_reservation.Start_date,
+                ),
+                and_(
+                    bed_reservation_model.Start_date <= bed_reservation.End_date,
+                    bed_reservation_model.End_date >= bed_reservation.End_date,
+                ),
+            ),
+        )
+        .all()
+    )
+
+    if len(bed_reservations) >= room.Number_of_beds:
+        raise HTTPException(status_code=400, detail="Room is full")
+
+    try:
+        db.query(bed_reservation_model).filter(
+            bed_reservation_model.ID_reservation == reservation_id
+        ).update(bed_reservation.model_dump())
+        db.commit()
+    except Exception:
+        raise HTTPException(
+            status_code=400, detail="Error while updating bed reservation."
+        )
+
+
 @app.delete("/delete/bed_reservation/{patient_id}", tags=["Bed Reservation"])
 def delete_bed_reservation(patient_id: str, db=Depends(get_db)):
     bed_reservation = (
@@ -383,6 +469,118 @@ def delete_bed_reservation(patient_id: str, db=Depends(get_db)):
             status_code=400, detail="Error while deleting bed reservation."
         )
     return {"message": "Bed reservation deleted successfully."}
+
+
+# ======================== Medical Procedure ========================
+@app.get("/get/medical_procedure/all", tags=["Medical Procedure"])
+def get_medical_procedures(db=Depends(get_db)):
+    medical_procedures = db.query(medical_procedure_model).all()
+    if not medical_procedures:
+        raise HTTPException(status_code=404, detail="Medical procedures not found")
+    return medical_procedures
+
+
+@app.get("/get/medical_procedure/id/{procedure_id}", tags=["Medical Procedure"])
+def get_medical_procedure(procedure_id: int, db=Depends(get_db)):
+    medical_procedure = (
+        db.query(medical_procedure_model)
+        .filter(medical_procedure_model.ID_procedure == procedure_id)
+        .first()
+    )
+    if medical_procedure is None:
+        raise HTTPException(status_code=404, detail="Medical procedure not found")
+    return medical_procedure
+
+
+@app.get("/get/medical_procedure/dept/{department_id}", tags=["Medical Procedure"])
+def get_medical_procedure_by_department(department_id: int, db=Depends(get_db)):
+    medical_procedures = (
+        db.query(medical_procedure_model)
+        .filter(medical_procedure_model.Related_department == department_id)
+        .all()
+    )
+    if not medical_procedures:
+        raise HTTPException(status_code=404, detail="Medical procedures not found")
+    return medical_procedures
+
+
+@app.post("/create/medical_procedure", tags=["Medical Procedure"])
+def create_medical_procedure(
+    medical_procedure: create_medical_procedure_schema, db=Depends(get_db)
+):
+    medical_procedure = medical_procedure_model(**medical_procedure.model_dump())
+
+    # check if department exists
+    department = (
+        db.query(department_model)
+        .filter(department_model.ID_department == medical_procedure.Related_department)
+        .first()
+    )
+    if department is None:
+        raise HTTPException(status_code=404, detail="Department not found")
+
+    try:
+        db.add(medical_procedure)
+        db.commit()
+    except Exception:
+        raise HTTPException(
+            status_code=400, detail="Error while adding medical procedure."
+        )
+    return {"message": "Medical procedure added successfully."}
+
+
+@app.patch("/update/medical_procedure/{procedure_id}", tags=["Medical Procedure"])
+def update_medical_procedure(
+    procedure_id: int,
+    medical_procedure: update_medical_procedure_schema,
+    db=Depends(get_db),
+):
+    existing_medical_procedure = (
+        db.query(medical_procedure_model)
+        .filter(medical_procedure_model.ID_procedure == procedure_id)
+        .first()
+    )
+    if existing_medical_procedure is None:
+        raise HTTPException(status_code=404, detail="Medical procedure not found")
+
+    # check if department exists
+    department = (
+        db.query(department_model)
+        .filter(department_model.ID_department == medical_procedure.Related_department)
+        .first()
+    )
+    if department is None:
+        raise HTTPException(status_code=404, detail="Department not found")
+
+    try:
+        db.query(medical_procedure_model).filter(
+            medical_procedure_model.ID_procedure == procedure_id
+        ).update(medical_procedure.model_dump())
+        db.commit()
+    except Exception:
+        raise HTTPException(
+            status_code=400, detail="Error while updating medical procedure."
+        )
+    return {"message": "Medical procedure updated successfully."}
+
+
+@app.delete("/delete/medical_procedure/{procedure_id}", tags=["Medical Procedure"])
+def delete_medical_procedure(procedure_id: int, db=Depends(get_db)):
+    medical_procedure = (
+        db.query(medical_procedure_model)
+        .filter(medical_procedure_model.ID_procedure == procedure_id)
+        .first()
+    )
+    if medical_procedure is None:
+        raise HTTPException(status_code=404, detail="Medical procedure not found")
+    try:
+        db.delete(medical_procedure)
+        db.commit()
+    except Exception:
+        raise HTTPException(
+            status_code=400, detail="Error while deleting medical procedure."
+        )
+    return {"message": "Medical procedure deleted successfully."}
 
 
 # ======================== Material Resource Management ========================

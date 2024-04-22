@@ -37,6 +37,21 @@ class UpdateBedReservationTime(BaseModel):
     End_date: date
 
 
+# ======================== Medical Procedure ========================
+class CreateMedicalProcedure(BaseModel):
+    Procedure_name: str
+    Description: str
+    Costs: str
+    Related_department: int
+
+
+class UpdateMedicalProcedure(BaseModel):
+    Procedure_name: str
+    Description: str
+    Costs: str
+    Related_department: int
+
+
 # ======================== Material Resource Management ========================
 class CreateMaterialResource(BaseModel):
     Resource_name: str
