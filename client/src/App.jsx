@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { createContext } from 'react';
 import MainLayout from './layouts/MainLayout';
 import RegisterPatient from './pages/RegisterPatient';
 import WarningInfo from './pages/WarningInfo';
@@ -19,6 +19,7 @@ import {
   createRoutesFromElements,
   RouterProvider,
 } from 'react-router-dom';
+import EmployeeSchedule from './components/EmployeeSchedule';
 
 
 const generateNurseRoutes = () => (
@@ -34,27 +35,14 @@ const generateDoctorRoutes = () => (
     <Route path='/patients/:id' element={<PatientPage />} />
     <Route path='/departments' element={<DepartmentsPage />} />
     <Route path='/departments/:id' element={<DepartmentPage />} />
+    <Route path='/schedules' element={<Home/>}/>
+    <Route path='/schedules/:id' element={<EmployeeSchedule/>}/>
   </>
 );
 
 const App = () => {
 
-  const [isLogin, roles, name] = useAuth();
-
-  const [patients, setPatients] = useState([]);
-
-  useEffect(() => {
-    const fetchPatients = async () => {
-      try {
-        const response = await httpClient.get('/getall/db');
-        setPatients(response.data);
-      } catch (error) {
-        console.error('Error fetching patients:', error);
-      }
-    };
-
-    fetchPatients();
-  }, []);
+  const [isLogin, roles, username] = useAuth();
 
   const generateRoutes = () => {
     const routes = (
@@ -62,7 +50,7 @@ const App = () => {
         <Route path='/' element={<MainLayout loggedUser={roles}/>}>
           {roles.includes('nurse') && generateNurseRoutes()}
           {roles.includes('doctor') && generateDoctorRoutes()}
-          <Route path='/home' element={<Home userName={name}/>} />
+          <Route path='/home' element={<Home userName={username}/>} />
           <Route path='/unauthorized' element={<WarningInfo info="Unauthorized!" />} />
           <Route path='/*' element={<WarningInfo info="404 Not Found!" />} />
         </Route>
