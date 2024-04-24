@@ -1,6 +1,7 @@
 from os import environ
+from typing import Annotated
 
-from fastapi import HTTPException, Request
+from fastapi import Header, HTTPException
 
 from keycloak import KeycloakOpenID
 
@@ -20,22 +21,16 @@ keycloak_openid = KeycloakOpenID(
 )
 
 
-def token_validator(func):
-    async def wrapper(request: Request):
-        token = request.headers.get("authorization", "")
-
-        if not token:
-            raise HTTPException(status_code=401, detail="Token is missing")
-        else:
-            token = token.split(" ")
-            if len(token) != 2 or token[0].lower() != "bearer":
-                raise HTTPException(status_code=401, detail="Invalid token")
-            token = token[1]
-            if not validate_token(token):
-                raise HTTPException(status_code=401, detail="Unauthorized")
-        return await func()
-
-    return wrapper
+async def token_validator(token: Annotated[str, Header()] = None):
+    if not token:
+        raise HTTPException(status_code=401, detail="Token is missing")
+    else:
+        token = token.split(" ")
+        if len(token) != 2 or token[0].lower() != "bearer":
+            raise HTTPException(status_code=401, detail="Invalid token")
+        token = token[1]
+        if not validate_token(token):
+            raise HTTPException(status_code=401, detail="Unauthorized")
 
 
 def validate_token(token: str) -> bool:

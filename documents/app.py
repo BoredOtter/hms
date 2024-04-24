@@ -2,7 +2,7 @@ import datetime
 import logging
 from os import environ, fstat
 
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import Depends, FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from minio import Minio
@@ -11,7 +11,7 @@ from utils import token_validator
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-app = FastAPI()
+app = FastAPI(dependencies=[Depends(token_validator)])
 
 
 app.add_middleware(
@@ -39,7 +39,7 @@ minio_client = Minio(
 
 
 # ================== Bucket Management ==================
-@app.post("/buckets/create{bucket_name}", tags=["bucket"])
+@app.post("/buckets/create/{bucket_name}", tags=["bucket"])
 def create_bucket(bucket_name: str):
     try:
         # Check if the bucket already exists
@@ -136,7 +136,7 @@ def get_documents_info_by_patient(
         raise HTTPException(status_code=500, detail=f"MinIO Error: {err}")
 
 
-@app.get("/documents/get/file/{file_name}", tags=["document"])
+@app.get("/documents/get/file/{document_name}", tags=["document"])
 def get_document_by_file_name(
     document_name: str, bucket_name: str = DEFAULT_BUCKET_NAME
 ):
@@ -153,7 +153,7 @@ def get_document_by_file_name(
     return FileResponse(document_name)
 
 
-@app.delete("/documents/delete/file/{file_name}", tags=["document"])
+@app.delete("/documents/delete/file/{document_name}", tags=["document"])
 def delete_document_by_file_name(
     document_name: str, bucket_name: str = DEFAULT_BUCKET_NAME
 ):

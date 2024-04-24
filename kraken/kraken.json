@@ -1,90 +1,466 @@
 {
   "version": 3,
   "timeout": "3s",
-  "endpoints":[
+  "endpoints": [
     {
       "endpoint": "/api/v1/patients/{get1}/",
-      "input_headers":[
-          "*"
+      "input_headers": [
+        "*"
       ],
+      "method": "GET",
+      "output_encoding": "no-op",
       "backend": [
         {
-          "host":["http://patients:8001"],
           "url_pattern": "/{get1}",
-          "is_collection": true
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://patients:8001"
+          ],
+          "disable_host_sanitize": false
         }
-      ],
-      "method": "GET"
+      ]
     },
     {
       "endpoint": "/api/v1/patients/{get1}/{get2}/",
-      "input_headers":[
+      "input_headers": [
         "*"
       ],
+      "method": "GET",
+      "output_encoding": "no-op",
       "backend": [
         {
-          "host":["http://patients:8001"],
           "url_pattern": "/{get1}/{get2}",
-          "is_collection": true
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://patients:8001"
+          ],
+          "disable_host_sanitize": false
         }
-      ],
-      "method": "GET"
+      ]
     },
     {
       "endpoint": "/api/v1/patients/{get1}/{get2}/{get3}/",
-      "input_headers":[
+      "input_headers": [
         "*"
       ],
+      "method": "GET",
+      "output_encoding": "no-op",
       "backend": [
         {
-          "host":["http://patients:8001"],
           "url_pattern": "/{get1}/{get2}/{get3}",
-          "is_collection": true
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://patients:8001"
+          ],
+          "disable_host_sanitize": false
         }
-      ],
-      "method": "GET"
+      ]
     },
     {
       "endpoint": "/api/v1/patients/{post1}/",
-      "input_headers":[
-          "*"
+      "input_headers": [
+        "*"
       ],
+      "method": "POST",
+      "output_encoding": "no-op",
       "backend": [
         {
-          "host":["http://patients:8001"],
           "url_pattern": "/{post1}",
-          "is_collection": true
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://patients:8001"
+          ],
+          "disable_host_sanitize": false
         }
-      ],
-      "method": "POST"
+      ]
     },
     {
       "endpoint": "/api/v1/patients/{post1}/{post2}/",
-      "input_headers":[
+      "input_headers": [
         "*"
       ],
+      "method": "POST",
+      "output_encoding": "no-op",
       "backend": [
         {
-          "host":["http://patients:8001"],
           "url_pattern": "/{post1}/{post2}",
-          "is_collection": true
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://patients:8001"
+          ],
+          "disable_host_sanitize": false
         }
-      ],
-      "method": "POST"
+      ]
     },
     {
       "endpoint": "/api/v1/patients/{post1}/{post2}/{post3}/",
-      "input_headers":[
+      "input_headers": [
         "*"
       ],
+      "method": "POST",
+      "output_encoding": "no-op",
       "backend": [
         {
-          "host":["http://patients:8001"],
           "url_pattern": "/{post1}/{post2}/{post3}",
-          "is_collection": true
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://patients:8001"
+          ],
+          "disable_host_sanitize": false
         }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/resources/{get1}/{get2}/",
+      "input_headers": [
+        "*"
       ],
-      "method": "POST"
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/{get1}/{get2}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://resources:8002"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/resources/{get1}/{get2}/{get3}/{get4}/",
+      "input_headers": [
+        "*"
+      ],
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/{get1}/{get2}/{get3}/{get4}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://resources:8002"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/resources/{get1}/{get2}/{get3}",
+      "input_headers": [
+        "*"
+      ],
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/{get1}/{get2}/{get3}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://resources:8002"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/resources/{delete1}/{delete2}/{delete3}/",
+      "input_headers": [
+        "*"
+      ],
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/{delete1}/{delete2}/{delete3}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "DELETE",
+          "host": [
+            "http://resources:8002"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/resources/{patch1}/{patch2}/{patch3}/",
+      "input_headers": [
+        "*"
+      ],
+      "method": "PATCH",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/{patch1}/{patch2}/{patch3}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "PATCH",
+          "host": [
+            "http://resources:8002"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/resources/{post1}/{post2}/",
+      "input_headers": [
+        "*"
+      ],
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/{post1}/{post2}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://resources:8002"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/resources/{post1}/{post2}/{post3}/",
+      "input_headers": [
+        "*"
+      ],
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/{post1}/{post2}/{post3}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://resources:8002"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/pharmacy/{get1}/{get2}/",
+      "input_headers": [
+        "*"
+      ],
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/{get1}/{get2}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://pharmacy:8004"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/pharmacy/{get1}/{get2}/{get3}/",
+      "input_headers": [
+        "*"
+      ],
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/{get1}/{get2}/{get3}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://pharmacy:8004"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/pharmacy/{get1}/{get2}/{get3}/{get4}/",
+      "input_headers": [
+        "*"
+      ],
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/{get1}/{get2}/{get3}/{get4}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://pharmacy:8004"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/pharmacy/{post1}/{post2}/",
+      "input_headers": [
+        "*"
+      ],
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/{post1}/{post2}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://pharmacy:8004"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/pharmacy/{patch1}/{patch2}/{patch3}/",
+      "input_headers": [
+        "*"
+      ],
+      "method": "PATCH",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/{patch1}/{patch2}/{patch3}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "PATCH",
+          "host": [
+            "http://pharmacy:8004"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/pharmacy/{delete1}/{delete2}/{delete3}/{delete4}/",
+      "input_headers": [
+        "*"
+      ],
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/{delete1}/{delete2}/{delete3}/{delete4}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "DELETE",
+          "host": [
+            "http://pharmacy:8004"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/documents/{get1}/{get2}/{get3}/{get4}/",
+      "input_headers": [
+        "*"
+      ],
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/{get1}/{get2}/{get3}/{get4}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://documents:8003"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/documents/{post1}/{post2}/{post3}/",
+      "input_headers": [
+        "*"
+      ],
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/{post1}/{post2}/{post3}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://documents:8003"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/documents/{post1}/{post2}/",
+      "input_headers": [
+        "*"
+      ],
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/{post1}/{post2}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://documents:8003"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/documents/{delete1}/{delete2}/{delete3}/{delete4}/",
+      "input_headers": [
+        "*"
+      ],
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/{delete1}/{delete2}/{delete3}/{delete4}/",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "DELETE",
+          "host": [
+            "http://documents:8003"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
     }
   ]
 }

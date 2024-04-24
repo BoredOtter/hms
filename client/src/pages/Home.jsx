@@ -15,7 +15,6 @@ const Home = ({userName}) => {
       setCurrentDate(dateString);
       setCurrentTime(timeString);
     };
-
     updateTime();
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);

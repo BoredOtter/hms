@@ -20,18 +20,19 @@ from schemas import CreateEmployeeSchedule as create_employee_schedule_schema
 from schemas import CreateMaterialResource as create_material_resource_schema
 from schemas import CreateMedicalProcedure as create_medical_procedure_schema
 from schemas import CreateOperatingRoom as create_operating_room_schema
-from schemas import \
-    CreateOperatingRoomReservation as create_operating_room_reservation_schema
+from schemas import (
+    CreateOperatingRoomReservation as create_operating_room_reservation_schema,
+)
 from schemas import CreateRoom as create_room_schema
 from schemas import CreateSurgicalPlan as create_surgical_plan_schema
 from schemas import UpdateBedInRoom as update_bed_number_room_schema
-from schemas import \
-    UpdateBedReservationTime as update_bed_reservation_time_schema
+from schemas import UpdateBedReservationTime as update_bed_reservation_time_schema
 from schemas import UpdateEmployeeSchedule as update_employee_schedule_schema
 from schemas import UpdateMaterialResource as update_material_resource_schema
 from schemas import UpdateMedicalProcedure as update_medical_procedure_schema
-from schemas import \
-    UpdateOperatingRoomReservation as update_operating_room_reservation_schema
+from schemas import (
+    UpdateOperatingRoomReservation as update_operating_room_reservation_schema,
+)
 from schemas import UpdateSurgicalPlan as update_surgical_plan_schema
 from sqlalchemy import and_, or_
 from utils import token_validator
@@ -40,7 +41,7 @@ from keycloak import KeycloakAdmin, KeycloakOpenIDConnection
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-app = FastAPI()
+app = FastAPI(dependencies=[Depends(token_validator)])
 
 app.add_middleware(
     CORSMiddleware,
@@ -104,7 +105,7 @@ def get_department_by_id(department_id: int, db=Depends(get_db)):
     return department
 
 
-@app.get("/get/department/name/{name}", tags=["Department"])
+@app.get("/get/department/name/{department_name}", tags=["Department"])
 def get_department_by_name(department_name: str, db=Depends(get_db)):
     department = (
         db.query(department_model)
@@ -272,8 +273,9 @@ def create_bed_reservation(
 
     # check patient id in keycloak
     patient_id = bed_reservation.ID_patient
-    user = keycloak_admin.get_user(patient_id)
-    if user is None:
+    try:
+        user = keycloak_admin.get_user(patient_id)
+    except Exception:
         raise HTTPException(status_code=404, detail="Patient not found")
 
     # check if room exists
@@ -832,7 +834,7 @@ def get_material_resource(resource_id: int, db=Depends(get_db)):
     return material_resource
 
 
-@app.get("/get/material_resource/name/{name}", tags=["Material Resource"])
+@app.get("/get/material_resource/name/{resource_name}", tags=["Material Resource"])
 def get_material_resource_by_name(resource_name: str, db=Depends(get_db)):
     material_resource = (
         db.query(material_resource_model)

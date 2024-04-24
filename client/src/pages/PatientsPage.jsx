@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-// import patients from '../../patients.json';
 import ObjectsListing from '../components/listing/ObjectsListing';
 import SearchBar from '../components/SearchBar';
 
@@ -9,7 +8,8 @@ const PatientsPage = () => {
   useEffect(() => {
     fetch('https://hms.test/api/v1/patients/getall/db')
       .then(response => response.json())
-      .then(data => setPatients(data.collection));
+      .then(data => setPatients(data))
+      .catch(error => console.log(error));
   }, []);
 
   const [searchTerm, setSearchTerm] = useState('');
