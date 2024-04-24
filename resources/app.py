@@ -104,7 +104,7 @@ def get_department_by_id(department_id: int, db=Depends(get_db)):
     return department
 
 
-@app.get("/get/department/name/{name}", tags=["Department"])
+@app.get("/get/department/name/{department_name}", tags=["Department"])
 def get_department_by_name(department_name: str, db=Depends(get_db)):
     department = (
         db.query(department_model)
@@ -272,8 +272,9 @@ def create_bed_reservation(
 
     # check patient id in keycloak
     patient_id = bed_reservation.ID_patient
-    user = keycloak_admin.get_user(patient_id)
-    if user is None:
+    try:
+        user = keycloak_admin.get_user(patient_id)
+    except Exception:
         raise HTTPException(status_code=404, detail="Patient not found")
 
     # check if room exists
@@ -832,7 +833,7 @@ def get_material_resource(resource_id: int, db=Depends(get_db)):
     return material_resource
 
 
-@app.get("/get/material_resource/name/{name}", tags=["Material Resource"])
+@app.get("/get/material_resource/name/{resource_name}", tags=["Material Resource"])
 def get_material_resource_by_name(resource_name: str, db=Depends(get_db)):
     material_resource = (
         db.query(material_resource_model)

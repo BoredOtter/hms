@@ -15,36 +15,7 @@ const Home = ({userName}) => {
       setCurrentDate(dateString);
       setCurrentTime(timeString);
     };
-
-    const checkConnection = async () => {
-      try {
-        const response = await fetch('https://hms.test/api/v1/patients/create', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            "First_name": "testuje",
-            "Last_name": "czydziala",
-            "Date_of_birth": "2024-04-24",
-            "Gender": "string",
-            "Contact_number": "string",
-            "Address": "string",
-            "PESEL": "frontass"
-          })
-        });
-        if (response.ok) {
-          console.log('Connection to patient service is working');
-        } else {
-          console.log('Connection to patient service failed');
-        }
-      } catch (error) {
-        console.log('Error connecting to patient service:', error);
-      }
-    };
-
     updateTime();
-    checkConnection();
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
   }, []);
