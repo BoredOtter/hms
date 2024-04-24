@@ -16,6 +16,7 @@ const Home = ({userName}) => {
       setCurrentTime(timeString);
     };
     updateTime();
+    checkConnection();
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
   }, []);
