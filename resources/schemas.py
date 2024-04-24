@@ -36,6 +36,16 @@ class UpdateBedReservationTime(BaseModel):
     End_date: date
 
 
+# ======================== Employee  Management ========================
+class CreateEmployee(BaseModel):
+    PESEL: str
+    First_name: str
+    Last_name: str
+    Employment_date: date
+    Position: str
+    Department_id: int
+
+
 # ======================== Employee Schedule Management ========================
 class CreateEmployeeSchedule(BaseModel):
     ID_employee: int
@@ -58,9 +68,9 @@ class CreateMedicalProcedure(BaseModel):
 
 
 class UpdateMedicalProcedure(BaseModel):
-    Procedure_name: str
-    Description: str
-    Costs: str
+    Procedure_name: Optional[str] = None
+    Description: Optional[str] = None
+    Costs: Optional[str] = None
 
 
 # ======================== Surgical Plan Management ========================

@@ -45,6 +45,7 @@ keycloak_connection = KeycloakOpenIDConnection(
     verify=False,
 )
 
+
 keycloak_admin = KeycloakAdmin(connection=keycloak_connection)
 
 # ======================== Patient Management ========================
