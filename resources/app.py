@@ -817,7 +817,7 @@ def create_surgical_plan(
     medical_personnel_list = medical_personnel_string.split(" ")
 
     for group in keycloak_admin.get_groups():
-        if group.get("name") == "doctor":
+        if group.get("name") == "doctors":
             keycloak_group_id = group.get("id")
             break
 
