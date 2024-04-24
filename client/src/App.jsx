@@ -1,52 +1,70 @@
-import React from 'react'
+import React, { createContext } from 'react';
 import MainLayout from './layouts/MainLayout';
 import RegisterPatient from './pages/RegisterPatient';
 import WarningInfo from './pages/WarningInfo';
 import DepartmentsPage from './pages/DepartmentsPage';
+import DepartmentPage from './pages/DepartmentPage';
+import MedicationsPage from './pages/MedicationsPage';
+import MedicationPage from './pages/MedicationPage';
+import Home from './pages/Home';
+import PatientsPage from './pages/PatientsPage';
+import PatientPage from './pages/PatientPage';
 import useAuth from './auth/useAuth';
+import httpClient from './client/httpClient';
+import { useState, useEffect } from 'react';
 
 import {
   Route,
   createBrowserRouter,
   createRoutesFromElements,
   RouterProvider,
-  Routes
 } from 'react-router-dom';
+import EmployeeSchedule from './components/EmployeeSchedule';
 
 
-const NurseDoctorRoutes = () => (
-  <Routes>
-    <Route path='/departments' element={<DepartmentsPage />} />
-    <Route path='/*' element={<WarningInfo info="404 Not Found!" />} />
-  </Routes>
+const generateNurseRoutes = () => (
+  <Route path='/register' element={<RegisterPatient />} />
 );
 
+const generateDoctorRoutes = () => (
+  <>
+    <Route path='/register' element={<RegisterPatient />} />
+    <Route path='/medications' element={<MedicationsPage/>} />
+    <Route path='/medications/:id' element={<MedicationPage/>} />
+    <Route path='/patients' element={<PatientsPage />} />
+    <Route path='/patients/:id' element={<PatientPage />} />
+    <Route path='/departments' element={<DepartmentsPage />} />
+    <Route path='/departments/:id' element={<DepartmentPage />} />
+    <Route path='/schedules' element={<Home/>}/>
+    <Route path='/schedules/:id' element={<EmployeeSchedule/>}/>
+  </>
+);
 
 const App = () => {
-  const [isLogin, roles] = useAuth();
 
-  // Dynamically generate routes based on roles
+  const [isLogin, roles, username] = useAuth();
+
   const generateRoutes = () => {
     const routes = (
-      <Route path='/' element={<MainLayout />}>
-        {roles.includes('admin') && (
-          <Route path='/register' element={<RegisterPatient />} />
-        )}
-        {(roles.includes('admin') || roles.includes('user')) && (
-          <Route path='/departments' element={<DepartmentsPage />} />
-        )}
-        <Route path='/unauthorized' element={<WarningInfo info="Unauthorized!" />} />
-        <Route path='/*' element={<WarningInfo info="404 Not Found!" />} />
-      </Route>
+      isLogin ? (
+        <Route path='/' element={<MainLayout loggedUser={roles}/>}>
+          {roles.includes('nurse') && generateNurseRoutes()}
+          {roles.includes('doctor') && generateDoctorRoutes()}
+          <Route path='/home' element={<Home userName={username}/>} />
+          <Route path='/unauthorized' element={<WarningInfo info="Unauthorized!" />} />
+          <Route path='/*' element={<WarningInfo info="404 Not Found!" />} />
+        </Route>
+      ) : (
+        <Route path='/*' element={<WarningInfo loading={true} />} />
+      )
     );
 
     return routes;
   };
 
-  // Create router from generated routes
   const router = createBrowserRouter(createRoutesFromElements(generateRoutes()));
 
-  return (  
+  return (
     <RouterProvider router={router} />
   );
 };

@@ -1,0 +1,26 @@
+[
+    {
+      "Manufacturer": "Pharma Corp",
+      "Active_substance": "Ibuprofen",
+      "Form": "Tablet",
+      "Medication_name": "Ibuprofen 200mg Tablet",
+      "ID_medication": 1,
+      "Price": 5.99
+    },
+    {
+      "Manufacturer": "Generic Meds Inc.",
+      "Active_substance": "Paracetamol",
+      "Form": "Capsule",
+      "Medication_name": "Paracetamol 500mg Capsule",
+      "ID_medication": 2,
+      "Price": 3.49
+    },
+    {
+      "Manufacturer": "Healthcare Labs",
+      "Active_substance": "Loratadine",
+      "Form": "Syrup",
+      "Medication_name": "Loratadine 5mg/5ml Syrup",
+      "ID_medication": 3,
+      "Price": 7.99
+    }
+  ]
