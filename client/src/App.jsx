@@ -10,8 +10,6 @@ import Home from './pages/Home';
 import PatientsPage from './pages/PatientsPage';
 import PatientPage from './pages/PatientPage';
 import useAuth from './auth/useAuth';
-import httpClient from './client/httpClient';
-import { useState, useEffect } from 'react';
 
 import {
   Route,
