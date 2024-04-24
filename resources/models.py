@@ -33,6 +33,7 @@ class BedReservation(Base):
 class Employee(Base):
     __tablename__ = "Employees"
     ID_employee = Column(Integer, primary_key=True)
+    PESEL = Column(String)
     First_name = Column(String)
     Last_name = Column(String)
     Employment_date = Column(Date)
