@@ -2,119 +2,89 @@
   "version": 3,
   "timeout": "3s",
   "endpoints":[
-  {
-    "endpoint": "api/v1/health",
-    "extra_config": {
-      "auth/validator": {
-        "alg": "RS256",
-        "jwk_url": "http://keycloak:8080/realms/hms/protocol/openid-connect/certs",
-        "disable_jwk_security": true,
-        "roles_key": "realm_access.roles",
-        "roles": ["admin"],
-        "roles_key_is_nested": true
-      }
-    },
-    "backend": [
+    {
+      "endpoint": "/api/v1/patients/{get1}/",
+      "input_headers":[
+          "*"
+      ],
+      "backend": [
         {
-          "host":["http://localhost:8080"],
-          "url_pattern": "/__health"
+          "host":["http://patients:8001"],
+          "url_pattern": "/{get1}",
+          "is_collection": true
         }
-    ]
-  },
-  {
-    "endpoint": "api/v1/validator",
-    "input_headers":[
-        "*"
-    ],
-    "extra_config": {
-      "auth/validator": {
-        "alg": "RS256",
-        "jwk_url": "http://keycloak:8080/realms/hms/protocol/openid-connect/certs",
-        "disable_jwk_security": true
-      }
+      ],
+      "method": "GET"
     },
-    "backend": [
-      {
-        "host":["http://validator:8000"],
-        "url_pattern": "/api/v1"
-      }
-    ]
-  },
-  {
-    "endpoint": "api/v1/patients",
-    "input_headers":[
+    {
+      "endpoint": "/api/v1/patients/{get1}/{get2}/",
+      "input_headers":[
         "*"
-    ],
-    "extra_config": {
-      "auth/patients": {
-        "alg": "RS256",
-        "jwk_url": "http://keycloak:8080/realms/hms/protocol/openid-connect/certs",
-        "disable_jwk_security": true
-      }
+      ],
+      "backend": [
+        {
+          "host":["http://patients:8001"],
+          "url_pattern": "/{get1}/{get2}",
+          "is_collection": true
+        }
+      ],
+      "method": "GET"
     },
-    "backend": [
-      {
-        "host":["http://patients:8001"],
-        "url_pattern": "/api/v1"
-      }
-    ]
-  },
-  {
-    "endpoint": "api/v1/resources",
-    "input_headers":[
+    {
+      "endpoint": "/api/v1/patients/{get1}/{get2}/{get3}/",
+      "input_headers":[
         "*"
-    ],
-    "extra_config": {
-      "auth/resources": {
-        "alg": "RS256",
-        "jwk_url": "http://keycloak:8080/realms/hms/protocol/openid-connect/certs",
-        "disable_jwk_security": true
-      }
+      ],
+      "backend": [
+        {
+          "host":["http://patients:8001"],
+          "url_pattern": "/{get1}/{get2}/{get3}",
+          "is_collection": true
+        }
+      ],
+      "method": "GET"
     },
-    "backend": [
-      {
-        "host":["http://resources:8002"],
-        "url_pattern": "/api/v1"
-      }
-    ]
-  },
-  {
-    "endpoint": "api/v1/documents",
-    "input_headers":[
+    {
+      "endpoint": "/api/v1/patients/{post1}/",
+      "input_headers":[
+          "*"
+      ],
+      "backend": [
+        {
+          "host":["http://patients:8001"],
+          "url_pattern": "/{post1}",
+          "is_collection": true
+        }
+      ],
+      "method": "POST"
+    },
+    {
+      "endpoint": "/api/v1/patients/{post1}/{post2}/",
+      "input_headers":[
         "*"
-    ],
-    "extra_config": {
-      "auth/resources": {
-        "alg": "RS256",
-        "jwk_url": "http://keycloak:8080/realms/hms/protocol/openid-connect/certs",
-        "disable_jwk_security": true
-      }
+      ],
+      "backend": [
+        {
+          "host":["http://patients:8001"],
+          "url_pattern": "/{post1}/{post2}",
+          "is_collection": true
+        }
+      ],
+      "method": "POST"
     },
-    "backend": [
-      {
-        "host":["http://documents:8003"],
-        "url_pattern": "/api/v1"
-      }
-    ]
-  },
-  {
-    "endpoint": "api/v1/pharmacy",
-    "input_headers":[
+    {
+      "endpoint": "/api/v1/patients/{post1}/{post2}/{post3}/",
+      "input_headers":[
         "*"
-    ],
-    "extra_config": {
-      "auth/resources": {
-        "alg": "RS256",
-        "jwk_url": "http://keycloak:8080/realms/hms/protocol/openid-connect/certs",
-        "disable_jwk_security": true
-      }
-    },
-    "backend": [
-      {
-        "host":["http://pharmacy:8004"],
-        "url_pattern": "/api/v1"
-      }
-    ]
-  }   
+      ],
+      "backend": [
+        {
+          "host":["http://patients:8001"],
+          "url_pattern": "/{post1}/{post2}/{post3}",
+          "is_collection": true
+        }
+      ],
+      "method": "POST"
+    }
   ]
 }

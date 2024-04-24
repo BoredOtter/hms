@@ -4,7 +4,6 @@ kind: Kustomization
 resources:
 - client.yaml
 - keycloak.yaml
-- validator.yaml
 - patients.yaml
 - patients-db.yaml
 - documents-db.yaml
