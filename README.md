@@ -12,7 +12,7 @@ The HMS aims to provide a comprehensive solution for managing various aspects of
 
 3. **Example Client App**: The client app is a frontend application built using JavaScript, which interacts with the backend services through the KrakenD API gateway. Currenly used as a testing client for the system concepts.
 
-4. **Validator - Example Python Service**: This is an example microservice written in Python, which demonstrates token introspection using Keycloak for authentication and authorization.
+# TODO
 
 5. **Kubernetes**: Kubernetes as a container orchestration platform is used to deploy and manage the services.
 

@@ -56,6 +56,7 @@ def get_patients_kc():
 
 
 @app.get("/getall/db", tags=["Patient"])
+#@token_validator
 def get_patients_db(db=Depends(get_db)):
     return db.query(patient_model).all()
 
@@ -72,7 +73,10 @@ def create_patient(patient: patient_request_schema, db=Depends(get_db)):
         keycloak_admin.create_user(
             {
                 "username": patient_username,
+                "lastName": patient.Last_name,
+                "firstName": patient.First_name,
                 "enabled": True,
+                "groups": ["patients"],
             },
             exist_ok=False,
         )

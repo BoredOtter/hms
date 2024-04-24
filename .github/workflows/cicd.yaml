@@ -14,8 +14,6 @@ jobs:
             context: client
           - image: hms-kraken
             context: kraken
-          - image: hms-validator
-            context: validator
           - image: hms-patients
             context: patients
           - image: hms-resources

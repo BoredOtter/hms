@@ -9,11 +9,7 @@ docker_build('client','client/',
         run('cd /app && npm install', trigger='./client/package.json')
     ]
 )
-docker_build('validator','validator/',
-    live_update=[
-        sync('./validator/', '/app')
-    ]
-)
+
 docker_build('patients','patients/',
     live_update=[
         sync('./patients/', '/app')
@@ -39,7 +35,6 @@ docker_build('pharmacy','pharmacy/',
 docker_build('kraken','kraken/')
 
 k8s_resource('client')
-k8s_resource('validator')
 k8s_resource('patients')
 k8s_resource('resources')
 k8s_resource('kraken')  

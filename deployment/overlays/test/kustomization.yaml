@@ -12,9 +12,6 @@ images:
   - name: kraken
     newName: ksw2137/hms-kraken
     newTag: __TAG__
-  - name: validator
-    newName: ksw2137/hms-validator
-    newTag: __TAG__
   - name: patients
     newName: ksw2137/hms-patients
     newTag: __TAG__
@@ -53,10 +50,6 @@ secretGenerator:
   literals:
   - KC_CLIENT_ID="admin-cli"
   - KC_CLIENT_SECRET="eryk-sie-obrazi-jak-wpisze-tu-cos-smiesznego"
-- name: validator
-  literals:
-  - KC_CLIENT_ID="python"
-  - KC_CLIENT_SECRET="olszak-sie-obrazi-jak-wpisze-tu-cos-smiesznego"
 
 - name: postgres-credentials-keycloak
   literals:

@@ -1,9 +1,17 @@
-import React, { useState } from 'react';
-import patients from '../../patients.json';
+import React, { useState, useEffect } from 'react';
+// import patients from '../../patients.json';
 import ObjectsListing from '../components/listing/ObjectsListing';
 import SearchBar from '../components/SearchBar';
 
 const PatientsPage = () => {
+  const [patients, setPatients] = useState([]);
+
+  useEffect(() => {
+    fetch('https://hms.test/api/v1/patients/getall/db')
+      .then(response => response.json())
+      .then(data => setPatients(data.collection));
+  }, []);
+
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredPatients = patients.filter(patient => {
