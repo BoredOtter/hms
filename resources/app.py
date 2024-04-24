@@ -4,6 +4,7 @@ from os import environ
 from database import get_db
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from keycloak.exceptions import KeycloakPostError
 from models import BedReservation as bed_reservation_model
 from models import Department as department_model
 from models import Employee as employee_model
@@ -16,6 +17,7 @@ from models import Room as room_model
 from models import SurgicalPlan as surgical_plan_model
 from schemas import CreateBedReservation as create_bed_reservation_schema
 from schemas import CreateDepartment as create_department_schema
+from schemas import CreateEmployee as create_employee_schema
 from schemas import CreateEmployeeSchedule as create_employee_schedule_schema
 from schemas import CreateMaterialResource as create_material_resource_schema
 from schemas import CreateMedicalProcedure as create_medical_procedure_schema
@@ -201,7 +203,7 @@ def get_room_by_id(room_id: int, db=Depends(get_db)):
     return room
 
 
-@app.get("/get/room/department/{department_id}", tags=["Room"])
+@app.get("/get/rooms/department/{department_id}", tags=["Room"])
 def get_room_by_department(department_id: int, db=Depends(get_db)):
     rooms = db.query(room_model).filter(room_model.ID_department == department_id).all()
     if not rooms:
@@ -299,13 +301,20 @@ def create_bed_reservation(
     )
     for existing_bed_reservation in existing_bed_reservations:
         if (
-            existing_bed_reservation.Start_date
-            <= bed_reservation.Start_date
-            <= existing_bed_reservation.End_date
-        ) or (
-            existing_bed_reservation.Start_date
-            <= bed_reservation.End_date
-            <= existing_bed_reservation.End_date
+            (
+                existing_bed_reservation.Start_date
+                <= bed_reservation.Start_date
+                <= existing_bed_reservation.End_date
+            )
+            or (
+                existing_bed_reservation.Start_date
+                <= bed_reservation.End_date
+                <= existing_bed_reservation.End_date
+            )
+            or (
+                bed_reservation.Start_date <= existing_bed_reservation.Start_date
+                and bed_reservation.End_date >= existing_bed_reservation.End_date
+            )
         ):
             raise HTTPException(
                 status_code=400,
@@ -417,6 +426,8 @@ def update_bed_reservation_time(
         .all()
     )
     for existing_bed_reservation in existing_bed_reservations:
+        if existing_bed_reservation.ID_reservation == reservation_id:
+            continue  # skip the current reservation, to make sure it doesn't conflict with itself
         if (
             existing_bed_reservation.Start_date
             <= bed_reservation.Start_date
@@ -461,6 +472,12 @@ def update_bed_reservation_time(
     if len(bed_reservations) >= room.Number_of_beds:
         raise HTTPException(status_code=400, detail="Room is full")
 
+    if (
+        bed_reservation.Start_date == existing_bed_reservation.Start_date
+        and bed_reservation.End_date == existing_bed_reservation.End_date
+    ):
+        raise HTTPException(status_code=400, detail="No change in bed reservation.")
+
     try:
         db.query(bed_reservation_model).filter(
             bed_reservation_model.ID_reservation == reservation_id
@@ -470,6 +487,8 @@ def update_bed_reservation_time(
         raise HTTPException(
             status_code=400, detail="Error while updating bed reservation."
         )
+
+    return {"message": "Bed reservation updated successfully."}
 
 
 @app.delete("/delete/bed_reservation/{patient_id}", tags=["Bed Reservation"])
@@ -492,6 +511,49 @@ def delete_bed_reservation(patient_id: str, db=Depends(get_db)):
 
 
 # ======================== Employee Management ========================
+@app.post("/create/employee", tags=["Employee"])
+def create_employee(employee: create_employee_schema, db=Depends(get_db)):
+    employee = employee_model(**employee.model_dump())
+
+    # check if department exists
+    department = (
+        db.query(department_model)
+        .filter(department_model.ID_department == employee.Department_id)
+        .first()
+    )
+    if department is None:
+        raise HTTPException(status_code=404, detail="Department not found")
+
+    if employee.Position not in ["Doctor", "Nurse", "Receptionist"]:
+        raise HTTPException(status_code=400, detail="Invalid position")
+
+    try:
+        keycloak_admin.create_user(
+            {
+                "username": employee.First_name
+                + "-"
+                + employee.Last_name
+                + "-"
+                + employee.PESEL,
+                "enabled": True,
+                "groups": [employee.Position.lower()],
+            },
+            exist_ok=False,
+        )
+    except KeycloakPostError as e:
+        logger.error("Error creating patient in keycloak: %s", e)
+        raise HTTPException(
+            status_code=409, detail="Error creating patient in keycloak"
+        )
+
+    try:
+        db.add(employee)
+        db.commit()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Error while adding employee.")
+    return {"message": "Employee added successfully."}
+
+
 @app.get("/get/employee/all", tags=["Employee"])
 def get_employees(db=Depends(get_db)):
     employees = db.query(employee_model).all()
@@ -676,15 +738,28 @@ def update_medical_procedure(
     )
     if existing_medical_procedure is None:
         raise HTTPException(status_code=404, detail="Medical procedure not found")
-    try:
-        db.query(medical_procedure_model).filter(
-            medical_procedure_model.ID_procedure == procedure_id
-        ).update(medical_procedure.model_dump())
-        db.commit()
-    except Exception:
-        raise HTTPException(
-            status_code=400, detail="Error while updating medical procedure."
-        )
+
+    updated_fields = {}
+    if medical_procedure.Procedure_name is not None:
+        updated_fields["Procedure_name"] = medical_procedure.Procedure_name
+    if medical_procedure.Description is not None:
+        updated_fields["Description"] = medical_procedure.Description
+    if medical_procedure.Costs is not None:
+        updated_fields["Costs"] = medical_procedure.Costs
+
+    if updated_fields:
+        try:
+            db.query(medical_procedure_model).filter(
+                medical_procedure_model.ID_procedure == procedure_id
+            ).update(updated_fields)
+            db.commit()
+        except Exception:
+            raise HTTPException(
+                status_code=400, detail="Error while updating medical procedure."
+            )
+    else:
+        raise HTTPException(status_code=400, detail="No fields to update")
+
     return {"message": "Medical procedure updated successfully."}
 
 
@@ -737,14 +812,18 @@ def create_surgical_plan(
 
     medical_personnel_list = medical_personnel_string.split(" ")
 
-    users = keycloak_admin.get_users()
-    users_id_list = []
-    for user in users:
-        users_id_list.append(user["id"])
+    for group in keycloak_admin.get_groups():
+        if group.get("name") == "doctor":
+            keycloak_group_id = group.get("id")
+            break
 
-    for medical_personnel in medical_personnel_list:
-        if medical_personnel not in users_id_list:
-            raise HTTPException(status_code=404, detail="Medical personnel not found")
+    doctors = keycloak_admin.get_group_members(keycloak_group_id)
+    medical_personnel_string = ""
+    for doctor in doctors:
+        if doctor.get("id") in medical_personnel_list:
+            medical_personnel_string += doctor.get("id") + " "
+        else:
+            raise HTTPException(status_code=404, detail="Doctor not found")
 
     surgical_plan.Medical_personnel_list = medical_personnel_string
 
@@ -1096,9 +1175,20 @@ def create_operating_room_reservation(
     )
     for reservation in operating_room_reservations:
         if (
-            reservation.Start_time
-            <= operating_room_reservation.Start_time
-            <= reservation.End_time
+            (
+                reservation.Start_time
+                <= operating_room_reservation.Start_time
+                <= reservation.End_time
+            )
+            or (
+                reservation.Start_time
+                <= operating_room_reservation.End_time
+                <= reservation.End_time
+            )
+            or (
+                operating_room_reservation.Start_time <= reservation.Start_time
+                and operating_room_reservation.End_time >= reservation.End_time
+            )
         ):
             raise HTTPException(
                 status_code=400, detail="Operating room is reserved for this period"

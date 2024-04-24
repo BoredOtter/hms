@@ -45,6 +45,7 @@ keycloak_connection = KeycloakOpenIDConnection(
     verify=False,
 )
 
+
 keycloak_admin = KeycloakAdmin(connection=keycloak_connection)
 
 # ======================== Patient Management ========================
@@ -73,6 +74,7 @@ def create_patient(patient: patient_request_schema, db=Depends(get_db)):
             {
                 "username": patient_username,
                 "enabled": True,
+                "groups": ["patient"],
             },
             exist_ok=False,
         )

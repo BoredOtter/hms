@@ -82,6 +82,7 @@ data:
 
     CREATE TABLE "Employees" (
       "ID_employee" serial PRIMARY KEY,
+      "PESEL" varchar,
       "First_name" varchar,
       "Last_name" varchar,
       "Employment_date" date,
@@ -101,8 +102,7 @@ data:
       "ID_procedure" serial PRIMARY KEY,
       "Procedure_name" varchar,
       "Description" varchar,
-      "Costs" varchar,
-      "Related_department" int
+      "Costs" varchar
     );
 
     CREATE TABLE "Surgical_Plans" (
