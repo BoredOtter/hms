@@ -8,16 +8,16 @@ from models import Medication, Prescription, PrescriptionMedication
 from schemas import CreateMedication as create_medication_schema
 from schemas import CreatePrescription as create_prescription_schema
 from schemas import UpdateMedication as update_medication_schema
-from schemas import \
-    UpdatePrescriptionMedicationList as \
-    update_prescription_medication_list_schema
+from schemas import (
+    UpdatePrescriptionMedicationList as update_prescription_medication_list_schema,
+)
 from utils import token_validator
 
 from keycloak import KeycloakAdmin, KeycloakOpenIDConnection
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-app = FastAPI()
+app = FastAPI(dependencies=[Depends(token_validator)])
 
 app.add_middleware(
     CORSMiddleware,

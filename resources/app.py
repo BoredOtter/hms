@@ -20,18 +20,19 @@ from schemas import CreateEmployeeSchedule as create_employee_schedule_schema
 from schemas import CreateMaterialResource as create_material_resource_schema
 from schemas import CreateMedicalProcedure as create_medical_procedure_schema
 from schemas import CreateOperatingRoom as create_operating_room_schema
-from schemas import \
-    CreateOperatingRoomReservation as create_operating_room_reservation_schema
+from schemas import (
+    CreateOperatingRoomReservation as create_operating_room_reservation_schema,
+)
 from schemas import CreateRoom as create_room_schema
 from schemas import CreateSurgicalPlan as create_surgical_plan_schema
 from schemas import UpdateBedInRoom as update_bed_number_room_schema
-from schemas import \
-    UpdateBedReservationTime as update_bed_reservation_time_schema
+from schemas import UpdateBedReservationTime as update_bed_reservation_time_schema
 from schemas import UpdateEmployeeSchedule as update_employee_schedule_schema
 from schemas import UpdateMaterialResource as update_material_resource_schema
 from schemas import UpdateMedicalProcedure as update_medical_procedure_schema
-from schemas import \
-    UpdateOperatingRoomReservation as update_operating_room_reservation_schema
+from schemas import (
+    UpdateOperatingRoomReservation as update_operating_room_reservation_schema,
+)
 from schemas import UpdateSurgicalPlan as update_surgical_plan_schema
 from sqlalchemy import and_, or_
 from utils import token_validator
@@ -40,7 +41,7 @@ from keycloak import KeycloakAdmin, KeycloakOpenIDConnection
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-app = FastAPI()
+app = FastAPI(dependencies=[Depends(token_validator)])
 
 app.add_middleware(
     CORSMiddleware,

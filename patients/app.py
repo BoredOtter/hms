@@ -18,7 +18,7 @@ from keycloak import KeycloakAdmin, KeycloakOpenIDConnection
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-app = FastAPI()
+app = FastAPI(dependencies=[Depends(token_validator)])
 
 app.add_middleware(
     CORSMiddleware,
@@ -56,7 +56,6 @@ def get_patients_kc():
 
 
 @app.get("/getall/db", tags=["Patient"])
-#@token_validator
 def get_patients_db(db=Depends(get_db)):
     return db.query(patient_model).all()
 

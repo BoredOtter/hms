@@ -2,7 +2,7 @@ import datetime
 import logging
 from os import environ, fstat
 
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import Depends, FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from minio import Minio
@@ -11,7 +11,7 @@ from utils import token_validator
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-app = FastAPI()
+app = FastAPI(dependencies=[Depends(token_validator)])
 
 
 app.add_middleware(
