@@ -526,7 +526,7 @@ def create_employee(employee: create_employee_schema, db=Depends(get_db)):
     if department is None:
         raise HTTPException(status_code=404, detail="Department not found")
 
-    if employee.Position not in ["Doctor", "Nurse", "Receptionist"]:
+    if employee.Position not in ["doctor", "nurse", "receptionist"]:
         raise HTTPException(status_code=400, detail="Invalid position")
 
     try:
@@ -538,7 +538,9 @@ def create_employee(employee: create_employee_schema, db=Depends(get_db)):
                 + "-"
                 + employee.PESEL,
                 "enabled": True,
-                "groups": [employee.Position.lower()],
+                "groups": [employee.Position.lower() + "s"],
+                "firstName": employee.First_name,
+                "lastName": employee.Last_name,
             },
             exist_ok=False,
         )

@@ -203,7 +203,7 @@
         { "type" : "password",
           "value" : "alice" }
       ],
-      "realmRoles": [ "user", "offline_access"  ],
+      "realmRoles": [ "patient", "offline_access"  ],
       "clientRoles": {
         "account": [ "manage-account" ]
       }
@@ -219,7 +219,7 @@
         { "type" : "password",
           "value" : "admin" }
       ],
-      "realmRoles": [ "user","admin" ],
+      "realmRoles": [ "admin" ],
       "clientRoles": {
         "realm-management": [ "realm-admin" ],
         "account": [ "manage-account" ]
@@ -233,13 +233,21 @@
         "description": "Doctor privileges"
       },
       {
-        "name": "user",
-        "description": "User privileges"
+        "name": "patient",
+        "description": "Patient privileges"
       },
       {
         "name": "admin",
         "description": "Administrator privileges"
-      }
+      },
+      {
+        "name": "nurse",
+        "description": "Nurse privileges"
+      },
+      {
+        "name": "receptionist",
+        "description": "Receptionist privileges"
+      } 
     ]
   },
   "groups": [
@@ -249,7 +257,9 @@
       "path": "/admins",
       "subGroups": [],
       "attributes": {},
-      "realmRoles": [],
+      "realmRoles": [
+        "admin"
+      ],
       "clientRoles": {}
     },
     {
@@ -258,7 +268,9 @@
       "path": "/doctors",
       "subGroups": [],
       "attributes": {},
-      "realmRoles": [],
+      "realmRoles": [
+        "doctor"
+      ],
       "clientRoles": {}
     },
     {
@@ -267,7 +279,9 @@
       "path": "/nurses",
       "subGroups": [],
       "attributes": {},
-      "realmRoles": [],
+      "realmRoles": [
+        "nurse"
+      ],
       "clientRoles": {}
     },
     {
@@ -276,7 +290,9 @@
       "path": "/patients",
       "subGroups": [],
       "attributes": {},
-      "realmRoles": [],
+      "realmRoles": [
+        "patient"
+      ],
       "clientRoles": {}
     },
     {
@@ -285,7 +301,9 @@
       "path": "/receptionists",
       "subGroups": [],
       "attributes": {},
-      "realmRoles": [],
+      "realmRoles": [
+        "receptionist"
+      ],
       "clientRoles": {}
     }
   ]
