@@ -103,6 +103,26 @@
       ]
     },
     {
+      "endpoint": "/api/v1/patients/{patch1}/{patch2}/",
+      "input_headers": [
+        "*"
+      ],
+      "method": "PATCH",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/{patch1}/{patch2}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "PATCH",
+          "host": [
+            "http://patients:8001"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
       "endpoint": "/api/v1/patients/{post1}/{post2}/{post3}/",
       "input_headers": [
         "*"
