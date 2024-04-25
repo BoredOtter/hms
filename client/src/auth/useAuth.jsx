@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import keycloak from './keycloak';
-// import httpClient from '../client/httpClient';
+import httpPatients from '../client/httpPatients';
 
 const useAuth = () => {
     const isRun = useRef(false);
@@ -27,7 +27,8 @@ const useAuth = () => {
                 if(tokenPayload && tokenPayload.realm_access && tokenPayload.realm_access.roles){
                     setRoles(tokenPayload.realm_access.roles);
                 }
-                // httpClient.defaults.headers.common['Authorization'] = `Bearer ${keycloak.token}`;
+                httpPatients.defaults.headers.common['token'] = `Bearer ${keycloak.token}`;
+                console.log(keycloak.token)
             });
     }, []);
 

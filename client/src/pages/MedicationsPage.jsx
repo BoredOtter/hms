@@ -10,6 +10,7 @@ const MedicationsPage = () => {
 
     const [searchTerm, setSearchTerm] = useState('');
     const [searchById, setSearchById] = useState(false); 
+    const [loading, setLoading] = useState(true);
     const [createMedication, setCreateMedication] = useState(false);
 
     const handleToggleSearch = () => {
@@ -30,15 +31,14 @@ const MedicationsPage = () => {
 
 
     <div className="container mx-auto px-4 py-8 text-center space-y-10">
-        
-        <div className='grid grid-cols-3 gap-10'>
         <button onClick={handleCreateMedication} className={bodyButton}> Add Medication</button>
-        <SearchBar searchTerm={searchTerm} onSearch={setSearchTerm} />
-        <button onClick={handleToggleSearch} className={`${bodyButton} `}>Searching by {searchById ? 'ID' : 'Name'}</button>
-        </div>
         {
           createMedication && (<MedicationCreation/>)
         }
+        <div className='grid grid-cols-2 gap-10'>
+          <SearchBar searchTerm={searchTerm} onSearch={setSearchTerm} />
+          <button onClick={handleToggleSearch} className={`${bodyButton} `}>Searching by {searchById ? 'ID' : 'Name'}</button>
+        </div>
         <ObjectsListing
             objectsData={filteredMedications}
             objectsTitle={"Medications"}

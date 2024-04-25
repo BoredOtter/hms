@@ -11,6 +11,7 @@ import PatientsPage from './pages/PatientsPage';
 import PatientPage from './pages/PatientPage';
 import useAuth from './auth/useAuth';
 
+
 import {
   Route,
   createBrowserRouter,

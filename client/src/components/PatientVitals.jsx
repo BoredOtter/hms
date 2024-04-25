@@ -1,15 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ObjectsListing from './listing/ObjectsListing';
 import ObjectDetails from './utils/ObjectDetails';
 import bodyButton from './utils/bodyButton';
-import vital_signs from '../../vital_signs.json';
-import Patient from './Patient';
-
-const PatientVitals = () => {
+import WarningInfo from '../pages/WarningInfo';
+import httpPatients from '../client/httpPatients';
+const PatientVitals = ({patient_id}) => {
 
   const inputStyle = "w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 px-4 py-2";
   const labelStyle = "block font-semibold text-gray-700 mb-1";
-  const vitals = vital_signs || [];
+  const [vitals, setVitals] = useState([])
+  const [prevSumbitted, setPrevSumbitted] = useState(false);
+
+    useEffect(() => { 
+        const fetchVitals = async () => {
+            try {
+              const response = await httpPatients.get(`/get_vitals/${patient_id}`,{params : {all_vitals: true}});
+              setVitals(response.data);
+            } catch (error) {
+                <WarningInfo info={"Failed to fetch patient vitals"}/>
+            }
+        };
+
+        fetchVitals();
+        return () => {
+        };
+    }, [prevSumbitted]);
 
 
   const [newVital, setNewVital] = useState({
@@ -27,28 +42,39 @@ const PatientVitals = () => {
     setNewVital({ ...newVital, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const currentDate = new Date().toISOString().split('T')[0];
-    const currentTime = new Date().toTimeString().split(' ')[0];
-    const currentDateTime = `${currentDate} ${currentTime}`;
+
+    for (const key in newVital) {
+      if (!newVital[key]) {
+          alert("Please fill in all fields before submitting.");
+          return;
+      }
+    }
 
     const newVitalWithDateTime = {
-      ...newVital,
-      Date_and_time_of_measurement: currentDateTime
+        ...newVital,
+        Date_and_time_of_measurement: currentDate
     };
-    // Here you can implement logic to add the new vital to the vitals list
-    // For example, make an API call to add the new vital data
-    console.log('New Vital:', newVital);
-    setNewVital({
-      Date_and_time_of_measurement: newVitalWithDateTime,
-      Blood_pressure: '',
-      Pulse: '',
-      Body_temperature: '',
-      Blood_sugar_level: '',
-      Other_medical_parameters: ''
-    });
+
+    try {
+        const response = await httpPatients.post(`/add_vitals/${patient_id}`, newVitalWithDateTime);
+        setPrevSumbitted(!prevSumbitted);
+        setSubmitted(true);
+        setNewVital({
+            Date_and_time_of_measurement: '',
+            Blood_pressure: '',
+            Pulse: '',
+            Body_temperature: '',
+            Blood_sugar_level: '',
+            Other_medical_parameters: ''
+        });
+    } catch (error) {
+        console.error('Error adding new vital:', error);
+    }
   };
+
 
   return (
     <>
@@ -114,7 +140,7 @@ const PatientVitals = () => {
             <button type="submit" className={bodyButton}>Save</button>
           </form>
       </ObjectDetails>
-      <ObjectsListing objectsData={vitals} objectsTitle={"Vitals History"} key={"examination_id"}/>
+      <ObjectsListing objectsData={vitals} objectsTitle={"Vitals History"} objectKey={"ID_measurement"}/>
     </>
   );
 };
