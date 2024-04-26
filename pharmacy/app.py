@@ -109,7 +109,7 @@ def update_medication(
     if medication.Medication_name:
         updated_fields["Medication_name"] = medication.Medication_name
     if medication.Form:
-        updated_fields["Form"] = medication.Fosage
+        updated_fields["Form"] = medication.Form
     if medication.Active_substance:
         updated_fields["Active_substance"] = medication.Active_substance
     if medication.Manufacturer:
