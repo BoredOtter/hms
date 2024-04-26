@@ -2,7 +2,7 @@ import React from 'react'
 import { useParams } from 'react-router-dom'
 
 const EmployeeSchedule = () => {
-    const id = useParams();
+    const {id} = useParams();
   return (
    console.log(id)
   )

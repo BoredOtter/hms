@@ -1,15 +1,15 @@
 import axios from 'axios';
 import keycloak from '../auth/keycloak';
 
-const httpPharmacy = axios.create({
-  baseURL: 'https://hms.test/api/v1/pharmacy',
+const httpResources = axios.create({
+  baseURL: 'https://hms.test/api/v1/resources',
   timeout: 5000,
   headers: {
     'Accept': 'application/json',
   }
 });
 
-httpPharmacy.interceptors.request.use(
+httpResources.interceptors.request.use(
   async (config) => {
     if (keycloak.isTokenExpired()) {
       try {
@@ -29,4 +29,4 @@ httpPharmacy.interceptors.request.use(
   }
 );
 
-export default httpPharmacy;
+export default httpResources;

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import prescriptions from '../../prescriptions.json';
 import bodyButton from './utils/bodyButton';
 import ObjectDetails from './utils/ObjectDetails';
 import formInput from './utils/formInput';

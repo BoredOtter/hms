@@ -1,27 +1,109 @@
-import React from 'react'
-import medications from '../../medications.json'
-import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import MedicationInfo from '../components/MedicationInfo';
-
+import React, { useState, useEffect } from 'react';
+import { useParams, NavLink } from 'react-router-dom';
+import httpPharmacy from '../client/httpPharmacy';
+import WarningInfo from './WarningInfo';
+import ObjectDetails from '../components/utils/ObjectDetails';
+import bodyButton from '../components/utils/bodyButton'; // Assuming bodyButton is imported from a file
 
 const MedicationPage = () => {
-  const {id} = useParams();
+  const { id } = useParams();
   const [medication, setMedication] = useState(null);
+  const [editedMedication, setEditedMedication] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const foundMedication = medications.find(medication => medication.ID_medication === parseInt(id));
-    if (foundMedication) {
-        setMedication(foundMedication);
+    const fetchMedications = async () => {
+      try {
+        const response = await httpPharmacy.get(`get/medicationID/${id}`);
+        const foundMedications = response.data;
+        if (foundMedications) {
+          setMedication(foundMedications);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Failed to fetch medications:", error);
         setLoading(false);
+      }
+    };
+
+    fetchMedications();
+  }, [id]); // Add id to the dependency array
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setEditedMedication((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handleSaveChanges = async () => {
+    try {
+      const updatedFields = {};
+      for (const key in editedMedication) {
+        if (editedMedication[key] !== medication[key]) {
+          updatedFields[key] = editedMedication[key];
+        }
+      }
+      await httpPharmacy.patch(`update/medication/${editedMedication.ID_medication}`, updatedFields);
+
+      // Clear the updated fields but keep other fields intact
+      for (const key in updatedFields) {
+        medication[key] = editedMedication[key];
+      }
+
+      setEditedMedication(null);
+      alert("Updated successfully!");
+    } catch (error) {
+      console.error("Error saving changes:", error);
     }
-  }, [id]);
+  };
+
+  const handleCancelEdit = () => {
+    setEditedMedication(null);
+  };
 
   return (
-    !loading ? <MedicationInfo medication={medication}></MedicationInfo>
-    : null
+    !loading ? (
+      <div className='flex justify-center'>
+      <ObjectDetails title={"Medication Information"}>
+        <div className="pt-5">
+          {Object.entries(medication).map(([key, value]) => (
+            (key !== "ID_medication") && (
+              <div key={key} className="text-l flex mb-2">
+                <p className="font-bold mr-2">{key}:</p>
+                {editedMedication && editedMedication['ID_medication'] === medication['ID_medication'] ? (
+                  <input
+                    type="text"
+                    name={key}
+                    value={editedMedication[key]}
+                    onChange={handleChange}
+                    className="border-b border-gray-400 focus:outline-none focus:border-indigo-500 flex-grow"
+                  />
+                ) : (
+                  <p>{typeof value === 'object' ? JSON.stringify(value) : value}</p>
+                )}
+              </div>
+            )
+          ))}
+          <div className="mt-2 md:mt-0 space-x-2 space-y-2">
+            {editedMedication && editedMedication['ID_medication'] === medication['ID_medication'] ? (
+              <>
+                <button className={bodyButton} onClick={handleSaveChanges}>Save Changes</button>
+                <button className={bodyButton} onClick={handleCancelEdit}>Cancel</button>
+              </>
+            ) : (
+              <>
+                <button className={bodyButton} onClick={() => setEditedMedication(medication)}>Update</button>
+                <NavLink className={`${bodyButton} pt-3`} to={'/medications'}>Back</NavLink>
+              </>
+            )}
+          </div>
+        </div>
+      </ObjectDetails>
+      </div>
+    ) : <WarningInfo loading={true} />
   );
 }
 
-export default MedicationPage
+export default MedicationPage;

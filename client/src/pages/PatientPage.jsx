@@ -1,5 +1,4 @@
 import React from 'react'
-import patients from '../../patients.json'
 import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Patient from '../components/Patient';
