@@ -94,16 +94,6 @@ def get_department_by_id(department_id: int, db=Depends(get_db)):
 
     # Retrieve rooms for the department
     rooms = db.query(room_model).filter(room_model.ID_department == department_id).all()
-
-    # Retrieve bed reservations for each room
-    for room in rooms:
-        room.bed_reservations = (
-            db.query(bed_reservation_model)
-            .filter(bed_reservation_model.ID_room == room.ID_room)
-            .all()
-        )
-
-    department.rooms = rooms
     return department
 
 
