@@ -198,46 +198,66 @@ def add_prescription(prescription: create_prescription_schema, db=Depends(get_db
     return {"message": "Prescription added successfully"}
 
 
+# @app.get("/get/prescriptions/{patient_id}", tags=["Prescription"])
+# def get_prescriptions(patient_id: str, db=Depends(get_db)):
+#     prescriptions = db.query(Prescription).filter(Prescription.ID_patient == patient_id)
+#     return prescriptions
+
+
 @app.get("/get/prescriptions/{patient_id}", tags=["Prescription"])
 def get_prescriptions(patient_id: str, db=Depends(get_db)):
-    prescriptions = db.query(Prescription).filter(Prescription.ID_patient == patient_id)
-    return prescriptions
-
-
-@app.get("/get/prescriptions/{patient_id}/{prescription_id}", tags=["Prescription"])
-def get_prescription(patient_id: str, prescription_id: int, db=Depends(get_db)):
-    # get the prescription for the patient
-    prescription = (
+    # get all prescriptions for the patient
+    prescriptions = (
         db.query(Prescription)
         .filter(Prescription.ID_patient == patient_id)
-        .filter(Prescription.ID_prescription == prescription_id)
-        .first()
-    )
-
-    # get the medications for the prescription
-    prescription_medications = (
-        db.query(PrescriptionMedication)
-        .filter(PrescriptionMedication.ID_prescription == prescription_id)
         .all()
     )
 
-    # get medication details
-    medications = []
-    for prescription_medication in prescription_medications:
-        medication = (
-            db.query(Medication)
-            .filter(Medication.ID_medication == prescription_medication.ID_medication)
-            .first()
+    if not prescriptions:
+        raise HTTPException(status_code=404, detail="No prescriptions found for this patient")
+
+    response = []
+    # iterate through each prescription to get medication details
+    for prescription in prescriptions:
+        prescription_dict = {
+            "ID_patient": prescription.ID_patient,
+            "ID_doctor": prescription.ID_doctor,
+            "Prescription_date": prescription.Prescription_date,
+            "ID_prescription": prescription.ID_prescription,
+            "prescription_medications": []
+        }
+
+        prescription_medications = (
+            db.query(PrescriptionMedication)
+            .filter(PrescriptionMedication.ID_prescription == prescription.ID_prescription)
+            .all()
         )
-        medications.append(medication)
 
-        prescription_medication.medication = medication
-    prescription.prescription_medications = prescription_medications
+        for prescription_medication in prescription_medications:
+            medication = (
+                db.query(Medication)
+                .filter(Medication.ID_medication == prescription_medication.ID_medication)
+                .first()
+            )
 
-    if not prescription:
-        raise HTTPException(status_code=404, detail="Prescription not found")
+            medication_dict = {
+                "ID_medication": medication.ID_medication,
+                "Quantity": prescription_medication.Quantity,
+                "Dosage": prescription_medication.Dosage,
+                "medication": {
+                    "Active_substance": medication.Active_substance,
+                    "Manufacturer": medication.Manufacturer,
+                    "Form": medication.Form,
+                    "Medication_name": medication.Medication_name,
+                }
+            }
 
-    return prescription
+            prescription_dict["prescription_medications"].append(medication_dict)
+
+        response.append(prescription_dict)
+
+    return response
+
 
 
 # ================== Prescription Medication ==================
