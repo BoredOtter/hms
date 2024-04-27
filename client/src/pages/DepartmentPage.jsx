@@ -66,9 +66,8 @@ const DepartmentPage = () => {
       <>
       <RoomsCreation ID_department={department.ID_department}/>
       <ResourceCreation ID_department={department.ID_department}/>
-      <div className=''>
-        <ObjectDetails title={"Department Details"}>
-          <ObjectSlicer object={department}/>
+      <ObjectDetails title={"Department Details"}>
+        <ObjectSlicer object={department}/>
           <div className='grid grid-cols-2 gap-2'>
             <button className={bodyButton} onClick={handleShowRooms}>Rooms</button>
             <button className={bodyButton} onClick={handleShowResources}>Resources</button>
@@ -83,7 +82,6 @@ const DepartmentPage = () => {
         </ObjectDetails>
         { showResources && <div className='justify-center'><DepartmentResources ID_department={department.ID_department}/> </div>}
         { showRooms && <DepartmentRooms ID_department={department.ID_department}/> }
-      </div>
       </>
     )
   );

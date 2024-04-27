@@ -68,7 +68,6 @@ const DepartmentResources = ({ ID_department }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {resources.map((resource, index) => (
             <div key={index} className="bg-sky-100 rounded-xl p-3.5 hover:bg-sky shadow-md hover:shadow-lg relative mb-10">
-              <div className="flex flex-col md:flex-row md:space-x-6">
                 <div className="md:flex-1">
                 {Object.entries(resource).map(([key, value]) => (
                     (key !== "ID_resource" && key !== "Department_id") && (
@@ -77,7 +76,7 @@ const DepartmentResources = ({ ID_department }) => {
                                 <p className="font-bold mr-2">{key}:</p>
                             </div>
                             {editedResource && editedResource['ID_resource'] === resource['ID_resource'] ? (
-                                <input 
+                                <input
                                     type="text" 
                                     name={key} 
                                     value={editedResource[key]} 
@@ -102,7 +101,6 @@ const DepartmentResources = ({ ID_department }) => {
                   )}
                 </div>
               </div>
-            </div>
           ))}
           </div>
         </div>

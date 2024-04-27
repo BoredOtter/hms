@@ -34,7 +34,6 @@ const RoomsCreation = ({ID_department}) => {
     } 
 
     return (
-        
             <ObjectDetails title={"Add new room"}>
                 <div className='space-y-3'>
                 <input
