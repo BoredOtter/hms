@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, NavLink } from 'react-router-dom';
 import httpPharmacy from '../client/httpPharmacy';
 import WarningInfo from './WarningInfo';
+import formInput from '../components/utils/formInput';
 import ObjectDetails from '../components/utils/ObjectDetails';
 import bodyButton from '../components/utils/bodyButton'; // Assuming bodyButton is imported from a file
 
@@ -29,13 +30,22 @@ const MedicationPage = () => {
     fetchMedications();
   }, [id]); // Add id to the dependency array
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setEditedMedication((prevState) => ({
-      ...prevState,
-      [name]: value,
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    let parsedValue = value;
+
+    // Check if the field being updated is "Price"
+    if (name === 'Price') {
+        // Ensure the input value is a valid number or empty string
+        const match = value.match(/^(-?\d*\.?\d{0,2}).*$/);
+        parsedValue = match ? match[1] : '';
+    }
+
+    setEditedMedication(prevState => ({
+        ...prevState,
+        [name]: parsedValue
     }));
-  };
+};
 
   const handleSaveChanges = async () => {
     try {
@@ -67,21 +77,20 @@ const MedicationPage = () => {
     !loading ? (
       <div className='flex justify-center'>
       <ObjectDetails title={"Medication Information"}>
-        <div className="pt-5">
           {Object.entries(medication).map(([key, value]) => (
             (key !== "ID_medication") && (
-              <div key={key} className="text-l flex mb-2">
-                <p className="font-bold mr-2">{key}:</p>
+              <div key={key} className="grid grid-cols-2 text-center my-2">
+                <p className="font-bold mr-2 flex items-center justify-start">{key}:</p> {/* Apply justify-start to align text to the left */}
                 {editedMedication && editedMedication['ID_medication'] === medication['ID_medication'] ? (
                   <input
                     type="text"
                     name={key}
                     value={editedMedication[key]}
                     onChange={handleChange}
-                    className="border-b border-gray-400 focus:outline-none focus:border-indigo-500 flex-grow"
+                    className={`${formInput} flex items-center justify-center`} // Keep input centered
                   />
                 ) : (
-                  <p>{typeof value === 'object' ? JSON.stringify(value) : value}</p>
+                  <p className="flex items-center justify-start">{typeof value === 'object' ? JSON.stringify(value) : value}</p>
                 )}
               </div>
             )
@@ -99,7 +108,6 @@ const MedicationPage = () => {
               </>
             )}
           </div>
-        </div>
       </ObjectDetails>
       </div>
     ) : <WarningInfo loading={true} />

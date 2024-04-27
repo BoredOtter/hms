@@ -3,7 +3,7 @@ import { useState } from 'react';
 import SearchBar from '../components/SearchBar';
 import ObjectsListing from '../components/listing/ObjectsListing';
 import bodyButton from '../components/utils/bodyButton';
-import MedicationCreation from '../components/MedicationCreation';
+import MedicationCreation from '../components/creators/MedicationCreation';
 import httpPharmacy from '../client/httpPharmacy';
 import { useEffect } from 'react';
 import WarningInfo from './WarningInfo';
@@ -14,6 +14,11 @@ const MedicationsPage = () => {
     const [searchById, setSearchById] = useState(false); 
     const [loading, setLoading] = useState(true);
     const [medications, setMedications] = useState([]);
+    const [refreshing, setRefreshing] = useState(false);
+
+    const refresh = () => {
+      setRefreshing(!refreshing);
+    }
 
     useEffect (() => {
       const fetchMedications = async () => {
@@ -26,7 +31,7 @@ const MedicationsPage = () => {
       }
 
       fetchMedications();
-    }, [])
+    }, [refreshing])
 
     const handleToggleSearch = () => {
         setSearchById(!searchById); // Toggle search by ID
@@ -42,7 +47,7 @@ const MedicationsPage = () => {
     loading ? <WarningInfo loading={true}/> 
     :
     <div className="container mx-auto px-4 py-8 justify-center items-center text-center space-y-10">
-        <MedicationCreation/>
+        <div className="flex justify-center"><MedicationCreation refresh={refresh}/></div>
         <div className='grid grid-cols-2 gap-10'>
           <SearchBar searchTerm={searchTerm} onSearch={setSearchTerm} />
           <button onClick={handleToggleSearch} className={`${bodyButton} `}>Searching by {searchById ? 'ID' : 'Name'}</button>

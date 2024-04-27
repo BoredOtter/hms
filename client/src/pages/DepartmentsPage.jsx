@@ -2,45 +2,46 @@ import React from 'react'
 import ObjectsListing from '../components/listing/ObjectsListing';
 import bodyButton from '../components/utils/bodyButton';
 import { useState, useEffect } from 'react';
-import DepartmentCreation from '../components/DepartmentCreation';
+import DepartmentCreation from '../components/creators/DepartmentCreation';
 import httpResources from '../client/httpResources';
 import WarningInfo from './WarningInfo';
 
 const DepartmentsPage = () => {
   const [departments, setDepartments] = useState([])
   const [loading, setLoading] = useState(true);
-  const [creatingDepartment, setCreateDepartment] = useState(false);
-  const handleCreateNewDepartment = () => {
-    setCreateDepartment(!creatingDepartment);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const refresh = () => {
+    setRefreshing(!refreshing);
   }
 
   useEffect(() => {
     const fetchDepartments = async () => {
-      try{
+      try {
         const response = await httpResources.get("/get/department/all");
         const foundDepartments = response.data;
-        if(foundDepartments){
-          setDepartments(foundDepartments);
+        setDepartments(foundDepartments);
+        setLoading(false);
+      } catch (error) {
+        if (error.response && error.response.status === 404) {
+          setDepartments([]);
           setLoading(false);
+        } else {
+          <WarningInfo info={"Failed to fetch departments!"}/>
         }
-      } catch(error){
-        <WarningInfo info={"Failed to fetch departments!"}/>
       }
-    }
-
+    };
+  
     fetchDepartments();
-  }, [])
+  }, [refreshing]);
   
   return (
     <>
       {loading ? (
-        <WarningInfo loading={true} />
+        <WarningInfo loading={true}/>
       ) : (
         <>
-          <div className='flex justify-center mt-10'>
-            <button className={bodyButton} onClick={handleCreateNewDepartment}> Create new Department</button>
-          </div>
-          {creatingDepartment && <DepartmentCreation />}
+          <div className='flex justify-center'><DepartmentCreation refresh={refresh}/></div>
           <ObjectsListing 
             objectsData={departments} 
             objectsTitle={"Departments"}

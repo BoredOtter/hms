@@ -28,6 +28,7 @@ const PatientPage = () => {
   const [loading, setLoading] = useState(true);
   const [editedPatient, setEditedPatient] = useState(null);
   const [submitted, setSubmitted] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     const fetchPatient = async () => {
@@ -52,6 +53,10 @@ const PatientPage = () => {
       setEditedPatient({ ...editedPatient, [name]: value });
   };
 
+  const handleIsEditing = () => {
+    setIsEditing(!isEditing);
+  }
+
   const handleSubmit = async (e) => {
       e.preventDefault();
   
@@ -73,20 +78,22 @@ const PatientPage = () => {
     try {
       await httpPatients.patch(`/update/${patient.Patient_uuid}`, changedFields);
       setSubmitted(!submitted)
+      setIsEditing(!isEditing)
       alert("Updated successfully!")
     } catch (error) {
         console.error('Error updating patient:', error);
     }
   };
 
-  return ( 
-    !loading ? 
-    <>
-    
-    <ObjectDetails title={"Patient informations"}>
-    <ObjectSlicer object={patient}></ObjectSlicer>
-      <form onSubmit={handleSubmit} className="space-y-4">
-            <div className='space-y-4'>
+  return (
+    !loading ? (
+      <div className="flex flex-col justify-center items-center">
+        <ObjectDetails title={"Patient Information"}>
+          <ObjectSlicer object={patient}></ObjectSlicer>
+          <button className={bodyButton} onClick={handleIsEditing}>Change informations</button>
+          {isEditing ? (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-4">
               <label className={formLabel}>
                 Contact Number:
                 <input
@@ -110,14 +117,17 @@ const PatientPage = () => {
               </label>
             </div>
             <div className="flex justify-center space-x-4">
-              <button type="submit" className={bodyButton}>Change</button>
+              <button type="submit" className={bodyButton}>Save</button>
             </div>
-        </form>
-      </ObjectDetails>
-      { <Patient patient={patient}/> }
-    </>
-    : null
+          </form>
+          ) : null}
+        </ObjectDetails>
+        { <Patient patient={patient}/> }
+      </div>
+    ) : null
   );
+  
+  
 };
 
 export  { PatientPage as default}

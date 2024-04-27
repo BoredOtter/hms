@@ -9,6 +9,9 @@ import ObjectSlicer from '../components/utils/ObjectSlicer';
 import bodyButton from '../components/utils/bodyButton';
 import { NavLink } from 'react-router-dom';
 import httpResources from '../client/httpResources';
+import RoomsCreation from '../components/creators/RoomsCreation';
+import ResourceCreation from '../components/creators/ResourceCreation';
+
 
 const DepartmentPage = () => {
 
@@ -27,17 +30,30 @@ const DepartmentPage = () => {
     setShowRooms(false);
     setShowResources(!showResources);
   }
+
+  const handleDeleteDepartment = async () => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this department?");
+      if (confirmDelete) {
+      try {
+        const response = await httpResources.delete(`/delete/department/${department.ID_department}`);
+        alert("Department successfully deleted!");
+        window.location.href = "/departments"
+
+      } catch (error) {
+        alert(error.response.data.detail);
+      }
+    } else {
+      return;
+    }
+  };
   useEffect(() => {
     const findDepartment = async () => {
       try{
         const response = await httpResources.get(`get/department/id/${id}`)
         const foundDepartment = response.data;
-        if(foundDepartment){
           setDepartment(foundDepartment);
           setLoading(false);
-        }
       } catch(error){
-        alert(error.response.data.details);
         return Promise.reject(error);
       }
       
@@ -46,23 +62,29 @@ const DepartmentPage = () => {
   }, [id]);
 
   return (
-    loading ? <WarningInfo loading={true}/> : (
-      <div className='flex justify-center'>
+    loading ? (<WarningInfo loading={true}/>) : (
+      <>
+      <RoomsCreation ID_department={department.ID_department}/>
+      <ResourceCreation ID_department={department.ID_department}/>
+      <div className=''>
         <ObjectDetails title={"Department Details"}>
           <ObjectSlicer object={department}/>
-          <div className='button space-x-2 text-center'>
+          <div className='grid grid-cols-2 gap-2'>
             <button className={bodyButton} onClick={handleShowRooms}>Rooms</button>
             <button className={bodyButton} onClick={handleShowResources}>Resources</button>
+            <button className={bodyButton} onClick={handleDeleteDepartment}>Delete</button>
+
             <NavLink
               to={'/departments/'}
-              className={`${bodyButton} pt-3`}>
+              className={`${bodyButton}`}>
               Back
             </NavLink>
           </div>
         </ObjectDetails>
-        { showResources && <DepartmentResources resources={resources}/> }
-        { showRooms && <DepartmentRooms rooms={rooms}/> }
+        { showResources && <div className='justify-center'><DepartmentResources ID_department={department.ID_department}/> </div>}
+        { showRooms && <DepartmentRooms ID_department={department.ID_department}/> }
       </div>
+      </>
     )
   );
   

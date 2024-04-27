@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import "../styles/styles.css";
 import bodyButton from '../components/utils/bodyButton';
+import formInput from '../components/utils/formInput';
 import httpPatients from '../client/httpPatients';
+import ObjectDetails from '../components/utils/ObjectDetails';
 
 
 const containsOnlyDigits= (str) => {
@@ -46,7 +48,7 @@ const RegisterPatient = () => {
         Last_name: "",
         PESEL: "",
         Date_of_birth: "",
-        Gender: "",
+        Gender: "Male",
         Contact_number: "",
         Address: "",
     });
@@ -66,6 +68,7 @@ const RegisterPatient = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log(values)
         if (
             values.First_name &&
             values.Last_name &&
@@ -76,32 +79,25 @@ const RegisterPatient = () => {
         ) {
             setValid(true);
             try {
-                // Send a POST request to the "/create" endpoint with form values as the body
-                const response = await httpPatients.post("/create", values);
-                console.log("POST request response:", response.data);
+                await httpPatients.post("/create", values);
+                alert("Patient registered successfully!")
                 setSubmitted(true);
             } catch (error) {
-                console.error('Error sending POST request:', error);
+                alert(error.response.data.detail);
             }
+        } else {
+            alert("Please fill in all required fields correctly.");
         }
     };
+    
 
     return (
-        <>
-            <div className="form-container bg-gray-200 mb-10">
-                <div className="title mt-4 text-2xl">
-                    <h3>Register Patient</h3>
-                </div>
-                <form className="register-form" onSubmit={handleSubmit}>
-                    {submitted && valid && (
-                        <>
-                            Registration successful!
-                            <Link to='/home' className='text-white bg-indigo-700 hover:bg-indigo-900 rounded-md px-3 py-2 mt-4'>Go Back</Link>
-                        </>
-                    )}
+        <div className='flex justify-center'>
+            <ObjectDetails title={"Register new patient"}>
+                <form className='space-y-5'>
                     {!valid && (
                         <input
-                            className="form-field bg-gray-100"
+                            className={formInput}
                             type="text"
                             placeholder="First Name"
                             name="First_name"
@@ -114,7 +110,7 @@ const RegisterPatient = () => {
                     )}
                     {!valid && (
                         <input
-                            className="form-field bg-gray-100"
+                            className={formInput}
                             type="text"
                             placeholder="Last Name"
                             name="Last_name"
@@ -127,7 +123,7 @@ const RegisterPatient = () => {
                     )}
                     {!valid && (
                         <input
-                            className="form-field bg-gray-100"
+                            className={formInput}
                             type="text"
                             maxLength={11}
                             placeholder="PESEL number"
@@ -141,7 +137,7 @@ const RegisterPatient = () => {
                     )}
                     {!valid && (
                         <input
-                        className="form-field bg-gray-100"
+                        className={formInput}
                         type="date"
                         placeholder="Date of Birth"
                         name="Date_of_birth"
@@ -157,15 +153,16 @@ const RegisterPatient = () => {
                     )}
                     {!valid && (
                         <select
-                            className="form-field bg-gray-100"
-                            name="Gender"
-                            value={values.Gender}
-                            onChange={handleInputChange}
-                        >
-=                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                            <option value="Other">Other</option>
-                        </select>
+                        className={formInput}
+                        name="Gender"
+                        value={values.Gender}
+                        onChange={handleInputChange}
+                    >
+                        <option value="Select gender" disabled>Select gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
                     )}
                     {submitted && !values.Gender && (
                         <span id="gender-error">Please select a gender</span>
@@ -173,7 +170,7 @@ const RegisterPatient = () => {
                     {!valid && (
                         
                         <input
-                        className="form-field bg-gray-100"
+                        className={formInput}
                         type="text"
                         placeholder="Contact Number"
                         name="Contact_number"
@@ -184,7 +181,7 @@ const RegisterPatient = () => {
                     )}
                     {!valid && (
                         <input
-                            className="form-field bg-gray-100"
+                            className={formInput}
                             type="text"
                             placeholder="Address"
                             name="Address"
@@ -193,13 +190,13 @@ const RegisterPatient = () => {
                         />
                     )}
                     {!valid && (
-                        <button className={bodyButton} type="submit">
+                        <button className={bodyButton} onClick={handleSubmit} type="submit">
                             Register
                         </button>
                     )}
                 </form>
-            </div>
-        </>
+            </ObjectDetails>
+        </div>
     );
 }
 
