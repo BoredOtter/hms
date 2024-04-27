@@ -1,10 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import bodyButton from './utils/bodyButton';
 import { NavLink } from 'react-router-dom';
+import httpResources from '../client/httpResources';
+import formInput from './utils/formInput';
 
-const DepartmentRooms = ({ rooms }) => {
+const DepartmentRooms = ({ID_department}) => {
+    const [rooms, setRooms] = useState([]);
     const [displayedRooms, setDisplayedRooms] = useState([]);
     const [editedRoom, setEditedRoom] = useState(null);
+
+    useEffect(() => {
+        const fetchReservationRooms =  async () => {
+            try{
+                const response = await httpResources.get(`/get/rooms/department/${ID_department}`)
+                const foundRooms = response.data;
+                setRooms(foundRooms);
+            }catch(error){
+                alert(error.response.data.detail)
+            }
+        }
+
+        fetchReservationRooms();
+    }, [])
 
     const toggleReservations = (roomId) => {
         if (displayedRooms.includes(roomId)) {
@@ -27,9 +44,24 @@ const DepartmentRooms = ({ rooms }) => {
         );
     };
 
-    const updateRoom = (roomId) => {
-        console.log(`Update room with ID ${roomId}`);
-        setEditedRoom(null);
+    const updateRoom = async (roomId) => {
+        try{
+            await httpResources.patch(`/update/bed_in_room/${roomId}`,editedRoom)
+            alert("Room changed successfully");
+        }catch(error){
+            alert(error.response.data.detail);
+        }
+        
+    };
+
+    const handleChange = (e, key) => {
+        const inputValue = e.target.value;
+        if (/^\d*$/.test(inputValue)) { 
+            setEditedRoom((prevRoom) => ({
+                ...prevRoom,
+                [key]: inputValue
+            }));
+        }
     };
 
     const handleDeleteReservation = (reservationId) => {
@@ -38,31 +70,25 @@ const DepartmentRooms = ({ rooms }) => {
     };
 
     return (
-        <div className="container-xl lg:container m-auto mb-10 ">
+        <div className="container m-auto mb-10 ">
             {rooms.map((room, index) => (
                 <div key={index} className=" rounded-lg p-2 relative">
                     <div className='bg-sky-100 rounded-lg p-5'>
-                        <div className="flex justify-between items-center mb-4">
+                        <div className="justify-between items-center mb-4">
                             <h2 className="text-xl font-semibold">Room {room.ID_room}</h2>
-                            <button
-                                className={`${bodyButton}`}
-                                onClick={() => toggleReservations(room['ID_room'])}
-                            >
-                                {displayedRooms.includes(room['ID_room']) ? 'Hide Bed Reservations' : 'Show Bed Reservations'}
-                            </button>
                         </div>
                         <div className="flex flex-col md:flex-row md:space-x-6">
                             {Object.entries(room).map(([key, value]) => (
                                 (key !== "ID_room" && key !== "bed_reservations" && key !== "ID_department") && (
-                                    <div key={key} className="flex mb-2">
+                                    <div key={key} className="flex mb-2 flex items-center">
                                         <p className="font-bold mr-2">{key}:</p>
                                         {editedRoom && editedRoom['ID_room'] === room['ID_room'] ? (
                                             <input
                                                 name={key}
                                                 value={editedRoom[key]}
-                                                onChange={(e) => setEditedRoom({ ...editedRoom, [key]: e.target.value })}
-                                                className="border-b border-gray-400 focus:outline-none focus:border-indigo-500"
-                                                inputmode="numeric"
+                                                onChange={(e) => handleChange(e, key)}  
+                                                className={formInput}
+                                                inputMode="numeric"
                                             />
                                         ) : (
                                             <p>{typeof value === 'object' ? JSON.stringify(value) : value}</p>
@@ -70,6 +96,7 @@ const DepartmentRooms = ({ rooms }) => {
                                     </div>
                                 )
                             ))}
+                            
                         </div>
                         <div className="flex justify-end items-end mt-2 md:mt-0 space-x-2">
                             {editedRoom && editedRoom['ID_room'] === room['ID_room'] ? (
@@ -78,7 +105,15 @@ const DepartmentRooms = ({ rooms }) => {
                                     <button className={bodyButton} onClick={() => setEditedRoom(null)}>Cancel</button>
                                 </>
                             ) : (
+                                <>
                                 <button className={bodyButton} onClick={() => setEditedRoom(room)}>Update Room</button>
+                                <button
+                                className={`${bodyButton}`}
+                                onClick={() => toggleReservations(room['ID_room'])}
+                            >
+                                {displayedRooms.includes(room['ID_room']) ? 'Hide Reservations' : 'Show Reservations'}
+                            </button>
+                            </>
                             )}
                         </div>
                     </div>

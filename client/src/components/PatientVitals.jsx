@@ -4,10 +4,11 @@ import ObjectDetails from './utils/ObjectDetails';
 import bodyButton from './utils/bodyButton';
 import WarningInfo from '../pages/WarningInfo';
 import httpPatients from '../client/httpPatients';
-const PatientVitals = ({patient_id}) => {
+import formInput from './utils/formInput';
+import formLabel from './utils/formLabel';
 
-  const inputStyle = "w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 px-4 py-2";
-  const labelStyle = "block font-semibold text-gray-700 mb-1";
+const PatientVitals = ({patient_id}) => {
+  const currentDate = new Date().toISOString().split('T')[0];
   const [vitals, setVitals] = useState([])
   const [prevSumbitted, setPrevSumbitted] = useState(false);
 
@@ -28,7 +29,7 @@ const PatientVitals = ({patient_id}) => {
 
 
   const [newVital, setNewVital] = useState({
-    Date_and_time_of_measurement: '',
+    Date_and_time_of_measurement: currentDate,
     Blood_pressure: '',
     Pulse: '',
     Body_temperature: '',
@@ -44,26 +45,21 @@ const PatientVitals = ({patient_id}) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const currentDate = new Date().toISOString().split('T')[0];
 
+    
+    console.log(newVital)
     for (const key in newVital) {
-      if (!newVital[key]) {
+      if (newVital[key] === '') {
           alert("Please fill in all fields before submitting.");
           return;
       }
     }
-
-    const newVitalWithDateTime = {
-        ...newVital,
-        Date_and_time_of_measurement: currentDate
-    };
-
+    
     try {
-        const response = await httpPatients.post(`/add_vitals/${patient_id}`, newVitalWithDateTime);
+        const response = await httpPatients.post(`/add_vitals/${patient_id}`, newVital);
         setPrevSumbitted(!prevSumbitted);
-        setSubmitted(true);
         setNewVital({
-            Date_and_time_of_measurement: '',
+            Date_and_time_of_measurement: currentDate,
             Blood_pressure: '',
             Pulse: '',
             Body_temperature: '',
@@ -82,62 +78,62 @@ const PatientVitals = ({patient_id}) => {
           <form onSubmit={handleSubmit} className="mt-4 space-y-4">
             <div className="grid grid-cols-2 gap-4 mt-10">
               <div>
-                <label className={labelStyle}>Blood Pressure:</label>
+                <label className={formLabel}>Blood Pressure:</label>
                 <input
                   type="text"
                   name="Blood_pressure"
                   value={newVital.Blood_pressure}
                   onChange={handleInputChange}
-                  className={inputStyle}
+                  className={formInput}
                   placeholder="Blood Pressure"
                 />
               </div>
               <div>
-                <label className={labelStyle}>Pulse:</label>
+                <label className={formLabel}>Pulse:</label>
                 <input
                   type="text"
                   name="Pulse"
                   value={newVital.Pulse}
                   onChange={handleInputChange}
-                  className={inputStyle}
+                  className={formInput}
                   placeholder="Pulse"
                 />
               </div>
               <div>
-                <label className={labelStyle}>Body Temperature:</label>
+                <label className={formLabel}>Body Temperature:</label>
                 <input
                   type="text"
                   name="Body_temperature"
                   value={newVital.Body_temperature}
                   onChange={handleInputChange}
-                  className={inputStyle}
+                  className={formInput}
                   placeholder="Body Temperature"
                 />
               </div>
               <div>
-                <label className={labelStyle}>Blood Sugar Level:</label>
+                <label className={formLabel}>Blood Sugar Level:</label>
                 <input
                   type="text"
                   name="Blood_sugar_level"
                   value={newVital.Blood_sugar_level}
                   onChange={handleInputChange}
-                  className={inputStyle}
+                  className={formInput}
                   placeholder="Blood Sugar Level"
                 />
               </div>
             </div>
             <div>
-                <label className={labelStyle}>Other Parameters:</label>
+                <label className={formLabel}>Other Parameters:</label>
                 <input
                   type="text"
                   name="Other_medical_parameters"
                   value={newVital.Other_medical_parameters}
                   onChange={handleInputChange}
-                  className={inputStyle}
+                  className={formInput}
                   placeholder="Other Medical Parameters"
                 />
               </div>
-            <button type="submit" className={bodyButton}>Save</button>
+            <button type="submit" onClick={handleSubmit} className={bodyButton}>Save</button>
           </form>
       </ObjectDetails>
       <ObjectsListing objectsData={vitals} objectsTitle={"Vitals History"} objectKey={"ID_measurement"}/>

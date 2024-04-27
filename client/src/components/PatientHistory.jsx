@@ -11,21 +11,12 @@ const currentDate = new Date().toISOString().split('T')[0];
 
 const PatientHistory = ({patient_id}) => {
 
-  const generateInitialFormData = () => ({
-    Diagnosis: '',
-    Prescribed_medicines: '',
-    Entry_date: '',
-    Description_of_disease_or_health_problem: '',
-    Patient_uuid: patient_id,
-    Doctor_notes: ''
-  });
-
   const [historyData, setHistoryData] = useState([]);
   const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     Diagnosis: '',
     Prescribed_medicines: '',
-    Entry_date: '',
+    Entry_date: currentDate,
     Description_of_disease_or_health_problem: '',
     Patient_uuid: patient_id,
     Doctor_notes: ''
@@ -38,7 +29,6 @@ const PatientHistory = ({patient_id}) => {
         setHistoryData(response.data || []);
       } catch (error) {
         console.error('Error fetching medical history:', error);
-        // Handle error here
       }
     };
 
@@ -66,7 +56,12 @@ const PatientHistory = ({patient_id}) => {
       const response = await httpPatients.post(`add_medical_history/${patient_id}`, formData);
       alert("Medical condition added successfully!");
       setSubmitted(!submitted);
-      setFormData(generateInitialFormData());
+      setFormData({Diagnosis: '',
+      Prescribed_medicines: '',
+      Entry_date: currentDate,
+      Description_of_disease_or_health_problem: '',
+      Patient_uuid: patient_id,
+      Doctor_notes: ''});
     } catch (error) {
       console.error('Error adding medical history:', error);
     }
@@ -77,7 +72,7 @@ const PatientHistory = ({patient_id}) => {
     <>
       <ObjectDetails title={"Medical Condition"}>
         <form onSubmit={handleSubmit} className="mt-4 space-y-4">
-          <div className="grid gap-4 mt-10">
+          <div className="grid grid-cols-2 gap-4">
             <div>
               <label className={formLabel}>Diagnosis:</label>
               <input
