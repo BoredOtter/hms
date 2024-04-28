@@ -9,8 +9,6 @@ const PrescriptionCreation = ({ refresh, ID_patient, ID_doctor }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [allMedications, setAllMedications] = useState([]);
   const [selectedMedications, setSelectedMedications] = useState([]);
-  const [newDosage, setNewDosage] = useState('');
-  const [newQuantity, setNewQuantity] = useState('');
 
   useEffect(() => {
     const fetchMedications = async () => {
@@ -59,15 +57,32 @@ const PrescriptionCreation = ({ refresh, ID_patient, ID_doctor }) => {
   };
 
   const handleSavePrescription = async () => {
-    // Assuming you have a function to save the prescription
     try {
-      // Save prescription with selected medications, dosage, and quantity
-      console.log("Prescription saved:", {
-        selectedMedications,
-        ID_patient,
-        ID_doctor
-      });
-      // Call your refresh function or any other necessary action
+      // Constructing prescription data object
+      const prescriptionData = {
+        ID_patient: ID_patient,
+        ID_doctor: '986d7c71-a3ab-4ffa-86a9-ab1d3d8c8c29'
+      };
+  
+      // Constructing medication list array
+      const medicationList = selectedMedications.map(medication => ({
+        ID_medication: medication.ID_medication,
+        Quantity: medication.quantity,
+        Dosage: medication.dosage
+      }));
+  
+      // Constructing the payload for the POST request
+      const payload = {
+        Prescription_data: prescriptionData,
+        Medication_list: medicationList
+      };
+  
+      // Assuming you have a function to save the prescription
+      // const response = await savePrescriptionFunction(payload);
+  
+      httpPharmacy.post("/add/prescription", payload)
+      console.log(payload)
+      alert("Prescription added!")
       refresh();
     } catch (error) {
       console.error("Error saving prescription:", error);
@@ -104,6 +119,7 @@ const PrescriptionCreation = ({ refresh, ID_patient, ID_doctor }) => {
               value={medication.quantity}
               onChange={e => handleQuantityChange(index, e.target.value)}
               className={formInput}
+              inputMode={'numeric'}
             />
             <button onClick={() => handleDeleteMedication(index)} className={bodyButton}>Delete</button>
           </div>

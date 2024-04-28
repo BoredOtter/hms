@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import httpPharmacy from '../client/httpPharmacy';
 import PrescriptionCreation from './creators/PrescriptionCreation';
+import ObjectsListing from './listing/ObjectsListing';
+
 
 const PatientPrescriptions = ({ patient_id }) => {
   const [loading, setLoading] = useState(true);
@@ -29,7 +31,7 @@ const PatientPrescriptions = ({ patient_id }) => {
     };
 
     fetchPrescriptions();
-  }, [patient_id]);
+  }, [refreshing]);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -60,10 +62,11 @@ const PatientPrescriptions = ({ patient_id }) => {
       ) : (
         <>
         <PrescriptionCreation refresh={refresh} ID_patient={patient_id} ID_doctor={"#TODO"}/>
-        <div className='mt-5 '>
+        <h2 className='text-3xl font-bold text-indigo-500 mb-8 text-center'>Prescriptions</h2>
+        <div className='mt-5 grid grid-cols-1 md:grid-cols-2 gap-2'>
           {prescriptions.length > 0 && (
             prescriptions.map((prescription, index) => (
-              <div key={index} className="container-xl lg:container m-auto bg-sky-100 rounded-xl p-3.5 hover:bg-sky shadow-md relative mb-10">
+              <div key={index} className="m-auto bg-sky-100 rounded-xl p-3.5 hover:bg-sky shadow-md relative mb-10">
                   <div className="font-bold text-l flex mb-2">
                     <p className="font-bold mr-2">Doctor ID:</p>
                     <p>{prescription.ID_doctor}</p>
@@ -113,7 +116,7 @@ const PatientPrescriptions = ({ patient_id }) => {
                   </div>
               </div>
             ))
-          )}
+          )} 
         </div>
         </>
       )}
