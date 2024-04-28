@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import httpPharmacy from '../client/httpPharmacy';
+import PrescriptionCreation from './creators/PrescriptionCreation';
 
 const PatientPrescriptions = ({ patient_id }) => {
   const [loading, setLoading] = useState(true);
   const [prescriptions, setPrescriptions] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
   const [medication, setMedication] = useState({
     ID_medication: '',
     Quantity: '',
     Dosage: ''
   });
+
+  const refresh = () => {
+    setRefreshing(!refresh);
+  }
 
   useEffect(() => {
     const fetchPrescriptions = async () => {
@@ -17,8 +23,7 @@ const PatientPrescriptions = ({ patient_id }) => {
         const foundPrescriptions = response.data;
         setPrescriptions(foundPrescriptions);
       } catch (error) {
-        console.error("Error fetching prescriptions:", error);
-      } finally {
+        } finally {
         setLoading(false);
       }
     };
@@ -53,6 +58,8 @@ const PatientPrescriptions = ({ patient_id }) => {
       {loading ? (
         <div>Loading...</div>
       ) : (
+        <>
+        <PrescriptionCreation refresh={refresh} ID_patient={patient_id} ID_doctor={"#TODO"}/>
         <div className='mt-5 '>
           {prescriptions.length > 0 && (
             prescriptions.map((prescription, index) => (
@@ -108,6 +115,7 @@ const PatientPrescriptions = ({ patient_id }) => {
             ))
           )}
         </div>
+        </>
       )}
     </>
   );

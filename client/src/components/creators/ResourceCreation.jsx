@@ -84,6 +84,7 @@ const ResourceCreation = ({ID_department}) => {
                       value={resource.Resource_name}
                       onChange={handleChange}
                       className={formInput}
+                      placeholder="Resource name"
                   />
               </label>
               <label className={formLabel}>
@@ -94,6 +95,7 @@ const ResourceCreation = ({ID_department}) => {
                       value={resource.Description}
                       onChange={handleChange}
                       className={formInput}
+                      placeholder="Description"
                   />
               </label>
               <label className={formLabel}>
@@ -105,6 +107,7 @@ const ResourceCreation = ({ID_department}) => {
                       onChange={handleChange}
                       className={formInput}
                       inputMode={'numeric'}
+                      placeholder="Available quantity"
                   />
               </label>
           </div>

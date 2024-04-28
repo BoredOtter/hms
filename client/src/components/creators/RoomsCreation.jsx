@@ -27,6 +27,7 @@ const RoomsCreation = ({ID_department}) => {
                 Number_of_beds: beds
             })
             alert("Room added successfully!")
+            setBeds('');
         }catch(error){
             alert(error.response.data.detail)
             Promise.reject(error)

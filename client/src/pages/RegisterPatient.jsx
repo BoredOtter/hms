@@ -77,11 +77,18 @@ const RegisterPatient = () => {
             values.Date_of_birth &&
             values.Gender 
         ) {
-            setValid(true);
             try {
                 await httpPatients.post("/create", values);
+                setValues({
+                    First_name: "",
+                    Last_name: "",
+                    PESEL: "",
+                    Date_of_birth: "",
+                    Gender: "Male",
+                    Contact_number: "",
+                    Address: "",
+                })
                 alert("Patient registered successfully!")
-                setSubmitted(true);
             } catch (error) {
                 alert(error.response.data.detail);
             }
