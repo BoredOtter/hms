@@ -65,7 +65,6 @@ const DepartmentRooms = ({ID_department}) => {
     };
 
     const handleDeleteReservation = (reservationId) => {
-        // Implement the logic to delete the reservation with the provided ID
         console.log(`Deleting reservation with ID ${reservationId}`);
     };
 

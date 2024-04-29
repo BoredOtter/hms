@@ -42,6 +42,7 @@ const NavbarRoles = ({ loggedUser }) => {
       <NavLink to='/register' className={linkClass}>Register</NavLink>
       <NavLink to='/patients' className={linkClass}>Patients</NavLink>
       <NavLink to='/medications' className={linkClass}>Medications</NavLink>
+      <NavLink to='/operating_rooms' className={linkClass}>Operating Rooms</NavLink>
       {/* <NavLink to='/schedule' className={linkClass}>Schedule</NavLink> */}
       <NavLink className={logoutClass} onClick={handleLogout}>Logout</NavLink>
     </div>

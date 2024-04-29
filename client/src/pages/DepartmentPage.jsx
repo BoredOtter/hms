@@ -11,7 +11,8 @@ import { NavLink } from 'react-router-dom';
 import httpResources from '../client/httpResources';
 import RoomsCreation from '../components/creators/RoomsCreation';
 import ResourceCreation from '../components/creators/ResourceCreation';
-
+import OperationalRoomCreation from '../components/creators/OperationalCreationRoom';
+import OperationRooms from '../components/OperationRooms';
 
 const DepartmentPage = () => {
 
@@ -29,6 +30,12 @@ const DepartmentPage = () => {
   const handleShowResources = () => {
     setShowRooms(false);
     setShowResources(!showResources);
+
+  }
+  const handleShowOperationRooms = () => {
+    setShowRooms(false);
+    setShowResources(false);
+
   }
 
   const handleDeleteDepartment = async () => {
@@ -64,8 +71,13 @@ const DepartmentPage = () => {
   return (
     loading ? (<WarningInfo loading={true}/>) : (
       <>
-      <RoomsCreation ID_department={department.ID_department}/>
+      <div className='flex justify-center flex-grow grid grid-cols-1 md:grid-cols-2 gap-2'>      
+      <div><RoomsCreation ID_department={department.ID_department}/></div>
+      <OperationalRoomCreation ID_department={department.ID_department}/>
       <ResourceCreation ID_department={department.ID_department}/>
+      <OperationRooms></OperationRooms>
+      </div>
+      
       <ObjectDetails title={"Department Details"}>
         <ObjectSlicer object={department}/>
           <div className='grid grid-cols-2 gap-2'>
@@ -82,6 +94,7 @@ const DepartmentPage = () => {
         </ObjectDetails>
         { showResources && <div className='justify-center'><DepartmentResources ID_department={department.ID_department}/> </div>}
         { showRooms && <DepartmentRooms ID_department={department.ID_department}/> }
+        {/* { showOperatingRooms && <>} */}
       </>
     )
   );

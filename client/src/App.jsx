@@ -19,6 +19,8 @@ import {
   RouterProvider,
 } from 'react-router-dom';
 import EmployeeSchedule from './components/EmployeeSchedule';
+import OperationRooms from './components/OperationRooms';
+import OperationRoomPage from './pages/OperationRoomPage';
 
 
 const generateNurseRoutes = () => (
@@ -36,6 +38,9 @@ const generateDoctorRoutes = () => (
     <Route path='/departments/:id' element={<DepartmentPage />} />
     <Route path='/schedules' element={<Home/>}/>
     <Route path='/schedules/:id' element={<EmployeeSchedule/>}/>
+    <Route path='/operating_rooms' element={<OperationRooms/>}/>
+    <Route path='/operating_rooms/:id' element={<OperationRoomPage/>}/>
+
   </>
 );
 
