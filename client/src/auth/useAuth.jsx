@@ -1,12 +1,10 @@
 import { useEffect, useState, useRef } from 'react';
 import keycloak from './keycloak';
-import httpPatients from '../client/httpPatients';
 
 const useAuth = () => {
     const isRun = useRef(false);
     const [isLogin, setLogin] = useState(false);
-    const [roles, setRoles] = useState('');
-    const [name, setName] = useState('');
+    const [roles, setRoles] = useState('')
     
     useEffect(() => {
         if(isRun.current) return;
@@ -16,23 +14,13 @@ const useAuth = () => {
             .then((authenticated) => {
                 setLogin(authenticated)
                 const tokenPayload = keycloak.tokenParsed;
-                const firstName = tokenPayload.given_name;
-                const lastName = tokenPayload.family_name;
-
-                if (firstName && lastName) {
-                    const fullName = `${firstName} ${lastName}`;
-                    setName(fullName);
-                }
-
                 if(tokenPayload && tokenPayload.realm_access && tokenPayload.realm_access.roles){
                     setRoles(tokenPayload.realm_access.roles);
                 }
-                httpPatients.defaults.headers.common['token'] = `Bearer ${keycloak.token}`;
-                console.log(keycloak.token)
             });
     }, []);
 
-    return [isLogin, roles, name];
+    return [isLogin, roles];
 };
 
 export default useAuth;
