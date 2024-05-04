@@ -10,10 +10,7 @@ const Navbar = ({ loggedUser }) => {
         <div className='flex flex-col md:flex-row md:items-center justify-between'>
           <div className='flex ml-5 items-center justify-center md:justify-start pt-3'>
             <NavLink className='flex flex-shrink-0 items-center mr-4' to='/home'>
-              <img className='h-20 w-auto rounded-full mb-3' src={hospital} alt='Hospital' />
-              <span className='hidden md:block text-white text-2xl ml-3 mt-1'>
-                HMS
-              </span>
+              <img className='h-10 w-auto rounded-full mb-3' src={hospital} alt='Hospital' />
             </NavLink>
           </div>
           <div className='md:flex md:space-x-2'>

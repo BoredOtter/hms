@@ -69,7 +69,7 @@ const DepartmentRooms = ({ID_department}) => {
     };
 
     return (
-        <div className="container m-auto mb-10 ">
+        <div className="container m-auto mb-10 mt-4">
             {rooms.map((room, index) => (
                 <div key={index} className=" rounded-lg p-2 relative">
                     <div className='bg-sky-100 rounded-lg p-5'>

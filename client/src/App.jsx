@@ -10,6 +10,11 @@ import Home from './pages/Home';
 import PatientsPage from './pages/PatientsPage';
 import PatientPage from './pages/PatientPage';
 import useAuth from './auth/useAuth';
+import EmployeeSchedule from './components/EmployeeSchedule';
+import OperationRooms from './components/OperationRooms';
+import OperationRoomPage from './pages/OperationRoomPage';
+import EmployeesPage from './pages/EmployeesPage';
+import EmployeePage from './pages/EmployeePage';
 
 
 import {
@@ -18,9 +23,7 @@ import {
   createRoutesFromElements,
   RouterProvider,
 } from 'react-router-dom';
-import EmployeeSchedule from './components/EmployeeSchedule';
-import OperationRooms from './components/OperationRooms';
-import OperationRoomPage from './pages/OperationRoomPage';
+
 
 
 const generateNurseRoutes = () => (
@@ -40,7 +43,8 @@ const generateDoctorRoutes = () => (
     <Route path='/schedules/:id' element={<EmployeeSchedule/>}/>
     <Route path='/operating_rooms' element={<OperationRooms/>}/>
     <Route path='/operating_rooms/:id' element={<OperationRoomPage/>}/>
-
+    <Route path='/employees' element={<EmployeesPage/>}/>
+    <Route path='/employees/:id' element={<EmployeePage/>}/>
   </>
 );
 

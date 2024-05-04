@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import httpPharmacy from '../client/httpPharmacy';
-import PrescriptionCreation from './creators/PrescriptionCreation';
+import WarningInfo from '../pages/WarningInfo';
+import bodyButton from './utils/bodyButton';
 
 const PatientPrescriptions = ({ patient_id }) => {
   const [loading, setLoading] = useState(true);
@@ -11,10 +12,6 @@ const PatientPrescriptions = ({ patient_id }) => {
     Quantity: '',
     Dosage: ''
   });
-
-  const refresh = () => {
-    setRefreshing(!refresh);
-  }
 
   useEffect(() => {
     const fetchPrescriptions = async () => {
@@ -29,41 +26,33 @@ const PatientPrescriptions = ({ patient_id }) => {
     };
 
     fetchPrescriptions();
-  }, [patient_id]);
+  }, [refreshing]);
 
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setMedication({ ...medication, [name]: value });
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleDeletePrescription = async (prescriptionId) => {
     try {
-      await httpPharmacy.post('/add/medication', medication);
+      await httpPharmacy.delete(`/delete/prescription/${prescriptionId}`);
+      alert("Prescription deleted successfully");
       const response = await httpPharmacy.get(`/get/prescriptions/${patient_id}`);
-      const updatedPrescriptions = response.data;
-      setPrescriptions(updatedPrescriptions);
-      setMedication({
-        ID_medication: '',
-        Quantity: '',
-        Dosage: ''
-      });
+      const foundPrescriptions = response.data;
+      setPrescriptions(foundPrescriptions);
     } catch (error) {
-      console.error("Error adding medication:", error);
+      setPrescriptions([]);
     }
   };
 
   return (
     <>
       {loading ? (
-        <div>Loading...</div>
+        <WarningInfo loading={true} />
       ) : (
         <>
-        <PrescriptionCreation refresh={refresh} ID_patient={patient_id} ID_doctor={"#TODO"}/>
-        <div className='mt-5 '>
-          {prescriptions.length > 0 && (
-            prescriptions.map((prescription, index) => (
-              <div key={index} className="container-xl lg:container m-auto bg-sky-100 rounded-xl p-3.5 hover:bg-sky shadow-md relative mb-10">
+          <h2 className='text-3xl font-bold text-indigo-500 mb-8 text-center mt-8'>
+            Prescriptions
+          </h2>
+          <div className='mt-5 '>
+            {prescriptions.length > 0 && (
+              prescriptions.map((prescription, index) => (
+                <div key={index} className="container-xl lg:container m-auto bg-sky-100 rounded-xl p-3.5 hover:bg-sky shadow-md relative mb-10">
                   <div className="font-bold text-l flex mb-2">
                     <p className="font-bold mr-2">Doctor ID:</p>
                     <p>{prescription.ID_doctor}</p>
@@ -71,9 +60,9 @@ const PatientPrescriptions = ({ patient_id }) => {
                   <div className="font-bold text-l flex mb-2">
                     <p className="font-bold mr-2">Prescription ID:</p>
                     <p>{prescription.ID_prescription}</p>
-                    </div>
+                  </div>
                   <h2 className="font-bold text-l mb-2">Medication List:</h2>
-                  <div >
+                  <div className='grid grid-cols-2 gap-3'>
                     {prescription.prescription_medications.length > 0 ? (
                       prescription.prescription_medications.map((medication, medIndex) => (
                         <div key={medIndex} className="bg-gray-200 rounded-xl p-3.5 hover:bg-sky shadow-md hover:shadow-lg relative mb-2">
@@ -111,16 +100,15 @@ const PatientPrescriptions = ({ patient_id }) => {
                       <p>No medications prescribed</p>
                     )}
                   </div>
-              </div>
-            ))
-          )}
-        </div>
+                  <button className={bodyButton} onClick={() => handleDeletePrescription(prescription.ID_prescription)}>Delete Prescription</button>
+                </div>
+              ))
+            )}
+          </div>
         </>
       )}
     </>
   );
-  
-  
 };
 
 export default PatientPrescriptions;

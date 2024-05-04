@@ -4,13 +4,13 @@ import httpPharmacy from '../../client/httpPharmacy';
 import formInput from '../utils/formInput';
 import bodyButton from '../utils/bodyButton';
 import SearchBar from '../SearchBar';
+import loggedUser from '../../auth/loggedUser';
 
-const PrescriptionCreation = ({ refresh, ID_patient, ID_doctor }) => {
+const PrescriptionCreation = ({patient_id}) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [allMedications, setAllMedications] = useState([]);
   const [selectedMedications, setSelectedMedications] = useState([]);
-  const [newDosage, setNewDosage] = useState('');
-  const [newQuantity, setNewQuantity] = useState('');
+  const employee = loggedUser();
 
   useEffect(() => {
     const fetchMedications = async () => {
@@ -46,29 +46,35 @@ const PrescriptionCreation = ({ refresh, ID_patient, ID_doctor }) => {
     setSelectedMedications(updatedMedications);
   };
 
-  const handleDosageChange = (index, value) => {
+  const handleChange = (index, field, value) => {
     const updatedMedications = [...selectedMedications];
-    updatedMedications[index].dosage = value;
-    setSelectedMedications(updatedMedications);
-  };
-
-  const handleQuantityChange = (index, value) => {
-    const updatedMedications = [...selectedMedications];
-    updatedMedications[index].quantity = value;
+    updatedMedications[index][field] = value;
     setSelectedMedications(updatedMedications);
   };
 
   const handleSavePrescription = async () => {
-    // Assuming you have a function to save the prescription
+    const hasEmptyFields = selectedMedications.some(medication => medication.dosage.trim() === '' || medication.quantity.trim() === '');
+    if (hasEmptyFields) {
+      alert("Please fill in all fields for selected medications.");
+      return;
+    }
+
     try {
-      // Save prescription with selected medications, dosage, and quantity
-      console.log("Prescription saved:", {
-        selectedMedications,
-        ID_patient,
-        ID_doctor
-      });
-      // Call your refresh function or any other necessary action
-      refresh();
+      const prescription = {
+        Prescription_data: {
+          ID_patient: patient_id,
+          ID_doctor: employee.uuid
+        },
+        Medication_list: selectedMedications.map(medication => ({
+          ID_medication: medication.ID_medication,
+          Dosage: medication.dosage,
+          Quantity: medication.quantity
+        }))
+      };
+      await httpPharmacy.post("/add/prescription", prescription);
+      setSelectedMedications([]);
+      setSearchTerm('');
+      alert("Prescription added successfully!");
     } catch (error) {
       console.error("Error saving prescription:", error);
     }
@@ -95,14 +101,14 @@ const PrescriptionCreation = ({ refresh, ID_patient, ID_doctor }) => {
               type="text"
               placeholder="Dosage"
               value={medication.dosage}
-              onChange={e => handleDosageChange(index, e.target.value)}
+              onChange={e => handleChange(index, 'dosage', e.target.value)}
               className={formInput}
             />
             <input
               type="text"
               placeholder="Quantity"
               value={medication.quantity}
-              onChange={e => handleQuantityChange(index, e.target.value)}
+              onChange={e => handleChange(index, 'quantity', e.target.value)}
               className={formInput}
             />
             <button onClick={() => handleDeleteMedication(index)} className={bodyButton}>Delete</button>

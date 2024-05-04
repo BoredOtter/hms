@@ -30,7 +30,7 @@ const OperationalRoomCreation = ({ID_department}) => {
     } 
 
     return (
-            <ObjectDetails title={"Add new operational room"}>
+            <ObjectDetails title={"Add new operating room"}>
                 <div className='space-y-3'>
                 <input
                     name='Room_name'
