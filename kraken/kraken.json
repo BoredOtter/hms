@@ -403,6 +403,26 @@
       ]
     },
     {
+      "endpoint": "/api/v1/pharmacy/{delete1}/{delete2}/{delete3}/",
+      "input_headers": [
+        "*"
+      ],
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/{delete1}/{delete2}/{delete3}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "DELETE",
+          "host": [
+            "http://pharmacy:8004"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
       "endpoint": "/api/v1/documents/{get1}/{get2}/{get3}/{get4}/",
       "input_headers": [
         "*"
