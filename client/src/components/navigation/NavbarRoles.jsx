@@ -4,25 +4,15 @@ import keycloak from '../../auth/keycloak';
 import { useEffect, useState } from 'react';
 
 
-// const CURRENT_USER_TYPE = "doctor";
-
-const handleLogout = () => {
-      
-  keycloak.logout();
- 
-};
-
 const NavbarRoles = ({ loggedUser }) => {
-  const [isWideScreen, setIsWideScreen] = useState(window.innerWidth > 768); // Assuming 768px as the breakpoint  useEffect(() => {
+  const [isWideScreen, setIsWideScreen] = useState(window.innerWidth > 768); 
     useEffect(() => {
       const handleResize = () => {
-          setIsWideScreen(window.innerWidth > 768); // Update state based on window width
+          setIsWideScreen(window.innerWidth > 768); 
       };
-
-      window.addEventListener('resize', handleResize); // Add event listener for window resize
-
+      window.addEventListener('resize', handleResize); 
       return () => {
-          window.removeEventListener('resize', handleResize); // Remove event listener on component unmount
+          window.removeEventListener('resize', handleResize);
       };
   }, []);
 
@@ -37,15 +27,15 @@ const NavbarRoles = ({ loggedUser }) => {
     'text-white hover:bg-gray-900 hover:text-white rounded-md px-3 py-2';
 
   return (
-    <div className={isWideScreen ? "flex justify-between items-center text-center" : "grid grid-cols-2 text-center gap-2 mb-1"}>  
+    <div className={isWideScreen ? "flex justify-between items-center text-center" : "grid grid-cols-4 text-center items-center gap-2 mb-1"}>  
     <NavLink to='/departments' className={linkClass}>Departments</NavLink>   
       <NavLink to='/register' className={linkClass}>Register</NavLink>
       <NavLink to='/patients' className={linkClass}>Patients</NavLink>
       <NavLink to='/medications' className={linkClass}>Medications</NavLink>
       <NavLink to='/operating_rooms' className={linkClass}>Operating Rooms</NavLink>
-      <NavLink to='/schedule' className={linkClass}>Schedule</NavLink>
+      <NavLink to='/rooms' className={linkClass}>Rooms</NavLink>
+      <NavLink to='/schedules' className={linkClass}>Schedule</NavLink>
       <NavLink to='/employees' className={linkClass}>Employees</NavLink>
-      <NavLink className={logoutClass} onClick={handleLogout}>Logout</NavLink>
     </div>
   );
 };

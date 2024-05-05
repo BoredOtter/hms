@@ -13,6 +13,7 @@ const useAuth = () => {
             .init({ onLoad: 'login-required' })
             .then((authenticated) => {
                 setLogin(authenticated)
+                console.log(keycloak.token)
                 const tokenPayload = keycloak.tokenParsed;
                 if(tokenPayload && tokenPayload.realm_access && tokenPayload.realm_access.roles){
                     setRoles(tokenPayload.realm_access.roles);

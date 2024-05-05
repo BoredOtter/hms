@@ -38,7 +38,7 @@ const EmployeesPage = () => {
         objectsData={filteredEmployees} 
         objectsTitle={"Employees"}
         objectLink={"/employees"}
-        objectKey={"ID_employee"}
+        objectKey={"Employee_uuid"}
       />
     </div>
   )

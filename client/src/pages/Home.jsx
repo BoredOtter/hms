@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import bodyButton from '../components/utils/bodyButton';
+import keycloak from '../auth/keycloak';
 import "../styles/styles.css"
 
 const Home = ({userName}) => {
@@ -21,6 +23,7 @@ const Home = ({userName}) => {
   }, []);
 
   return (
+    <>
     <div className='form-container bg-gray-200'>
       <h1 className='text-3xl mb-4'>Welcome to Home Page</h1>
       <div className='mb-4'>
@@ -32,8 +35,11 @@ const Home = ({userName}) => {
         <p className='text-xl'>{currentTime}</p>
         <p className='text-lg mt-4'>Current Date:</p>
         <p className='text-xl'>{currentDate}</p>
+        <div className='flex justify-center'><button className={`${bodyButton} mt-5`} onClick={() => keycloak.logout()}> Logout</button></div>
+
       </div>
     </div>
+    </>
   );
 };
 

@@ -7,6 +7,9 @@ import formLabel from '../components/utils/formLabel';
 import bodyButton from '../components/utils/bodyButton';
 import ObjectSlicer from '../components/utils/ObjectSlicer';
 import WarningInfo from '../pages/WarningInfo';
+import httpResources from '../client/httpResources';
+import PatientBedReservationCreation from './creators/PatientBedReservationCreation';
+import { NavLink } from 'react-router-dom';
 
 const formatPhoneNumber = (phoneNumber) => {
     // Remove all non-numeric characters from the input
@@ -22,27 +25,43 @@ const formatPhoneNumber = (phoneNumber) => {
 const PatientInfo = ({patient_id}) => {
     const [loading, setLoading] = useState(true);
     const [editedPatient, setEditedPatient] = useState(null);
+    const [bedReservation, setBedReservation] = useState(null);
     const [submitted, setSubmitted] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
-    const [patient, setPatient] = useState('')
+    const [patient, setPatient] = useState('');
+    const [refreshing, setRefreshing] = useState(false);
+
+
+  const refresh = () => {
+    setRefreshing(!refreshing);
+  }
 
   useEffect(() => {
     const fetchPatient = async () => {
         try {
             const response = await httpPatients.get(`/get/${patient_id}`);
             const foundPatient = response.data;
-            if (foundPatient) {
-                setPatient(foundPatient);
-                setEditedPatient(foundPatient);
-                setLoading(false);
-            }
+            setPatient(foundPatient);
+            setEditedPatient(foundPatient);
         } catch (error) {
-            console.error('Error fetching patient:', error);
-            // Handle error here
+          alert(error.response.data.detail)
+        } finally {
+          setLoading(false);
         }
     };
     fetchPatient();
 }, [submitted]);
+
+  useEffect(() => {
+    const fetchBedReservation = async () => {
+      try{
+        const bedReservation = await httpResources.get(`/get/bed_reservation`, {params: {patient_id: patient_id}})
+        const foundBedReservations = bedReservation.data;
+        setBedReservation(foundBedReservations[0]);
+      } catch(error){}
+    }
+    fetchBedReservation();
+  }, [refreshing])
 
   const handleInputChange = (e) => {
       const { name, value } = e.target;
@@ -56,16 +75,13 @@ const PatientInfo = ({patient_id}) => {
   const handleSubmit = async (e) => {
       e.preventDefault();
   
-    // Compare editedPatient with the original patient object to find the changes
     const changedFields = {};
     for (const key in patient) {
         if (patient[key] !== editedPatient[key]) {
-            // Add the key-value pair to the changedFields object
             changedFields[key] = editedPatient[key];
         }
     }
 
-    // Check if any fields have been edited
     if (Object.keys(changedFields).length === 0) {
       alert("No changes were made!")
       return;
@@ -117,6 +133,16 @@ const PatientInfo = ({patient_id}) => {
           </form>
           ) : null}
         </ObjectDetails>
+        {
+          bedReservation? (
+            <div className="flex flex-col justify-center items-center">
+              <ObjectDetails title={"Bed Reservation"}>
+                <ObjectSlicer object={bedReservation}></ObjectSlicer>
+                <NavLink to={`/rooms/${bedReservation.ID_room}` }className={`${bodyButton} pt-3`}>Check Room</NavLink>
+              </ObjectDetails>
+            </div>
+          ) : <PatientBedReservationCreation patient_id={patient_id} refresh={refresh}></PatientBedReservationCreation>
+        }
       </div>
     ) : <WarningInfo loading={true}/>
   );

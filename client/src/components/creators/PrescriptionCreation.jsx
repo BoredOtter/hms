@@ -83,7 +83,7 @@ const PrescriptionCreation = ({patient_id}) => {
   return (
     <ObjectDetails title={"Create new Prescription"}>
       <SearchBar searchTerm={searchTerm} onSearch={setSearchTerm} />
-      {searchTerm !== '' && (
+      {searchTerm !== '' && 
         <div>
           {filteredMedications.map(medication => (
             <ObjectDetails key={medication.ID_medication} title={medication.Medication_name}>
@@ -91,7 +91,7 @@ const PrescriptionCreation = ({patient_id}) => {
             </ObjectDetails>
           ))}
         </div>
-      )}
+      }
       <div className='mt-5'>
         <h3>Selected Medications:</h3>
         {selectedMedications.map((medication, index) => (

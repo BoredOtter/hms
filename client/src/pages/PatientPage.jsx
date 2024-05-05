@@ -10,6 +10,7 @@ import PatientInfo from '../components/PatientInfo';
 import VitalCreation from '../components/creators/VitalCreation';
 import PrescriptionCreation from '../components/creators/PrescriptionCreation';
 import ConditionCreation from '../components/creators/ConditionCreation';
+import PatientBedReservationCreation from '../components/creators/PatientBedReservationCreation';
 
 const PatientPage = () => {
   const {id} = useParams();
@@ -26,7 +27,7 @@ const PatientPage = () => {
       <button onClick={() => handleSetActiveSection("prescriptions")} className={bodyButton}>Prescriptions</button>
       <button onClick={() => handleSetActiveSection("info")} className={bodyButton}>Info</button>
       <button onClick={() => handleSetActiveSection("addVital")} className={bodyButton}>Add Vital</button>
-      <button onClick={() => handleSetActiveSection("addMedicalCondition")} className={bodyButton}>Add Medical Condition</button>
+      <button onClick={() => handleSetActiveSection("addMedicalCondition")} className={bodyButton}>Add Condition</button>
       <button onClick={() => handleSetActiveSection("addPrescription")} className={bodyButton}>Add Prescription</button>
       <NavLink to={`/patients`} className={`${bodyButton} pt-2.5`}>Back</NavLink>
     </div>
@@ -34,10 +35,14 @@ const PatientPage = () => {
     {activeSection === "vitals" && <PatientVitals patient_id={id} />}
     {activeSection === "history" && <PatientHistory patient_id={id} />}
     {activeSection === "prescriptions" && <PatientPrescriptions patient_id={id} />}
-    {activeSection === "info" && <PatientInfo patient_id={id} />}
+    {activeSection === "info" && 
+    <>
+    <PatientInfo patient_id={id} />
+    </>}
     {activeSection === "addVital" && <VitalCreation patient_id={id} />}
     {activeSection === "addMedicalCondition" && <ConditionCreation patient_id={id} />}
     {activeSection === "addPrescription" && <PrescriptionCreation patient_id={id} />}
+    
     </>
   );
     

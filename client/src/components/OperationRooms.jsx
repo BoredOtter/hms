@@ -18,7 +18,6 @@ const OperationRooms = () => {
             const foundOperationRooms = await response.data;
             setOperationRooms(foundOperationRooms);
           } catch(error){
-            alert(error.response.data.detail);
           }
         }
         fetchOperationRooms();

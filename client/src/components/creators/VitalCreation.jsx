@@ -40,6 +40,7 @@ const VitalCreation = ({patient_id}) => {
         try {
             await httpPatients.post(`/add_vitals/${patient_id}`, newVital);
             setPrevSumbitted(!prevSumbitted);
+            alert("Vitals added successfully!");
             setNewVital({
                 Date_and_time_of_measurement: currentDate,
                 Blood_pressure: '',

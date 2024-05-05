@@ -35,7 +35,7 @@ const RoomsCreation = ({ID_department}) => {
     } 
 
     return (
-            <ObjectDetails title={"Add new room"}>
+            <ObjectDetails title={" Add new patients room "}>
                 <div className='space-y-3'>
                 <input
                     name='Beds'

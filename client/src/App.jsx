@@ -15,6 +15,8 @@ import OperationRooms from './components/OperationRooms';
 import OperationRoomPage from './pages/OperationRoomPage';
 import EmployeesPage from './pages/EmployeesPage';
 import EmployeePage from './pages/EmployeePage';
+import RoomPage from './pages/RoomPage';
+import RoomsPage from './pages/RoomsPage';
 
 
 import {
@@ -45,6 +47,8 @@ const generateDoctorRoutes = () => (
     <Route path='/operating_rooms/:id' element={<OperationRoomPage/>}/>
     <Route path='/employees' element={<EmployeesPage/>}/>
     <Route path='/employees/:id' element={<EmployeePage/>}/>
+    <Route path='/rooms/:id' element={<RoomPage/>}/>
+    <Route path='/rooms' element={<RoomsPage/>}/>
   </>
 );
 

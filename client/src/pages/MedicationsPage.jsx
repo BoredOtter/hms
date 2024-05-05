@@ -46,8 +46,8 @@ const MedicationsPage = () => {
   return (
     loading ? <WarningInfo loading={true}/> 
     :
-    <div className="container mx-auto px-4 py-8 justify-center items-center text-center space-y-10">
-        <div className="flex justify-center"><MedicationCreation refresh={refresh}/></div>
+    <div className="justify-center items-center text-center">
+        <MedicationCreation refresh={refresh}/>
         <div className='grid grid-cols-2 gap-10'>
           <SearchBar searchTerm={searchTerm} onSearch={setSearchTerm} />
           <button onClick={handleToggleSearch} className={`${bodyButton} `}>Searching by {searchById ? 'ID' : 'Name'}</button>

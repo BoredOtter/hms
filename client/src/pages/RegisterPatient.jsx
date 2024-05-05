@@ -99,7 +99,7 @@ const RegisterPatient = () => {
     
 
     return (
-        <div className='flex justify-center'>
+        <div className='max-w-md mx-auto'>
             <ObjectDetails title={"Register new patient"}>
                 <form className='space-y-5'>
                     {!valid && (
