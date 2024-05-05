@@ -32,7 +32,7 @@ class BedReservation(Base):
 
 class Employee(Base):
     __tablename__ = "Employees"
-    ID_employee = Column(Integer, primary_key=True)
+    Employee_uuid = Column(String, primary_key=True)
     PESEL = Column(String)
     First_name = Column(String)
     Last_name = Column(String)
@@ -45,7 +45,7 @@ class Employee(Base):
 class EmployeeSchedule(Base):
     __tablename__ = "Employee_Schedules"
     ID_entry = Column(Integer, primary_key=True)
-    ID_employee = Column(Integer, ForeignKey("Employees.ID_employee"))
+    Employee_uuid = Column(String, ForeignKey("Employees.Employee_uuid"))
     Date = Column(Date)
     Start_time = Column(Time)
     End_time = Column(Time)

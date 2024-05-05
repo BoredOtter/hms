@@ -515,6 +515,7 @@ def delete_bed_reservation(patient_id: str, db=Depends(get_db)):
 # ======================== Employee Management ========================
 @app.post("/create/employee", tags=["Employee"])
 def create_employee(employee: create_employee_schema, db=Depends(get_db)):
+    employee_schema = employee
     employee = employee_model(**employee.model_dump())
 
     # check if department exists
@@ -529,14 +530,12 @@ def create_employee(employee: create_employee_schema, db=Depends(get_db)):
     if employee.Position not in ["doctor", "nurse", "receptionist"]:
         raise HTTPException(status_code=400, detail="Invalid position")
 
+    employee_username =  employee.First_name + "-" + employee.Last_name + "-" + employee.PESEL
+    
     try:
         keycloak_admin.create_user(
             {
-                "username": employee.First_name
-                + "-"
-                + employee.Last_name
-                + "-"
-                + employee.PESEL,
+                "username": employee_username,
                 "enabled": True,
                 "groups": [employee.Position.lower() + "s"],
                 "firstName": employee.First_name,
@@ -549,13 +548,27 @@ def create_employee(employee: create_employee_schema, db=Depends(get_db)):
         raise HTTPException(
             status_code=409, detail="Error creating patient in keycloak"
         )
+        
+    user_id = keycloak_admin.get_user_id(employee_username)
+    
+    if db.query(employee_model).filter(employee_model.PESEL == employee.PESEL).first():
+        logger.error("Employee already exists in database")
+        keycloak_admin.delete_user(user_id)
+        raise HTTPException(
+            status_code=409, detail="Employee with this uuid already exists in database"
+        )
 
     try:
+        employee = employee_model(**employee_schema.model_dump(), Employee_uuid=user_id)
         db.add(employee)
         db.commit()
-    except Exception:
-        raise HTTPException(status_code=400, detail="Error while adding employee.")
-    return {"message": "Employee added successfully."}
+    except Exception as e:
+        logger.error("Error creating employee in database: %s", e)
+        keycloak_admin.delete_user(user_id)
+        raise HTTPException(
+            status_code=500, detail="Error creating employee in database"
+        )
+    return {"message": "Employee created successfully."}
 
 
 @app.get("/get/employee/all", tags=["Employee"])
