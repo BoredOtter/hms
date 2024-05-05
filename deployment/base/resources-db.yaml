@@ -108,7 +108,7 @@ data:
 
     CREATE TABLE "Material_Resources" (
       "ID_resource" serial PRIMARY KEY,
-      "Resource_name" varchar,
+      "Resource_name" varchar unique,
       "Description" varchar,
       "Available_quantity" int,
       "Department_id" int

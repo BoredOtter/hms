@@ -807,7 +807,27 @@ def update_medical_procedure(
         updated_fields["Description"] = medical_procedure.Description
     if medical_procedure.Costs is not None:
         updated_fields["Costs"] = medical_procedure.Costs
-
+    if medical_procedure.Medical_personnel_list is not None:
+        updated_fields["Medical_personnel_list"] = " ".join(
+            medical_procedure.Medical_personnel_list
+        )
+        
+        # check if medical personnel exists and is in doctor group in keycloak
+        for group in keycloak_admin.get_groups():
+            if group.get("name") == "doctors":
+                keycloak_group_id = group.get("id")
+                break
+            
+        doctors = keycloak_admin.get_group_members(keycloak_group_id)
+        for doctor_id in medical_procedure.Medical_personnel_list:
+            doctor_exists = False
+            for doctor in doctors:
+                if doctor.get("id") == doctor_id:
+                    doctor_exists = True
+                    break
+            if not doctor_exists:
+                raise HTTPException(status_code=404, detail="Doctor not found")
+            
     if updated_fields:
         try:
             db.query(medical_procedure_model).filter(
