@@ -81,8 +81,8 @@ data:
     );
 
     CREATE TABLE "Employees" (
-      "ID_employee" serial PRIMARY KEY,
-      "PESEL" varchar,
+      "Employee_uuid" varchar PRIMARY KEY,
+      "PESEL" varchar unique,
       "First_name" varchar,
       "Last_name" varchar,
       "Employment_date" date,
@@ -92,7 +92,7 @@ data:
 
     CREATE TABLE "Employee_Schedules" (
       "ID_entry" serial PRIMARY KEY,
-      "ID_employee" int,
+      "Employee_uuid" varchar,
       "Date" date,
       "Start_time" time,
       "End_time" time
@@ -102,18 +102,13 @@ data:
       "ID_procedure" serial PRIMARY KEY,
       "Procedure_name" varchar,
       "Description" varchar,
-      "Costs" varchar
-    );
-
-    CREATE TABLE "Surgical_Plans" (
-      "ID_plan" serial PRIMARY KEY,
-      "ID_procedure" int,
+      "Costs" varchar,
       "Medical_personnel_list" varchar
     );
 
     CREATE TABLE "Material_Resources" (
       "ID_resource" serial PRIMARY KEY,
-      "Resource_name" varchar,
+      "Resource_name" varchar unique,
       "Description" varchar,
       "Available_quantity" int,
       "Department_id" int
@@ -127,15 +122,13 @@ data:
 
     CREATE TABLE "Operating_Room_Reservation" (
       "ID_reservation" serial PRIMARY KEY,
-      "ID_plan" int,
+      "ID_procedure" int,
       "ID_operating_room" int,
       "Reservation_date" date,
       "Start_time" time,
       "End_time" time
     );
 
-
-    ALTER TABLE "Operating_Room_Reservation" ADD FOREIGN KEY ("ID_plan") REFERENCES "Surgical_Plans" ("ID_plan");
 
     ALTER TABLE "Operating_Room" ADD FOREIGN KEY ("ID_department") REFERENCES "Departments" ("ID_department");
 
@@ -147,9 +140,7 @@ data:
 
     ALTER TABLE "Employees" ADD FOREIGN KEY ("Department_id") REFERENCES "Departments" ("ID_department");
 
-    ALTER TABLE "Employee_Schedules" ADD FOREIGN KEY ("ID_employee") REFERENCES "Employees" ("ID_employee");
-
-    ALTER TABLE "Surgical_Plans" ADD FOREIGN KEY ("ID_procedure") REFERENCES "Medical_Procedures" ("ID_procedure");
+    ALTER TABLE "Employee_Schedules" ADD FOREIGN KEY ("Employee_uuid") REFERENCES "Employees" ("Employee_uuid");
 
     ALTER TABLE "Material_Resources" ADD FOREIGN KEY ("Department_id") REFERENCES "Departments" ("ID_department");
 

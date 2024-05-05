@@ -147,6 +147,9 @@
       "input_headers": [
         "*"
       ],
+      "input_query_strings": [
+        "room_id"
+      ],
       "method": "GET",
       "output_encoding": "no-op",
       "backend": [
