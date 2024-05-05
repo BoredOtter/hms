@@ -57,13 +57,7 @@ class MedicalProcedure(Base):
     Procedure_name = Column(String)
     Description = Column(String)
     Costs = Column(String)
-
-
-class SurgicalPlan(Base):
-    __tablename__ = "Surgical_Plans"
-    ID_plan = Column(Integer, primary_key=True)
-    ID_procedure = Column(Integer, ForeignKey("Medical_Procedures.ID_procedure"))
-    Medical_personnel_list = Column(String)
+    Medical_personnel_list = Column(String)    
 
 
 class MaterialResource(Base):

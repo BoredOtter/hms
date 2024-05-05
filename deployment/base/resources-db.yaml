@@ -102,12 +102,7 @@ data:
       "ID_procedure" serial PRIMARY KEY,
       "Procedure_name" varchar,
       "Description" varchar,
-      "Costs" varchar
-    );
-
-    CREATE TABLE "Surgical_Plans" (
-      "ID_plan" serial PRIMARY KEY,
-      "ID_procedure" int,
+      "Costs" varchar,
       "Medical_personnel_list" varchar
     );
 
@@ -127,15 +122,13 @@ data:
 
     CREATE TABLE "Operating_Room_Reservation" (
       "ID_reservation" serial PRIMARY KEY,
-      "ID_plan" int,
+      "ID_procedure" int,
       "ID_operating_room" int,
       "Reservation_date" date,
       "Start_time" time,
       "End_time" time
     );
 
-
-    ALTER TABLE "Operating_Room_Reservation" ADD FOREIGN KEY ("ID_plan") REFERENCES "Surgical_Plans" ("ID_plan");
 
     ALTER TABLE "Operating_Room" ADD FOREIGN KEY ("ID_department") REFERENCES "Departments" ("ID_department");
 
@@ -148,8 +141,6 @@ data:
     ALTER TABLE "Employees" ADD FOREIGN KEY ("Department_id") REFERENCES "Departments" ("ID_department");
 
     ALTER TABLE "Employee_Schedules" ADD FOREIGN KEY ("Employee_uuid") REFERENCES "Employees" ("Employee_uuid");
-
-    ALTER TABLE "Surgical_Plans" ADD FOREIGN KEY ("ID_procedure") REFERENCES "Medical_Procedures" ("ID_procedure");
 
     ALTER TABLE "Material_Resources" ADD FOREIGN KEY ("Department_id") REFERENCES "Departments" ("ID_department");
 
