@@ -130,6 +130,8 @@ data:
     );
 
 
+    ALTER TABLE "Operating_Room_Reservation" ADD FOREIGN KEY ("ID_procedure") REFERENCES "Medical_Procedures" ("ID_procedure");
+
     ALTER TABLE "Operating_Room" ADD FOREIGN KEY ("ID_department") REFERENCES "Departments" ("ID_department");
 
     ALTER TABLE "Operating_Room_Reservation" ADD FOREIGN KEY ("ID_operating_room") REFERENCES "Operating_Room" ("ID_operating_room");
