@@ -10,7 +10,7 @@ import ObjectDetails from '../utils/ObjectDetails'
 const ScheduleCreation = ({refresh,employee_id}) => {
 
     const [schedule, setSchedule] = useState({
-        Date: '',
+        Date: currentDate,
         Start_time: '',
         End_time: '',
         Employee_uuid: employee_id

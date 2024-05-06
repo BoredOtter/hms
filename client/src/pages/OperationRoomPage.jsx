@@ -7,6 +7,7 @@ import bodyButton from '../components/utils/bodyButton';
 import formInput from '../components/utils/formInput';
 import { NavLink } from 'react-router-dom';
 import httpResources from '../client/httpResources';
+import OperatingRoomReservations from '../components/creators/OperatingRoomReservations';
 
 const OperationRoomPage = () => {
     const { id } = useParams();
@@ -61,7 +62,7 @@ const OperationRoomPage = () => {
 
   return (
     !loading ? (
-      <div className='flex justify-center'>
+      <>
       <ObjectDetails title={"Operating Room Information"}>
           {Object.entries(operation_room).map(([key, value]) => (
             (key !== "ID_operating_room") && (
@@ -83,11 +84,11 @@ const OperationRoomPage = () => {
           ))}
         <div className='flex justify-center gap-2'>
             <button className={bodyButton} onClick={handleDeleteRoom}>Delete</button>
-            <button className={bodyButton}> Reserve</button>
             <NavLink className={`${bodyButton}`} to={'/operating_rooms'}>Back</NavLink>
         </div>
       </ObjectDetails>
-      </div>
+      <OperatingRoomReservations ID_operating_room={id}></OperatingRoomReservations>
+      </>
     ) : <WarningInfo loading={true} />
   );
 }

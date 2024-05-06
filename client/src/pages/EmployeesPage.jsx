@@ -32,7 +32,7 @@ const EmployeesPage = () => {
       });
   return (
     loading ? <WarningInfo loading={true}/>
-    :<div className="container mx-auto px-4 py-8">
+    :<div className="container px-4 py-8">
       <SearchBar searchTerm={searchTerm} onSearch={setSearchTerm} />
       <ObjectsListing 
         objectsData={filteredEmployees} 

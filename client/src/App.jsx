@@ -10,13 +10,13 @@ import Home from './pages/Home';
 import PatientsPage from './pages/PatientsPage';
 import PatientPage from './pages/PatientPage';
 import useAuth from './auth/useAuth';
-import EmployeeSchedule from './components/EmployeeSchedule';
 import OperationRooms from './components/OperationRooms';
 import OperationRoomPage from './pages/OperationRoomPage';
 import EmployeesPage from './pages/EmployeesPage';
 import EmployeePage from './pages/EmployeePage';
 import RoomPage from './pages/RoomPage';
 import RoomsPage from './pages/RoomsPage';
+import ProceduresPage from './pages/ProceduresPage';
 
 
 import {
@@ -41,14 +41,13 @@ const generateDoctorRoutes = () => (
     <Route path='/patients/:id' element={<PatientPage />} />
     <Route path='/departments' element={<DepartmentsPage />} />
     <Route path='/departments/:id' element={<DepartmentPage />} />
-    <Route path='/schedules' element={<Home/>}/>
-    <Route path='/schedules/:id' element={<EmployeeSchedule/>}/>
     <Route path='/operating_rooms' element={<OperationRooms/>}/>
     <Route path='/operating_rooms/:id' element={<OperationRoomPage/>}/>
     <Route path='/employees' element={<EmployeesPage/>}/>
     <Route path='/employees/:id' element={<EmployeePage/>}/>
     <Route path='/rooms/:id' element={<RoomPage/>}/>
     <Route path='/rooms' element={<RoomsPage/>}/>
+    <Route path='/procedures' element={<ProceduresPage/>}/>
   </>
 );
 

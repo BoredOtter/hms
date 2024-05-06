@@ -4,7 +4,7 @@ import keycloak from '../../auth/keycloak';
 import { useEffect, useState } from 'react';
 
 
-const NavbarRoles = ({ loggedUser }) => {
+const NavbarRoles = () => {
   const [isWideScreen, setIsWideScreen] = useState(window.innerWidth > 768); 
     useEffect(() => {
       const handleResize = () => {
@@ -17,7 +17,6 @@ const NavbarRoles = ({ loggedUser }) => {
   }, []);
 
 
-  const CURRENT_USER_TYPE = loggedUser;
   const linkClass = ({ isActive }) =>
     isActive
       ? 'bg-black text-white hover:bg-gray-900 hover:text-white rounded-md px-3 py-2'
@@ -28,14 +27,14 @@ const NavbarRoles = ({ loggedUser }) => {
 
   return (
     <div className={isWideScreen ? "flex justify-between items-center text-center" : "grid grid-cols-4 text-center items-center gap-2 mb-1"}>  
-    <NavLink to='/departments' className={linkClass}>Departments</NavLink>   
+      <NavLink to='/departments' className={linkClass}>Departments</NavLink>   
       <NavLink to='/register' className={linkClass}>Register</NavLink>
       <NavLink to='/patients' className={linkClass}>Patients</NavLink>
       <NavLink to='/medications' className={linkClass}>Medications</NavLink>
-      <NavLink to='/operating_rooms' className={linkClass}>Operating Rooms</NavLink>
+      <NavLink to='/operating_rooms' className={linkClass}>Operating rooms</NavLink>
       <NavLink to='/rooms' className={linkClass}>Rooms</NavLink>
-      <NavLink to='/schedules' className={linkClass}>Schedule</NavLink>
       <NavLink to='/employees' className={linkClass}>Employees</NavLink>
+      <NavLink to='/procedures' className={linkClass}>Procedures</NavLink>
     </div>
   );
 };
