@@ -68,12 +68,16 @@ const RegisterPatient = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const currentDate = new Date();
+        const enteredDateOfBirth = new Date(values.Date_of_birth);
+    
         if (
             values.First_name &&
             values.Last_name &&
             values.PESEL &&
             containsOnlyDigits(values.PESEL) &&
             values.Date_of_birth &&
+            enteredDateOfBirth <= currentDate &&
             values.Gender 
         ) {
             try {
@@ -86,15 +90,20 @@ const RegisterPatient = () => {
                     Gender: "Male",
                     Contact_number: "",
                     Address: "",
-                })
-                alert("Patient registered successfully!")
+                });
+                alert("Patient registered successfully!");
             } catch (error) {
                 alert(error.response.data.detail);
             }
         } else {
-            alert("Please fill in all required fields correctly.");
+            if (!values.Date_of_birth || enteredDateOfBirth > currentDate) {
+                alert("Date of birth cannot be empty or after the current date.");
+            } else {
+                alert("Please fill in all required fields correctly.");
+            }
         }
     };
+    
     
 
     return (

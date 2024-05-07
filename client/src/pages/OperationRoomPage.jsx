@@ -14,6 +14,7 @@ const OperationRoomPage = () => {
     const [operation_room, setOperation_room] = useState('');
     const [editedOperation_room, setEditedOperation_room] = useState('');
     const [operationRoomReservations, setOperationRoomReservations] = useState([]);
+    const [refreshing,setRefreshing] = useState(false);
     const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -26,7 +27,7 @@ const OperationRoomPage = () => {
       }catch(error){}
     }
     fetchOperationRoomReservations();
-  }, [])
+  }, [refreshing])
 
   useEffect(() => {
     const fetchoperation_rooms = async () => {
@@ -44,7 +45,11 @@ const OperationRoomPage = () => {
     };
 
     fetchoperation_rooms();
-  }, [id]);
+  }, []);
+
+  const refresh = () => {
+    setRefreshing(!refreshing);
+  }
 
     const handleChange = (e) => {
       const { name, value } = e.target;
@@ -110,7 +115,7 @@ const OperationRoomPage = () => {
             <NavLink className={`${bodyButton}`} to={'/operating_rooms'}>Back</NavLink>
         </div>
       </ObjectDetails>
-      <OperatingRoomReservations ID_operating_room={id}></OperatingRoomReservations>
+      <OperatingRoomReservations refresh={refresh} ID_operating_room={id}></OperatingRoomReservations>
       <h2 className='text-3xl font-bold text-black-100 mb-8 text-center'>Reservations</h2>
       <div className='grid sm:grid-cols-3 grid-cols-1'>
       {

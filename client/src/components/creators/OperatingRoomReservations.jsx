@@ -8,7 +8,7 @@ import formLabel from '../utils/formLabel';
 import SearchBar from '../SearchBar';
 import currentDate from '../utils/currentDate';
 
-const OperatingRoomReservations = ({ID_operating_room}) => {
+const OperatingRoomReservations = ({refresh, ID_operating_room}) => {
 
     const [searchTerm,setSearchTerm] = useState('');
     const [procedures, setProcedures] = useState([]);
@@ -61,7 +61,7 @@ const OperatingRoomReservations = ({ID_operating_room}) => {
                 Start_time: '',
                 ID_procedure: ''
               })
-              setRefreshing(!refreshing);
+            refresh();
             alert("Reservation added successfully!")
         }catch(error){
             alert(error.response.data.detail)

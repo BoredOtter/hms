@@ -19,7 +19,6 @@ const PatientBedReservationCreation = ({ patient_id , refresh}) => {
                 const foundRooms = response.data;
                 setRooms(foundRooms);
             } catch (error) {
-                alert(error.response.data.detail);
             }
         };
         fetchRooms();

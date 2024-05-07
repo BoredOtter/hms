@@ -6,7 +6,7 @@ import ObjectDetails from '../utils/ObjectDetails';
 import SearchBar from '../SearchBar';
 import httpResources from '../../client/httpResources';
 
-const ProcedureCreation = ({refresh}) => {
+const ProcedureCreation = (refresh) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [employees, setEmployees] = useState([]);
     const [selectedEmployees, setSelectedEmployees] = useState([]);
@@ -130,7 +130,7 @@ const ProcedureCreation = ({refresh}) => {
                     <label className={formLabel}>Search Employee:</label>
                     <SearchBar searchTerm={searchTerm} onSearch={setSearchTerm} />
                     {searchTerm !== '' && 
-                        <div className='grid grid-cols-2 mt-2'> 
+                        <div className='w-full mt-2'> 
                         {filteredEmployees.map(employee => (
                             <button type="button" className="bg-[#2D9596] p-4 rounded-md mt-4 text-center justify-center items-center" onClick={() => handleAddEmployee(employee)} key={employee.Employee_uuid}>
                                 <p className='text-white text-xl'>{employee.First_name} {employee.Last_name}</p>                          

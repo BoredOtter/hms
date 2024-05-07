@@ -6,7 +6,7 @@ import httpResources from '../client/httpResources';
 import loggedUser from '../auth/loggedUser';
 import ObjectDetails from '../components/utils/ObjectDetails';
 
-const Home = ({employee_name, employee_id}) => {
+const Home = ({employee_name}) => {
 
 
 
