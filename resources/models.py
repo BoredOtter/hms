@@ -32,7 +32,7 @@ class BedReservation(Base):
 
 class Employee(Base):
     __tablename__ = "Employees"
-    ID_employee = Column(Integer, primary_key=True)
+    Employee_uuid = Column(String, primary_key=True)
     PESEL = Column(String)
     First_name = Column(String)
     Last_name = Column(String)
@@ -45,7 +45,7 @@ class Employee(Base):
 class EmployeeSchedule(Base):
     __tablename__ = "Employee_Schedules"
     ID_entry = Column(Integer, primary_key=True)
-    ID_employee = Column(Integer, ForeignKey("Employees.ID_employee"))
+    Employee_uuid = Column(String, ForeignKey("Employees.Employee_uuid"))
     Date = Column(Date)
     Start_time = Column(Time)
     End_time = Column(Time)
@@ -57,13 +57,7 @@ class MedicalProcedure(Base):
     Procedure_name = Column(String)
     Description = Column(String)
     Costs = Column(String)
-
-
-class SurgicalPlan(Base):
-    __tablename__ = "Surgical_Plans"
-    ID_plan = Column(Integer, primary_key=True)
-    ID_procedure = Column(Integer, ForeignKey("Medical_Procedures.ID_procedure"))
-    Medical_personnel_list = Column(String)
+    Medical_personnel_list = Column(String)    
 
 
 class MaterialResource(Base):
@@ -87,7 +81,7 @@ class OperatingRoom(Base):
 class OperatingRoomReservation(Base):
     __tablename__ = "Operating_Room_Reservation"
     ID_reservation = Column(Integer, primary_key=True)
-    ID_plan = Column(Integer, ForeignKey("Surgical_Plans.ID_plan"))
+    ID_procedure = Column(Integer, ForeignKey("Medical_Procedures.ID_procedure"))
     ID_operating_room = Column(Integer, ForeignKey("Operating_Room.ID_operating_room"))
     Reservation_date = Column(Date)
     Start_time = Column(Time)

@@ -279,6 +279,20 @@ def delete_prescription_medication(
     return {"message": "Prescription medication deleted successfully"}
 
 
+@app.delete("/delete/prescription/{prescription_id}", tags=["Prescription"])
+def delete_prescription(prescription_id: int, db=Depends(get_db)):
+    try:
+        db.query(PrescriptionMedication).filter(PrescriptionMedication.ID_prescription == prescription_id).delete()
+        db.query(Prescription).filter(Prescription.ID_prescription == prescription_id).delete()
+        db.commit()
+    except:
+        raise HTTPException(
+            status_code=400, detail="Error deleting prescription and related medications"
+        )
+    return {"message": "Prescription and related medications deleted successfully"}
+
+
+
 @app.patch("/update/prescription/{prescription_id}", tags=["Prescription"])
 def update_prescription_medication_list(
     prescription_id: int,

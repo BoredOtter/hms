@@ -48,7 +48,7 @@ class CreateEmployee(BaseModel):
 
 # ======================== Employee Schedule Management ========================
 class CreateEmployeeSchedule(BaseModel):
-    ID_employee: int
+    Employee_uuid: str
     Date: date
     Start_time: time
     End_time: time
@@ -65,22 +65,14 @@ class CreateMedicalProcedure(BaseModel):
     Procedure_name: str
     Description: str
     Costs: str
+    Medical_personnel_list: List[str]
 
 
 class UpdateMedicalProcedure(BaseModel):
     Procedure_name: Optional[str] = None
     Description: Optional[str] = None
     Costs: Optional[str] = None
-
-
-# ======================== Surgical Plan Management ========================
-class CreateSurgicalPlan(BaseModel):
-    ID_procedure: int
-    Medical_personnel_list: List[str]
-
-
-class UpdateSurgicalPlan(BaseModel):
-    Medical_personnel_list: List[str]
+    Medical_personnel_list: Optional[List[str]] = None
 
 
 # ======================== Material Resource Management ========================
@@ -106,7 +98,7 @@ class CreateOperatingRoom(BaseModel):
 
 # ======================== Operating Room Reservations Management ========================
 class CreateOperatingRoomReservation(BaseModel):
-    ID_plan: int
+    ID_procedure: int
     ID_operating_room: int
     Reservation_date: date
     Start_time: time

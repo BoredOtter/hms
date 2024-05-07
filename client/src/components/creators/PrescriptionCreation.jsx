@@ -4,11 +4,13 @@ import httpPharmacy from '../../client/httpPharmacy';
 import formInput from '../utils/formInput';
 import bodyButton from '../utils/bodyButton';
 import SearchBar from '../SearchBar';
+import loggedUser from '../../auth/loggedUser';
 
-const PrescriptionCreation = ({ refresh, ID_patient, ID_doctor }) => {
+const PrescriptionCreation = ({patient_id}) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [allMedications, setAllMedications] = useState([]);
   const [selectedMedications, setSelectedMedications] = useState([]);
+  const employee = loggedUser();
 
   useEffect(() => {
     const fetchMedications = async () => {
@@ -44,46 +46,35 @@ const PrescriptionCreation = ({ refresh, ID_patient, ID_doctor }) => {
     setSelectedMedications(updatedMedications);
   };
 
-  const handleDosageChange = (index, value) => {
+  const handleChange = (index, field, value) => {
     const updatedMedications = [...selectedMedications];
-    updatedMedications[index].dosage = value;
-    setSelectedMedications(updatedMedications);
-  };
-
-  const handleQuantityChange = (index, value) => {
-    const updatedMedications = [...selectedMedications];
-    updatedMedications[index].quantity = value;
+    updatedMedications[index][field] = value;
     setSelectedMedications(updatedMedications);
   };
 
   const handleSavePrescription = async () => {
+    const hasEmptyFields = selectedMedications.some(medication => medication.dosage.trim() === '' || medication.quantity.trim() === '');
+    if (hasEmptyFields) {
+      alert("Please fill in all fields for selected medications.");
+      return;
+    }
+
     try {
-      // Constructing prescription data object
-      const prescriptionData = {
-        ID_patient: ID_patient,
-        ID_doctor: '986d7c71-a3ab-4ffa-86a9-ab1d3d8c8c29'
+      const prescription = {
+        Prescription_data: {
+          ID_patient: patient_id,
+          ID_doctor: employee.uuid
+        },
+        Medication_list: selectedMedications.map(medication => ({
+          ID_medication: medication.ID_medication,
+          Dosage: medication.dosage,
+          Quantity: medication.quantity
+        }))
       };
-  
-      // Constructing medication list array
-      const medicationList = selectedMedications.map(medication => ({
-        ID_medication: medication.ID_medication,
-        Quantity: medication.quantity,
-        Dosage: medication.dosage
-      }));
-  
-      // Constructing the payload for the POST request
-      const payload = {
-        Prescription_data: prescriptionData,
-        Medication_list: medicationList
-      };
-  
-      // Assuming you have a function to save the prescription
-      // const response = await savePrescriptionFunction(payload);
-  
-      httpPharmacy.post("/add/prescription", payload)
-      console.log(payload)
-      alert("Prescription added!")
-      refresh();
+      await httpPharmacy.post("/add/prescription", prescription);
+      setSelectedMedications([]);
+      setSearchTerm('');
+      alert("Prescription added successfully!");
     } catch (error) {
       console.error("Error saving prescription:", error);
     }
@@ -92,7 +83,7 @@ const PrescriptionCreation = ({ refresh, ID_patient, ID_doctor }) => {
   return (
     <ObjectDetails title={"Create new Prescription"}>
       <SearchBar searchTerm={searchTerm} onSearch={setSearchTerm} />
-      {searchTerm !== '' && (
+      {searchTerm !== '' && 
         <div>
           {filteredMedications.map(medication => (
             <ObjectDetails key={medication.ID_medication} title={medication.Medication_name}>
@@ -100,7 +91,7 @@ const PrescriptionCreation = ({ refresh, ID_patient, ID_doctor }) => {
             </ObjectDetails>
           ))}
         </div>
-      )}
+      }
       <div className='mt-5'>
         <h3>Selected Medications:</h3>
         {selectedMedications.map((medication, index) => (
@@ -110,14 +101,14 @@ const PrescriptionCreation = ({ refresh, ID_patient, ID_doctor }) => {
               type="text"
               placeholder="Dosage"
               value={medication.dosage}
-              onChange={e => handleDosageChange(index, e.target.value)}
+              onChange={e => handleChange(index, 'dosage', e.target.value)}
               className={formInput}
             />
             <input
               type="text"
               placeholder="Quantity"
               value={medication.quantity}
-              onChange={e => handleQuantityChange(index, e.target.value)}
+              onChange={e => handleChange(index, 'quantity', e.target.value)}
               className={formInput}
               inputMode={'numeric'}
             />

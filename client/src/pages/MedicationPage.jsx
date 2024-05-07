@@ -87,7 +87,7 @@ const MedicationPage = () => {
                     name={key}
                     value={editedMedication[key]}
                     onChange={handleChange}
-                    className={`${formInput} flex items-center justify-center`} // Keep input centered
+                    className={`${formInput} flex items-center justify-center`}
                   />
                 ) : (
                   <p className="flex items-center justify-start">{typeof value === 'object' ? JSON.stringify(value) : value}</p>

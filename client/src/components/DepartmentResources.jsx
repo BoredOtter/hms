@@ -65,7 +65,7 @@ const DepartmentResources = ({ ID_department }) => {
   
     return (
       <div className='container-xl lg:container m-auto'>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
           {resources.map((resource, index) => (
             <div key={index} className="bg-sky-100 rounded-xl p-3.5 hover:bg-sky shadow-md hover:shadow-lg relative mb-10">
                 <div className="md:flex-1">

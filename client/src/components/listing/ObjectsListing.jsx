@@ -3,7 +3,7 @@ import ObjectListing from './ObjectListing';
 const ObjectsListing = ({ objectsData, objectsTitle, objectLink, objectKey }) => {
   return (
     <section className='px-4 py-8'>
-      <div className='container-xl lg:container m-auto'>
+      <div className='container-xl'>
         <h2 className='text-3xl font-bold text-indigo-500 mb-8 text-center'>
           {objectsTitle}
         </h2>
