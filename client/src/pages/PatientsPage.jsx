@@ -32,7 +32,7 @@ const PatientsPage = () => {
 
   return (
     loading ? <WarningInfo loading={true}/>
-    :<div className="px-4 py-8">
+    :<div className="mt-8">
       <SearchBar searchTerm={searchTerm} onSearch={setSearchTerm} />
       <ObjectsListing 
         objectsData={filteredPatients} 

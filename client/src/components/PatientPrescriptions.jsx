@@ -46,7 +46,7 @@ const PatientPrescriptions = ({ patient_id }) => {
         <WarningInfo loading={true} />
       ) : (
         <>
-          <h2 className='text-3xl font-bold text-indigo-500 mb-8 text-center mt-8'>
+          <h2 className='text-3xl font-bold text-black-100 mb-8 text-center mt-8'>
             Prescriptions
           </h2>
           <div className='mt-5 '>
@@ -65,7 +65,7 @@ const PatientPrescriptions = ({ patient_id }) => {
                   <div className='grid grid-cols-2 gap-3'>
                     {prescription.prescription_medications.length > 0 ? (
                       prescription.prescription_medications.map((medication, medIndex) => (
-                        <div key={medIndex} className="bg-gray-200 rounded-xl p-3.5 hover:bg-sky shadow-md hover:shadow-lg relative mb-2">
+                        <div key={medIndex} className="bg-[#9AD0C2] rounded-xl p-3.5 hover:bg-sky shadow-md hover:shadow-lg relative mb-2">
                           <div className="font-bold text-l flex mb-2">
                             <p className="font-bold mr-2">Medication ID:</p>
                             <p>{medication.ID_medication}</p>

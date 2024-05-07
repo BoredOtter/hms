@@ -64,12 +64,17 @@ const ProcedureCreation = ({refresh}) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault(); // Prevent default form submission
+    
+        // Sprawdź, czy wszystkie pola formularza są wypełnione
+        if (!formData.Procedure_name || !formData.Description || !formData.Costs || selectedEmployees.length === 0) {
+            alert("Please fill in all fields and select at least one employee.");
+            return;
+        }
         try {
             const dataToSend = {
                 ...formData,
                 Medical_personnel_list: selectedEmployees.map(employee => employee.Employee_uuid)
             };
-            console.log(dataToSend);
             await httpResources.post("/create/medical_procedure", dataToSend);
             alert("Procedure added successfully!");
             refresh();
@@ -125,21 +130,19 @@ const ProcedureCreation = ({refresh}) => {
                     <label className={formLabel}>Search Employee:</label>
                     <SearchBar searchTerm={searchTerm} onSearch={setSearchTerm} />
                     {searchTerm !== '' && 
-                        <div className='grid grid-cols-2 gap-2'> 
+                        <div className='grid grid-cols-2 mt-2'> 
                         {filteredEmployees.map(employee => (
-                            <ObjectDetails key={employee.Employee_uuid} title={`${employee.First_name} ${employee.Last_name}`}>
-                                <button type="button" onClick={() => handleAddEmployee(employee)} className={bodyButton}>
-                                    Add
-                                </button>                           
-                            </ObjectDetails>
+                            <button type="button" className="bg-[#2D9596] p-4 rounded-md mt-4 text-center justify-center items-center" onClick={() => handleAddEmployee(employee)} key={employee.Employee_uuid}>
+                                <p className='text-white text-xl'>{employee.First_name} {employee.Last_name}</p>                          
+                            </button>
                         ))}
                         </div>
                     }
                     <div className='mt-5'>
                         <h3>Selected Employees:</h3>
                         {selectedEmployees.map((employee) => (
-                            <div key={employee.Employee_uuid} className="flex gap-2 justify-center">
-                                <span className="font-bold text-xl mt-1" style={{ color: "black" }}>
+                            <div key={employee.Employee_uuid} className="flex items-center justify-between text-center">
+                                <span className="font-bold text-black text-xl pt-1">
                                     {`${employee.First_name} ${employee.Last_name}`}
                                 </span>
                                 <button onClick={() => handleDeleteEmployee(employee.Employee_uuid)} className={`${bodyButton}`}>

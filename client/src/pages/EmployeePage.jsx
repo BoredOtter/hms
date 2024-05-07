@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import ObjectDetails from '../components/utils/ObjectDetails';
 import httpResources from '../client/httpResources';
 import bodyButton from '../components/utils/bodyButton';
-import { NavLink } from 'react-router-dom';
 
 const EmployeePage = () => {
   const {id} = useParams();
@@ -23,7 +22,6 @@ const EmployeePage = () => {
         const response = await httpResources.get(`/get/employee_schedule/employee/${id}`)
         const foundSchedules = response.data;
         setSchedules(foundSchedules);
-        console.log(foundSchedules)
       }catch(error){
         
       }
@@ -35,11 +33,10 @@ const EmployeePage = () => {
     try{
       await httpResources.delete(`/delete/employee_schedule/${schedule_id}`)
       alert("Schedule deleted successfully!")
-      refresh();
+      location.reload();
     }catch(error){
       alert(error.response.data.detail);
     }
-    
   }
   return (
     <>
@@ -47,7 +44,7 @@ const EmployeePage = () => {
       <div className='grid sm:grid-cols-3 '>
         {
           schedules.map(schedule => (
-            <ObjectDetails title={"Schedule"}>
+            <ObjectDetails key={schedule.ID_entry}>
               <p>Schedule ID: {schedule.ID_entry}</p>
               <p>Start time: {schedule.Start_time}</p>
               <p>End time: {schedule.End_time}</p>

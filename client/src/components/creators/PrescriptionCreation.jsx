@@ -5,13 +5,14 @@ import formInput from '../utils/formInput';
 import bodyButton from '../utils/bodyButton';
 import SearchBar from '../SearchBar';
 import loggedUser from '../../auth/loggedUser';
+import formLabel from '../utils/formLabel';
 
 const PrescriptionCreation = ({patient_id}) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [allMedications, setAllMedications] = useState([]);
   const [selectedMedications, setSelectedMedications] = useState([]);
   const employee = loggedUser();
-
+  
   useEffect(() => {
     const fetchMedications = async () => {
       try {
@@ -47,9 +48,13 @@ const PrescriptionCreation = ({patient_id}) => {
   };
 
   const handleChange = (index, field, value) => {
-    const updatedMedications = [...selectedMedications];
-    updatedMedications[index][field] = value;
-    setSelectedMedications(updatedMedications);
+    if (!isNaN(value)) {
+      const updatedMedications = [...selectedMedications];
+      updatedMedications[index][field] = value;
+      setSelectedMedications(updatedMedications);
+    } else {
+
+    }
   };
 
   const handleSavePrescription = async () => {
@@ -82,13 +87,14 @@ const PrescriptionCreation = ({patient_id}) => {
 
   return (
     <ObjectDetails title={"Create new Prescription"}>
+      <label className={formLabel}>Search medicines:</label>
       <SearchBar searchTerm={searchTerm} onSearch={setSearchTerm} />
       {searchTerm !== '' && 
         <div>
           {filteredMedications.map(medication => (
-            <ObjectDetails key={medication.ID_medication} title={medication.Medication_name}>
-              <button onClick={() => handleAddMedication(medication)} className={bodyButton}>Add</button>
-            </ObjectDetails>
+            <button type="button" className="bg-[#2D9596] p-4 rounded-md mt-4 w-full" onClick={() => handleAddMedication(medication)} key={medication.ID_medication}>
+            <p className='text-white text-xl'>{medication.Medication_name}</p>                          
+        </button>
           ))}
         </div>
       }
@@ -103,6 +109,7 @@ const PrescriptionCreation = ({patient_id}) => {
               value={medication.dosage}
               onChange={e => handleChange(index, 'dosage', e.target.value)}
               className={formInput}
+              inputMode={'numeric'}
             />
             <input
               type="text"

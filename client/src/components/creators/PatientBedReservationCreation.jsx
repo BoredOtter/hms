@@ -17,7 +17,6 @@ const PatientBedReservationCreation = ({ patient_id , refresh}) => {
             try {
                 const response = await httpResources.get(`/get/room/all`);
                 const foundRooms = response.data;
-                console.log(foundRooms);
                 setRooms(foundRooms);
             } catch (error) {
                 alert(error.response.data.detail);
@@ -66,7 +65,7 @@ const PatientBedReservationCreation = ({ patient_id , refresh}) => {
                 value={endDate}
                 onChange={handleEndDateChange}/>
                 {searchTerm !== '' &&
-                    <div className='grid sm:grid-cols-4 gap-2 grid-cols-1'>
+                    <div className='grid sm:grid-cols-3 gap-4 grid-cols-1'>
                         {filteredRooms.map(room => (
                             <ObjectDetails key={room.ID_room} title={`Room ${room.ID_room}`}>
                                 <p>Beds quantity: {room.Number_of_beds}</p>

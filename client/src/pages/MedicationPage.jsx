@@ -4,13 +4,15 @@ import httpPharmacy from '../client/httpPharmacy';
 import WarningInfo from './WarningInfo';
 import formInput from '../components/utils/formInput';
 import ObjectDetails from '../components/utils/ObjectDetails';
-import bodyButton from '../components/utils/bodyButton'; // Assuming bodyButton is imported from a file
+import bodyButton from '../components/utils/bodyButton';
+import loggedUser from '../auth/loggedUser';
 
 const MedicationPage = () => {
   const { id } = useParams();
   const [medication, setMedication] = useState(null);
   const [editedMedication, setEditedMedication] = useState(null);
   const [loading, setLoading] = useState(true);
+  const employee= loggedUser();
 
   useEffect(() => {
     const fetchMedications = async () => {
@@ -103,7 +105,7 @@ const MedicationPage = () => {
               </>
             ) : (
               <>
-                <button className={bodyButton} onClick={() => setEditedMedication(medication)}>Update</button>
+                {employee.roles.includes('admin') && <button className={bodyButton} onClick={() => setEditedMedication(medication)}>Update</button>}
                 <NavLink className={`${bodyButton} pt-3`} to={'/medications'}>Back</NavLink>
               </>
             )}

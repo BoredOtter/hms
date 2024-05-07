@@ -17,6 +17,9 @@ import EmployeePage from './pages/EmployeePage';
 import RoomPage from './pages/RoomPage';
 import RoomsPage from './pages/RoomsPage';
 import ProceduresPage from './pages/ProceduresPage';
+import ProcedurePage from './pages/ProcedurePage';
+import EmployeeProceduresPage from './pages/EmployeeProceduresPage';
+import EmployeeSchedulesPage from './pages/EmployeeSchedulesPage';
 
 
 import {
@@ -26,42 +29,66 @@ import {
   RouterProvider,
 } from 'react-router-dom';
 
-
-
-const generateNurseRoutes = () => (
-  <Route path='/register' element={<RegisterPatient />} />
-);
-
-const generateDoctorRoutes = () => (
-  <>
-    <Route path='/register' element={<RegisterPatient />} />
-    <Route path='/medications' element={<MedicationsPage/>} />
-    <Route path='/medications/:id' element={<MedicationPage/>} />
-    <Route path='/patients' element={<PatientsPage />} />
-    <Route path='/patients/:id' element={<PatientPage />} />
-    <Route path='/departments' element={<DepartmentsPage />} />
-    <Route path='/departments/:id' element={<DepartmentPage />} />
-    <Route path='/operating_rooms' element={<OperationRooms/>}/>
-    <Route path='/operating_rooms/:id' element={<OperationRoomPage/>}/>
-    <Route path='/employees' element={<EmployeesPage/>}/>
-    <Route path='/employees/:id' element={<EmployeePage/>}/>
-    <Route path='/rooms/:id' element={<RoomPage/>}/>
-    <Route path='/rooms' element={<RoomsPage/>}/>
-    <Route path='/procedures' element={<ProceduresPage/>}/>
-  </>
-);
-
 const App = () => {
-
-  const [isLogin, roles, username] = useAuth();
+  const [isLogin, roles, uuid, name] = useAuth();
+  const generateNurseRoutes = () => (
+    <>
+      <Route path='/register' element={<RegisterPatient />} />
+      <Route path='/medications' element={<MedicationsPage/>} />
+      <Route path='/medications/:id' element={<MedicationPage/>} />
+      <Route path='/patients' element={<PatientsPage />} />
+      <Route path='/patients/:id' element={<PatientPage />} />
+      <Route path='/operating_rooms' element={<OperationRooms/>}/>
+      <Route path='/operating_rooms/:id' element={<OperationRoomPage/>}/>
+      <Route path='/rooms/:id' element={<RoomPage/>}/>
+      <Route path='/rooms' element={<RoomsPage/>}/>
+      <Route path='/employee-schedules' element={<EmployeeSchedulesPage employee_id={uuid}/>} />
+    </>
+  )
+  const generateDoctorRoutes = () => (
+    <>
+      <Route path='/register' element={<RegisterPatient />} />
+      <Route path='/medications' element={<MedicationsPage/>} />
+      <Route path='/medications/:id' element={<MedicationPage/>} />
+      <Route path='/patients' element={<PatientsPage />} />
+      <Route path='/patients/:id' element={<PatientPage />} />
+      <Route path='/operating_rooms' element={<OperationRooms/>}/>
+      <Route path='/operating_rooms/:id' element={<OperationRoomPage/>}/>
+      <Route path='/rooms/:id' element={<RoomPage/>}/>
+      <Route path='/rooms' element={<RoomsPage/>}/>
+      <Route path='/employee-procedures' element={<EmployeeProceduresPage employee_id={uuid}/>} />
+      <Route path='/employee-schedules' element={<EmployeeSchedulesPage employee_id={uuid}/>} />
+  
+    </>
+  );
+  const generateAdminRoutes = () => (
+    <>
+      <Route path='/register' element={<RegisterPatient />} />
+      <Route path='/medications' element={<MedicationsPage/>} />
+      <Route path='/medications/:id' element={<MedicationPage/>} />
+      <Route path='/patients' element={<PatientsPage />} />
+      <Route path='/patients/:id' element={<PatientPage />} />
+      <Route path='/departments' element={<DepartmentsPage />} />
+      <Route path='/departments/:id' element={<DepartmentPage />} />
+      <Route path='/operating_rooms' element={<OperationRooms/>}/>
+      <Route path='/operating_rooms/:id' element={<OperationRoomPage/>}/>
+      <Route path='/employees' element={<EmployeesPage/>}/>
+      <Route path='/employees/:id' element={<EmployeePage/>}/>
+      <Route path='/rooms/:id' element={<RoomPage/>}/>
+      <Route path='/rooms' element={<RoomsPage/>}/>
+      <Route path='/procedures' element={<ProceduresPage/>}/>
+      <Route path='/procedures/:id' element={<ProcedurePage/>}/>
+    </>
+  );
 
   const generateRoutes = () => {
     const routes = (
       isLogin ? (
-        <Route path='/' element={<MainLayout loggedUser={roles}/>}>
+        <Route path='/' element={<MainLayout/>}>
           {roles.includes('nurse') && generateNurseRoutes()}
           {roles.includes('doctor') && generateDoctorRoutes()}
-          <Route path='/home' element={<Home userName={username}/>} />
+          {roles.includes('admin') && generateAdminRoutes()}
+          <Route path='/home' element={<Home employee_name={name} employee_id={uuid}/>} />
           <Route path='/unauthorized' element={<WarningInfo info="Unauthorized!" />} />
           <Route path='/*' element={<WarningInfo info="404 Not Found!" />} />
         </Route>
@@ -74,9 +101,9 @@ const App = () => {
   };
 
   const router = createBrowserRouter(createRoutesFromElements(generateRoutes()));
-
-  return (
-    <RouterProvider router={router} />
+    return (
+        <RouterProvider router={router}>
+        </RouterProvider>
   );
 };
 

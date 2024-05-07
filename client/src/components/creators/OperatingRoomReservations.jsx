@@ -13,6 +13,7 @@ const OperatingRoomReservations = ({ID_operating_room}) => {
     const [searchTerm,setSearchTerm] = useState('');
     const [procedures, setProcedures] = useState([]);
     const [selectedProcedure, setSelectedProcedure] = useState('')
+    const [refreshing, setRefreshing] = useState(false);
     const [reservation, setReservation] = useState({
         ID_operating_room: parseInt(ID_operating_room),
         Reservation_date: currentDate,
@@ -20,7 +21,6 @@ const OperatingRoomReservations = ({ID_operating_room}) => {
         End_time: '',
         ID_procedure: ''
       });
-
 
     useEffect(() => {
       const fetchProcedures = async () => {
@@ -31,7 +31,7 @@ const OperatingRoomReservations = ({ID_operating_room}) => {
         }catch(error){}
       }
       fetchProcedures();
-    }, [])
+    }, [refreshing])
 
     const filteredProcedures = procedures.filter(procedure => {
       const search = searchTerm.toLowerCase();
@@ -49,6 +49,10 @@ const OperatingRoomReservations = ({ID_operating_room}) => {
       };
 
     const handleAddReservation = async () => {
+      if (!reservation.Start_time || !reservation.End_time || !reservation.ID_procedure) {
+          alert("Please fill in all fields.");
+          return;
+      }
         try{
             await httpResources.post("/create/operating_room_reservation", reservation)
             setReservation({
@@ -57,6 +61,7 @@ const OperatingRoomReservations = ({ID_operating_room}) => {
                 Start_time: '',
                 ID_procedure: ''
               })
+              setRefreshing(!refreshing);
             alert("Reservation added successfully!")
         }catch(error){
             alert(error.response.data.detail)
@@ -107,15 +112,15 @@ const OperatingRoomReservations = ({ID_operating_room}) => {
         <label className={formLabel}>Search Procedure:</label>
         <SearchBar searchTerm={searchTerm} onSearch={setSearchTerm} />
         {searchTerm !== '' && 
-            <div className='grid grid-cols-2 gap-2'> 
+            <div className='grid grid-cols-1 gap-2'> 
             {filteredProcedures.map(procedure => (
-              <div key={procedure.ID_procedure} className="bg-gray-100 p-4 rounded-md mt-4 text-center justify-center items-center" onClick={() => handleAddProcedure(procedure)}>
-                <h4 className="font-semibold">{procedure.Procedure_name}</h4>
-              </div>
+              <button key={procedure.ID_procedure} className="bg-[#2D9596] p-4 rounded-md mt-4 text-center justify-center items-center" onClick={() => handleAddProcedure(procedure)}>
+                <h4 className="text-white">{procedure.Procedure_name}</h4>
+              </button>
             ))}
             </div>
         }
-        <div className='mt-5'>
+        <div className='mt-5 '>
             <h3>Selected Procedure:</h3>
             <span className="font-bold text-xl mt-1" style={{ color: "black" }}>
                 {selectedProcedure.Procedure_name}

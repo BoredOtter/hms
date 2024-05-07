@@ -31,7 +31,6 @@ const EmployeeCreation = ({ID_department}) => {
       };
 
       const handleAddEmployee = async () => {
-        console.log(employee)
         try{
             await httpResources.post("/create/employee", employee)
             setEmployee({

@@ -6,9 +6,8 @@ import bodyButton from '../components/utils/bodyButton';
 import MedicationCreation from '../components/creators/MedicationCreation';
 import httpPharmacy from '../client/httpPharmacy';
 import { useEffect } from 'react';
-import loggedUser from '../auth/loggedUser'
 import WarningInfo from './WarningInfo';
-
+import loggedUser from '../auth/loggedUser';
 
 const MedicationsPage = () => {
 
@@ -17,7 +16,8 @@ const MedicationsPage = () => {
     const [loading, setLoading] = useState(true);
     const [medications, setMedications] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
-    const roles = loggedUser();
+    const employee = loggedUser();
+    
 
     const refresh = () => {
       setRefreshing(!refreshing);
@@ -25,7 +25,6 @@ const MedicationsPage = () => {
 
     useEffect (() => {
       const fetchMedications = async () => {
-        console.log(roles)
         const response = await httpPharmacy.get("get/medications");
         const foundMedications = response.data;
         if(foundMedications){
@@ -51,8 +50,8 @@ const MedicationsPage = () => {
     loading ? <WarningInfo loading={true}/> 
     :
     <div className="justify-center items-center text-center">
-        <MedicationCreation refresh={refresh}/>
-        <div className='grid grid-cols-2 gap-10'>
+        {employee.roles.includes('admin') && <MedicationCreation refresh={refresh} />}
+        <div className='space-y-2 mt-4'>
           <SearchBar searchTerm={searchTerm} onSearch={setSearchTerm} />
           <button onClick={handleToggleSearch} className={`${bodyButton} `}>Searching by {searchById ? 'ID' : 'Name'}</button>
         </div>

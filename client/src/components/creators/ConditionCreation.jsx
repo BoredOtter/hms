@@ -28,7 +28,6 @@ const ConditionCreation = ({patient_id}) => {
         e.preventDefault();
         
         setFormData({ ...formData, Entry_date: currentDate }); // Set Entry_date before checking for empty fields
-        console.log(formData)
         for (const key in formData) {
           if (formData[key] === '') {
             alert("Please fill in all fields before submitting.");
@@ -53,7 +52,7 @@ const ConditionCreation = ({patient_id}) => {
   return (
     <ObjectDetails title={"Medical Condition"}>
             <form onSubmit={handleSubmit} className="mt-4 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="justify-center text-center items-center">
                 <div>
                   <label className={formLabel}>Diagnosis:</label>
                   <input
@@ -66,7 +65,7 @@ const ConditionCreation = ({patient_id}) => {
                   />
                 </div>
                 <div>
-                  <label className={formLabel}>Prescribed Medicines:</label>
+                  <label className={formLabel}>Medicines:</label>
                   <input
                     type="text"
                     name="Prescribed_medicines"
@@ -77,7 +76,7 @@ const ConditionCreation = ({patient_id}) => {
                   />
                 </div>
                 <div>
-                  <label className={formLabel}>Description of Disease:</label>
+                  <label className={formLabel}>Description:</label>
                   <input
                     type="text"
                     name="Description_of_disease_or_health_problem"

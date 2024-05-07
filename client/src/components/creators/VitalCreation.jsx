@@ -29,7 +29,6 @@ const VitalCreation = ({patient_id}) => {
         e.preventDefault();
     
         
-        console.log(newVital)
         for (const key in newVital) {
           if (newVital[key] === '') {
               alert("Please fill in all fields before submitting.");
@@ -56,7 +55,6 @@ const VitalCreation = ({patient_id}) => {
   return (
     <ObjectDetails title={"Patient Vitals"}>
           <form onSubmit={handleSubmit} className="mt-4 space-y-4">
-            <div className="grid grid-cols-2 gap-4 mt-10">
               <div>
                 <label className={formLabel}>Blood Pressure:</label>
                 <input
@@ -101,7 +99,6 @@ const VitalCreation = ({patient_id}) => {
                   placeholder="Blood Sugar Level"
                 />
               </div>
-            </div>
             <div>
                 <label className={formLabel}>Other Parameters:</label>
                 <input

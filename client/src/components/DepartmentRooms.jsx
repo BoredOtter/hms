@@ -66,7 +66,7 @@ const DepartmentRooms = ({ ID_department }) => {
     };
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 mb-10 mt-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 mb-10 mt-4">
             {rooms.map((room, index) => (
                 <div key={index} className=" rounded-lg p-2 relative">
                     <div className='bg-sky-100 rounded-lg p-5'>
@@ -74,27 +74,30 @@ const DepartmentRooms = ({ ID_department }) => {
                             <h2 className="text-xl font-semibold">Room {room.ID_room}</h2>
                         </div>
                         <div className="flex flex-col md:flex-row md:space-x-6">
-                            {Object.entries(room).map(([key, value]) => (
-                                (key !== "ID_room" && key !== "bed_reservations" && key !== "ID_department") && (
-                                    <div key={key} className="flex mb-2 flex items-center">
-                                        <p className="font-bold mr-2">{key}:</p>
-                                        {editedRoom && editedRoom['ID_room'] === room['ID_room'] ? (
-                                            <input
-                                                name={key}
-                                                value={editedRoom[key] || ""}
-                                                onChange={(e) => handleChange(e, key)}
-                                                className={formInput}
-                                                inputMode="numeric"
-                                            />
-                                        ) : (
+                            {Object.entries(room).map(([key, value]) => {
+                                const formattedKey = key.split('_').join(' ');
+                                return (
+                                    (key !== "ID_room" && key !== "bed_reservations" && key !== "ID_department") && (
+                                        <div key={key} className="flex mb-2 flex items-center">
+                                            <p className="font-bold mr-2">{formattedKey}:</p>
+                                            {editedRoom && editedRoom['ID_room'] === room['ID_room'] ? (
+                                                <input
+                                                    name={key}
+                                                    value={editedRoom[key] || ""}
+                                                    onChange={(e) => handleChange(e, key)}
+                                                    className={formInput}
+                                                    inputMode="numeric"
+                                                />
+                                            ) : (
                                                 <p>{typeof value === 'object' ? JSON.stringify(value) : value}</p>
                                             )}
-                                    </div>
-                                )
-                            ))}
+                                        </div>
+                                    )
+                                );
+                            })}
 
                         </div>
-                        <div className="flex justify-end items-end mt-2 md:mt-0 space-x-2">
+                        <div className="flex justify-center gap-2">
                             {editedRoom && editedRoom['ID_room'] === room['ID_room'] ? (
                                 <>
                                     <button className={bodyButton} onClick={() => updateRoom(room['ID_room'])}>Save Changes</button>

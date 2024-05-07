@@ -23,18 +23,6 @@ const OperationRooms = () => {
         fetchOperationRooms();
     }, [])
 
-
-    const handleChange = (e) => {
-      const { name, value } = e.target;
-      setEditedOperationRooms(prevState => ({
-          ...prevState,
-          [name]: value
-      }));
-  };
-
-  const handleSaveChanges = (e) => {
-
-  }
   return (
     <ObjectsListing objectsData={operationRooms} objectKey={"ID_operating_room"} objectsTitle={"Operating Rooms"} objectLink={"/operating_rooms"}></ObjectsListing>
   )

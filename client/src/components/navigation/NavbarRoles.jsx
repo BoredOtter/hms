@@ -1,10 +1,11 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import keycloak from '../../auth/keycloak';
 import { useEffect, useState } from 'react';
+import loggedUser from '../../auth/loggedUser';
 
 
 const NavbarRoles = () => {
+  const employee = loggedUser();
   const [isWideScreen, setIsWideScreen] = useState(window.innerWidth > 768); 
     useEffect(() => {
       const handleResize = () => {
@@ -27,14 +28,34 @@ const NavbarRoles = () => {
 
   return (
     <div className={isWideScreen ? "flex justify-between items-center text-center" : "grid grid-cols-4 text-center items-center gap-2 mb-1"}>  
-      <NavLink to='/departments' className={linkClass}>Departments</NavLink>   
+       
       <NavLink to='/register' className={linkClass}>Register</NavLink>
       <NavLink to='/patients' className={linkClass}>Patients</NavLink>
       <NavLink to='/medications' className={linkClass}>Medications</NavLink>
-      <NavLink to='/operating_rooms' className={linkClass}>Operating rooms</NavLink>
       <NavLink to='/rooms' className={linkClass}>Rooms</NavLink>
-      <NavLink to='/employees' className={linkClass}>Employees</NavLink>
-      <NavLink to='/procedures' className={linkClass}>Procedures</NavLink>
+      {employee.roles.includes('admin') && (
+        <>
+          <NavLink to='/operating_rooms' className={linkClass}>Operating rooms</NavLink>
+          <NavLink to='/departments' className={linkClass}>Departments</NavLink>  
+          <NavLink to='/employees' className={linkClass}>Employees</NavLink>
+          <NavLink to='/procedures' className={linkClass}>Procedures</NavLink>
+        </>
+      )}
+
+      {(employee.roles.includes('nurse')) && (
+        <>
+          <NavLink to='/employee-schedules' className={linkClass}>Schedules</NavLink>
+        </>
+      )}
+      {
+        employee.roles.includes('doctor') && (
+          <>
+          <NavLink to='/employee-procedures' className={linkClass}>Procedures</NavLink>
+          <NavLink to='/employee-schedules' className={linkClass}>Schedules</NavLink>
+          </>
+        )
+      }
+
     </div>
   );
 };

@@ -5,11 +5,13 @@ import { useState, useEffect } from 'react';
 import DepartmentCreation from '../components/creators/DepartmentCreation';
 import httpResources from '../client/httpResources';
 import WarningInfo from './WarningInfo';
+import loggedUser from '../auth/loggedUser';
 
 const DepartmentsPage = () => {
   const [departments, setDepartments] = useState([])
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const employee = loggedUser();
 
   const refresh = () => {
     setRefreshing(!refreshing);
@@ -41,7 +43,7 @@ const DepartmentsPage = () => {
         <WarningInfo loading={true}/>
       ) : (
         <>
-          <div className='flex justify-center'><DepartmentCreation refresh={refresh}/></div>
+          {employee.roles.includes('admin') && <DepartmentCreation refresh={refresh}/> }
           <ObjectsListing 
             objectsData={departments} 
             objectsTitle={"Departments"}

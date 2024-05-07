@@ -33,7 +33,6 @@ const ResourceCreation = ({ID_department}) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(resource);
     
         // Parse Available_quantity to an integer
         const availableQuantity = parseInt(resource.Available_quantity);

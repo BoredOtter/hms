@@ -68,7 +68,6 @@ const RegisterPatient = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(values)
         if (
             values.First_name &&
             values.Last_name &&
