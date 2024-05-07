@@ -1225,15 +1225,15 @@ def get_operating_room_reservations_by_doctor(doctor_id: str, db=Depends(get_db)
     # get operating room reservations for operating procedures
     operating_room_reservations = []
     for operating_procedure in operating_procedures:
-        operating_room_reservation = (
+        reservations = (
             db.query(operating_room_reservation_model)
             .filter(operating_room_reservation_model.ID_procedure == operating_procedure.ID_procedure)
             .all()
         )
-        operating_room_reservations.extend(operating_room_reservation)
+        operating_room_reservations.extend(reservations)
         
     # get information about procedure
-    for reservation in operating_room_reservation:
+    for reservation in operating_room_reservations:
         reservation.Procedure_name = operating_procedure.Procedure_name
         reservation.Description = operating_procedure.Description
         reservation.Costs = operating_procedure.Costs
@@ -1244,6 +1244,7 @@ def get_operating_room_reservations_by_doctor(doctor_id: str, db=Depends(get_db)
             status_code=404, detail="Operating room reservations not found"
         )
     return operating_room_reservations
+
 
 @app.patch(
     "/update/operating_room_reservation/{reservation_id}",
