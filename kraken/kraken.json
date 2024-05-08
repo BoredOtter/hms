@@ -103,6 +103,26 @@
       ]
     },
     {
+      "endpoint": "/api/v1/patients/{patch1}/{patch2}/",
+      "input_headers": [
+        "*"
+      ],
+      "method": "PATCH",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/{patch1}/{patch2}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "PATCH",
+          "host": [
+            "http://patients:8001"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
       "endpoint": "/api/v1/patients/{post1}/{post2}/{post3}/",
       "input_headers": [
         "*"
@@ -126,6 +146,9 @@
       "endpoint": "/api/v1/resources/{get1}/{get2}/",
       "input_headers": [
         "*"
+      ],
+      "input_query_strings": [
+        "room_id"
       ],
       "method": "GET",
       "output_encoding": "no-op",
@@ -372,6 +395,26 @@
       "backend": [
         {
           "url_pattern": "/{delete1}/{delete2}/{delete3}/{delete4}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "DELETE",
+          "host": [
+            "http://pharmacy:8004"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/pharmacy/{delete1}/{delete2}/{delete3}/",
+      "input_headers": [
+        "*"
+      ],
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/{delete1}/{delete2}/{delete3}",
           "encoding": "no-op",
           "sd": "static",
           "method": "DELETE",

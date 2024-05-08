@@ -184,7 +184,7 @@ def update_patient(
 
 
 @app.get("/get_vitals/{patient_uuid}", tags=["Vital Signs"])
-def get_vitals(patient_uuid: str, db=Depends(get_db), all_vitals: bool = False):
+def get_vitals(patient_uuid: str, db=Depends(get_db), all_vitals: bool = True):
     # check if patient exists
     if (
         not db.query(patient_model)
@@ -234,7 +234,7 @@ def add_vitals(patient_uuid: str, vital_signs: vital_signs_schema, db=Depends(ge
 
 @app.get("/get_medical_history/{patient_uuid}", tags=["Medical History"])
 def get_medical_history(
-    patient_uuid: str, db=Depends(get_db), all_medical_history: bool = False
+    patient_uuid: str, db=Depends(get_db), all_medical_history: bool = True
 ):
     # check if patient exists
     if (

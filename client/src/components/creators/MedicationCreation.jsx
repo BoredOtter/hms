@@ -1,12 +1,14 @@
 import React from 'react'
 import { useState } from 'react'
-import formInput from './utils/formInput'
-import formLabel from './utils/formLabel'
-import bodyButton from './utils/bodyButton'
-import ObjectDetails from './utils/ObjectDetails'
+import formInput from '../utils/formInput'
+import formLabel from '../utils/formLabel'
+import bodyButton from '../utils/bodyButton'
+import ObjectDetails from '../utils/ObjectDetails'
+import httpPharmacy from '../../client/httpPharmacy'
+import WarningInfo from '../../pages/WarningInfo'
 
-const MedicationCreation = () => {
-
+const MedicationCreation = ({refresh}) => {
+    const [createMedication, setCreateMedication] = useState(false);
     const [medication, setMedication] = useState({
         Medication_name: '',
         Active_substance: '',
@@ -17,20 +19,49 @@ const MedicationCreation = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+        let parsedValue = value;
+    
+        // Check if the field being updated is "Price"
+        if (name === 'Price') {
+            // Ensure the input value is a valid number or empty string
+            const match = value.match(/^(-?\d*\.?\d{0,2}).*$/);
+            parsedValue = match ? match[1] : '';
+        }
+    
         setMedication(prevState => ({
             ...prevState,
-            [name]: value
+            [name]: parsedValue
         }));
     };
+    
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Submitted Medication Data:", medication);
-        // Add your logic to send the medication data to the server here
+        const allFieldsNotEmpty = Object.values(medication).every(value => value !== '');
+        if(allFieldsNotEmpty){
+            try{
+                await httpPharmacy.post("/add/medication", medication)
+                alert("Medication added successfully!");
+                setCreateMedication(!createMedication);
+                refresh();
+                setMedication({Medication_name: '',
+                Active_substance: '',
+                Form: '',
+                Manufacturer: '',
+                Price: ''});
+                
+            }catch(error){
+                alert(error.response.data.detail);
+                return Promise.reject(error);
+            }
+        }
+        else{
+            alert("Make sure every field is not empty!")
+        }
     };
 
-    
   return (
+
     <ObjectDetails title={"Add Medication"}>
         <form onSubmit={handleSubmit} className="space-y-4">
             <div className='space-y-4'>
@@ -90,7 +121,6 @@ const MedicationCreation = () => {
             </div>
         </form>
     </ObjectDetails>
-
   )
 }
 

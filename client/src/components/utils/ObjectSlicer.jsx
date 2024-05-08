@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 const ObjectSlicer = ({ object }) => {
   const renderValue = (value) => {
@@ -10,15 +10,18 @@ const ObjectSlicer = ({ object }) => {
   };
 
   return (
-    <div className='text-center p-5'>
-      {Object.entries(object).map(([key, value]) => (
-        <div key={key} className='flex flex-wrap'>
-          <p className="font-bold">{key.charAt(0).toUpperCase() +  key.slice(1)}:</p>
-          {renderValue(value)}
-        </div>
-      ))}
+    <div className='text-center p-3'>
+      {Object.entries(object).map(([key, value]) => {
+        const formattedKey = key.split('_').join(' '); // Zamienia podkreślenia na spacje
+        return (
+          <div key={key} className='flex flex-wrap'>
+            <p className="font-bold">{formattedKey.charAt(0).toUpperCase() + formattedKey.slice(1)}:</p>
+            {renderValue(value)}
+          </div>
+        );
+      })}
     </div>
   );
 };
 
-export default ObjectSlicer
+export default ObjectSlicer;

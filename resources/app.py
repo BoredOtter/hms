@@ -91,16 +91,6 @@ def get_department_by_id(department_id: int, db=Depends(get_db)):
 
     # Retrieve rooms for the department
     rooms = db.query(room_model).filter(room_model.ID_department == department_id).all()
-
-    # Retrieve bed reservations for each room
-    for room in rooms:
-        room.bed_reservations = (
-            db.query(bed_reservation_model)
-            .filter(bed_reservation_model.ID_room == room.ID_room)
-            .all()
-        )
-
-    department.rooms = rooms
     return department
 
 
@@ -1218,6 +1208,38 @@ def get_operating_room_reservations_by_room(room_id: int, db=Depends(get_db)):
         .all()
     )
     if operating_room_reservations is None:
+        raise HTTPException(
+            status_code=404, detail="Operating room reservations not found"
+        )
+    return operating_room_reservations
+
+@app.get("/get/operating_room_reservations/doctor/{doctor_id}", tags=["Operating Room Reservation"])
+def get_operating_room_reservations_by_doctor(doctor_id: str, db=Depends(get_db)):
+    # get operating procedures for doctor (check if id is in medical personnel list)
+    operating_procedures = (
+        db.query(medical_procedure_model)
+        .filter(medical_procedure_model.Medical_personnel_list.contains(doctor_id))
+        .all()
+    )
+    
+    # get operating room reservations for operating procedures
+    operating_room_reservations = []
+    for operating_procedure in operating_procedures:
+        reservations = (
+            db.query(operating_room_reservation_model)
+            .filter(operating_room_reservation_model.ID_procedure == operating_procedure.ID_procedure)
+            .all()
+        )
+        operating_room_reservations.extend(reservations)
+        
+    # get information about procedure
+    for reservation in operating_room_reservations:
+        reservation.Procedure_name = operating_procedure.Procedure_name
+        reservation.Description = operating_procedure.Description
+        reservation.Costs = operating_procedure.Costs
+        reservation.Medical_personnel_list = operating_procedure.Medical_personnel_list
+        
+    if not operating_room_reservations:
         raise HTTPException(
             status_code=404, detail="Operating room reservations not found"
         )

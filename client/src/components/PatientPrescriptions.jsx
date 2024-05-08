@@ -1,155 +1,112 @@
-import React, { useState } from 'react';
-import prescriptions from '../../prescriptions.json';
+import React, { useState, useEffect } from 'react';
+import httpPharmacy from '../client/httpPharmacy';
+import WarningInfo from '../pages/WarningInfo';
 import bodyButton from './utils/bodyButton';
-import ObjectDetails from './utils/ObjectDetails';
-import formInput from './utils/formInput';
-import formLabel from './utils/formLabel';
 
 const PatientPrescriptions = ({ patient_id }) => {
-  const [editMode, setEditMode] = useState(false);
-  const [editedMedications, setEditedMedications] = useState(() => prescriptions.Medication_list.map(() => ({})));
-  
-  const handleEditMedication = (index) => {
-    setEditedMedications((prevEditedMedications) => {
-      const newEditedMedications = [...prevEditedMedications];
-      if (!newEditedMedications.includes(index)) {
-        newEditedMedications[index] = { ...prescriptions.Medication_list[index] };
-      }
-      return newEditedMedications;
-    });
-    setEditMode(true);
-  };
-  const handleDeleteMedication = (index) => {
-    console.log("DELETE ENDPOINT")
-  }
-
-  const handleChange = (event, index, key) => {
-    const { value } = event.target;
-    setEditedMedications((prevEditedMedications) => {
-      const updatedMedications = [...prevEditedMedications];
-      updatedMedications[index] = {
-        ...updatedMedications[index],
-        [key]: value,
-      };
-      return updatedMedications;
-    });
-  };
-
-  const handleSaveChanges = () => {
-    console.log("Updated Medication List:", editedMedications);
-    setEditedMedications([]);
-    setEditMode(false);
-  };
-
-  const handleCancelEdit = (index) => {
-    setEditedMedications((prevEditedMedications) => {
-      const updatedMedications = [...prevEditedMedications];
-      updatedMedications[index] = {};
-      return updatedMedications;
-    });
-    setEditMode(false);
-  };
-
+  const [loading, setLoading] = useState(true);
+  const [prescriptions, setPrescriptions] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
   const [medication, setMedication] = useState({
-    ID_medication: 0,
-    Quantity: 0,
-    Dosage: "string"
+    ID_medication: '',
+    Quantity: '',
+    Dosage: ''
   });
 
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setMedication({ ...medication, [name]: value });
-  };
+  useEffect(() => {
+    const fetchPrescriptions = async () => {
+      try {
+        const response = await httpPharmacy.get(`/get/prescriptions/${patient_id}`);
+        const foundPrescriptions = response.data;
+        setPrescriptions(foundPrescriptions);
+      } catch (error) {
+        } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log("Submitted Medication Data:", medication);
-    // Add your logic to send the medication data to the server here
+    fetchPrescriptions();
+  }, [refreshing]);
+
+  const handleDeletePrescription = async (prescriptionId) => {
+    try {
+      await httpPharmacy.delete(`/delete/prescription/${prescriptionId}`);
+      alert("Prescription deleted successfully");
+      const response = await httpPharmacy.get(`/get/prescriptions/${patient_id}`);
+      const foundPrescriptions = response.data;
+      setPrescriptions(foundPrescriptions);
+    } catch (error) {
+      setPrescriptions([]);
+    }
   };
 
   return (
     <>
-    <ObjectDetails title={"Add prescription"}>
-    <form onSubmit={handleSubmit} className="mt-4 space-y-4">
-      <div className="grid grid-cols-2 gap-4 mt-10">
-        <div>
-          <label className={formLabel}>Medication ID:</label>
-          <input
-            type="text"
-            name="ID_medication"
-            onChange={handleInputChange}
-            className={formInput}
-            placeholder="Medication ID"
-          />
-        </div>
-        <div>
-          <label className={formLabel}>Quantity:</label>
-          <input
-            type="text"
-            name="Quantity"
-            onChange={handleInputChange}
-            className={formInput}
-            placeholder="Quantity"
-          />
-        </div>
-        <div>
-          <label className={formLabel}>Dosage:</label>
-          <input
-            type="text"
-            name="Dosage"
-            onChange={handleInputChange}
-            className={formInput}
-            placeholder="Dosage"
-          />
-        </div>
-      </div>
-      <button type="submit" className={bodyButton}>Save</button>
-    </form>
-    </ObjectDetails>
-    <div className="container-xl lg:container m-auto bg-sky-100 rounded-xl p-3.5 hover:bg-sky shadow-md relative mb-10">
-      {/* Prescription Data */}
-      <div className="font-bold text-l flex mb-2">
-        <p className="font-bold mr-2">Prescription Data (Doctor ID):</p>
-        <p>{prescriptions.Prescription_data.ID_doctor}</p> {/* Display only the doctor ID */}
-      </div>
-      <h2 className="font-bold text-l mb-2">Medication List:</h2>
-      <div className='grid grid-cols-2 gap-4'>
-        {prescriptions.Medication_list.map((medication, index) => (
-          <div key={index} className="bg-gray-200 rounded-xl p-3.5 hover:bg-sky shadow-md hover:shadow-lg relative mb-2">
-            {Object.entries(medication).map(([key, value]) => (
-              <div key={key} className="font-bold text-l flex mb-2">
-                <p className="font-bold mr-2">{key}:</p>
-                {editedMedications[index] && editedMedications[index][key] !== undefined ? (
-                  <input 
-                    type="text" 
-                    name={key} 
-                    value={editedMedications[index][key]} 
-                    onChange={(event) => handleChange(event, index, key)} 
-                    className="border-b border-gray-400 focus:outline-none focus:border-indigo-500 flex-grow"
-                  />
-                ) : (
-                  <p>{value}</p>
-                )}
-              </div>
-            ))}
-            {/* Edit Button */}
-            {(!editedMedications[index] || Object.keys(editedMedications[index]).length === 0) && (
-              <div className="flex gap-2 mt-2">
-                <button className={bodyButton} onClick={() => handleEditMedication(index)}>Edit</button>
-                <button className={bodyButton} onClick={() => handleDeleteMedication(index)}>Delete</button>
-              </div>
-            )}
-            {/* Save and Cancel Buttons */}
-            {editedMedications[index] && Object.keys(editedMedications[index]).length > 0 && (
-              <div className="flex gap-2 mt-2">
-                <button className={bodyButton} onClick={handleSaveChanges}>Save</button>
-                <button className={bodyButton} onClick={() => handleCancelEdit(index)}>Cancel</button>
-              </div>
+      {loading ? (
+        <WarningInfo loading={true} />
+      ) : (
+        <>
+          <h2 className='text-3xl font-bold text-black-100 mb-8 text-center mt-8'>
+            Prescriptions
+          </h2>
+          <div className='mt-5 '>
+            {prescriptions.length > 0 && (
+              prescriptions.map((prescription, index) => (
+                <div key={index} className="container-xl lg:container m-auto bg-sky-100 rounded-xl p-3.5 hover:bg-sky shadow-md relative mb-10">
+                  <div className="font-bold text-l flex mb-2">
+                    <p className="font-bold mr-2">Doctor ID:</p>
+                    <p>{prescription.ID_doctor}</p>
+                  </div>
+                  <div className="font-bold text-l flex mb-2">
+                    <p className="font-bold mr-2">Prescription ID:</p>
+                    <p>{prescription.ID_prescription}</p>
+                  </div>
+                  <h2 className="font-bold text-l mb-2">Medication List:</h2>
+                  <div className='grid grid-cols-2 gap-3'>
+                    {prescription.prescription_medications.length > 0 ? (
+                      prescription.prescription_medications.map((medication, medIndex) => (
+                        <div key={medIndex} className="bg-[#9AD0C2] rounded-xl p-3.5 hover:bg-sky shadow-md hover:shadow-lg relative mb-2">
+                          <div className="font-bold text-l flex mb-2">
+                            <p className="font-bold mr-2">Medication ID:</p>
+                            <p>{medication.ID_medication}</p>
+                          </div>
+                          <div className="font-bold text-l flex mb-2">
+                            <p className="font-bold mr-2">Quantity:</p>
+                            <p>{medication.Quantity}</p>
+                          </div>
+                          <div className="font-bold text-l flex mb-2">
+                            <p className="font-bold mr-2">Dosage:</p>
+                            <p>{medication.Dosage}</p>
+                          </div>
+                          <div className="font-bold text-l flex mb-2">
+                            <p className="font-bold mr-2">Medication Name:</p>
+                            <p>{medication.medication.Medication_name}</p>
+                          </div>
+                          <div className="font-bold text-l flex mb-2">
+                            <p className="font-bold mr-2">Active Substance:</p>
+                            <p>{medication.medication.Active_substance}</p>
+                          </div>
+                          <div className="font-bold text-l flex mb-2">
+                            <p className="font-bold mr-2">Manufacturer:</p>
+                            <p>{medication.medication.Manufacturer}</p>
+                          </div>
+                          <div className="font-bold text-l flex mb-2">
+                            <p className="font-bold mr-2">Form:</p>
+                            <p>{medication.medication.Form}</p>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <p>No medications prescribed</p>
+                    )}
+                  </div>
+                  <button className={bodyButton} onClick={() => handleDeletePrescription(prescription.ID_prescription)}>Delete Prescription</button>
+                </div>
+              ))
             )}
           </div>
-        ))}
-      </div>
-    </div>
+        </>
+      )}
     </>
   );
 };

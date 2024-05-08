@@ -1,37 +1,36 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import keycloak from './keycloak';
-// import httpClient from '../client/httpClient';
 
 const useAuth = () => {
-    const isRun = useRef(false);
+    const [isInitialized, setIsInitialized] = useState(false);
     const [isLogin, setLogin] = useState(false);
     const [roles, setRoles] = useState('');
-    const [name, setName] = useState('');
-    
+    const [uuid, setUuid] = useState('');
+    const [name , setName] = useState('');
     useEffect(() => {
-        if(isRun.current) return;
-        isRun.current = true;
-        keycloak
-            .init({ onLoad: 'login-required' })
-            .then((authenticated) => {
-                setLogin(authenticated)
-                const tokenPayload = keycloak.tokenParsed;
-                const firstName = tokenPayload.given_name;
-                const lastName = tokenPayload.family_name;
-
-                if (firstName && lastName) {
-                    const fullName = `${firstName} ${lastName}`;
-                    setName(fullName);
-                }
-
-                if(tokenPayload && tokenPayload.realm_access && tokenPayload.realm_access.roles){
-                    setRoles(tokenPayload.realm_access.roles);
-                }
-                // httpClient.defaults.headers.common['Authorization'] = `Bearer ${keycloak.token}`;
-            });
+        if (!isInitialized) {
+            keycloak
+                .init({ onLoad: 'login-required' })
+                .then((authenticated) => {
+                    setLogin(authenticated);
+                    console.log(keycloak.token);
+                    const tokenPayload = keycloak.tokenParsed;
+                    if (tokenPayload && tokenPayload.realm_access && tokenPayload.realm_access.roles) {
+                        setRoles(tokenPayload.realm_access.roles);
+                    }
+                    setUuid(tokenPayload.sub);
+                    setName(tokenPayload.name);
+                })
+                .catch((error) => {
+                    console.error('Error initializing Keycloak:', error);
+                })
+                .finally(() => {
+                    setIsInitialized(true);
+                });
+        }
     }, []);
 
-    return [isLogin, roles, name];
+    return [isLogin, roles, uuid, name];
 };
 
 export default useAuth;

@@ -1,80 +1,119 @@
 import React from 'react'
-import formInput from './utils/formInput'
-import formLabel from './utils/formLabel'
-import bodyButton from './utils/bodyButton'
-import { useState } from 'react'
-import ObjectDetails from './utils/ObjectDetails'
+import { useState, useEffect } from 'react';
+import httpPatients from '../client/httpPatients';
+import ObjectDetails from '../components/utils/ObjectDetails';
+import formInput from '../components/utils/formInput';
+import formLabel from '../components/utils/formLabel';
+import bodyButton from '../components/utils/bodyButton';
+import ObjectSlicer from '../components/utils/ObjectSlicer';
+import WarningInfo from '../pages/WarningInfo';
+import httpResources from '../client/httpResources';
+import PatientBedReservationCreation from './creators/PatientBedReservationCreation';
+import { NavLink } from 'react-router-dom';
 
-const PatientInfo = ({patient}) => {
-    const [editedPatient, setEditedPatient] = useState(patient);
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setEditedPatient({ ...editedPatient, [name]: value });
+const formatPhoneNumber = (phoneNumber) => {
+    // Remove all non-numeric characters from the input
+    const cleaned = ('' + phoneNumber).replace(/\D/g, '');
+    // Apply the pattern "xxx-xxx-xxx"
+    const match = cleaned.match(/^(\d{0,3})(\d{0,3})(\d{0,3})$/);
+    if (match) {
+        return [match[1], match[2], match[3]].filter((group) => group.length > 0).join('-');
+    }
+    return cleaned.slice(0, 9); // Ensure only 9 digits are displayed
+}
+
+const PatientInfo = ({patient_id}) => {
+    const [loading, setLoading] = useState(true);
+    const [editedPatient, setEditedPatient] = useState(null);
+    const [bedReservation, setBedReservation] = useState(null);
+    const [submitted, setSubmitted] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [patient, setPatient] = useState('');
+    const [refreshing, setRefreshing] = useState(false);
+
+
+  const refresh = () => {
+    setRefreshing(!refreshing);
+  }
+
+  useEffect(() => {
+    const fetchPatient = async () => {
+        try {
+            const response = await httpPatients.get(`/get/${patient_id}`);
+            const foundPatient = response.data;
+            setPatient(foundPatient);
+            setEditedPatient(foundPatient);
+        } catch (error) {
+          alert(error.response.data.detail)
+        } finally {
+          setLoading(false);
+        }
     };
+    fetchPatient();
+}, [submitted]);
 
-    const handleSubmit = (e) => {
-    e.preventDefault();
-    // Here you can implement logic to update the patient's details
-    // For example, make an API call to update the patient's information
-    // After successful update, you can set editing to false
-    setEditing(false);
-    };
+  useEffect(() => {
+    const fetchBedReservation = async () => {
+      try{
+        const bedReservation = await httpResources.get(`/get/bed_reservation`, {params: {patient_id: patient_id}})
+        const foundBedReservations = bedReservation.data;
+        setBedReservation(foundBedReservations[0]);
+      } catch(error){}
+    }
+    fetchBedReservation();
+  }, [refreshing])
 
+  const handleInputChange = (e) => {
+      const { name, value } = e.target;
+      setEditedPatient({ ...editedPatient, [name]: value });
+  };
+
+  const handleIsEditing = () => {
+    setIsEditing(!isEditing);
+  }
+
+  const handleSubmit = async (e) => {
+      e.preventDefault();
+  
+    const changedFields = {};
+    for (const key in patient) {
+        if (patient[key] !== editedPatient[key]) {
+            changedFields[key] = editedPatient[key];
+        }
+    }
+
+    if (Object.keys(changedFields).length === 0) {
+      alert("No changes were made!")
+      return;
+    }
+
+    try {
+      await httpPatients.patch(`/update/${patient_id}`, changedFields);
+      setSubmitted(!submitted)
+      setIsEditing(!isEditing)
+      alert("Updated successfully!")
+    } catch (error) {
+        console.error('Error updating patient:', error);
+    }
+  };
   return (
-    <ObjectDetails title={"Change patient informations"}>
-    <form onSubmit={handleSubmit} className="space-y-4">
-            <div className='space-y-4'>
-              <label className={formLabel}>
-                First Name:
-                <input
-                  type="text"
-                  name="First_name"
-                  value={editedPatient.First_name}
-                  onChange={handleInputChange}
-                  className={formInput}
-                />
-              </label>
-              <label className={formLabel}>
-                Last Name:
-                <input
-                  type="text"
-                  name="Last_name"
-                  value={editedPatient.Last_name}
-                  onChange={handleInputChange}
-                  className={formInput}
-                />
-              </label>
-              <label className={formLabel}>
-                Date of Birth:
-                <input
-                  type="text"
-                  name="Date_of_birth"
-                  value={editedPatient.Date_of_birth}
-                  onChange={handleInputChange}
-                  className={formInput}
-                  pattern="\d{4}-\d{2}-\d{2}"
-                  placeholder="YYYY-MM-DD"
-                  title="Date should be in the format YYYY-MM-DD"
-                />
-              </label>
-              <label className={formLabel}>
-                Gender:
-                <input
-                  type="text"
-                  name="Gender"
-                  value={editedPatient.Gender}
-                  onChange={handleInputChange}
-                  className={formInput}
-                />
-              </label>
+    !loading ? (
+      <div className="flex flex-col justify-center items-center">
+        <ObjectDetails title={"Patient Information"}>
+          <ObjectSlicer object={patient}></ObjectSlicer>
+          <button className={bodyButton} onClick={handleIsEditing}>Change informations</button>
+          {isEditing ? (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-4">
               <label className={formLabel}>
                 Contact Number:
                 <input
                   type="text"
                   name="Contact_number"
-                  value={editedPatient.Contact_number}
+                  value={formatPhoneNumber(editedPatient.Contact_number)}
                   onChange={handleInputChange}
                   className={formInput}
+                  maxLength={11}
                 />
               </label>
               <label className={formLabel}>
@@ -87,23 +126,28 @@ const PatientInfo = ({patient}) => {
                   className={formInput}
                 />
               </label>
-              <label className={formLabel}>
-                PESEL:
-                <input
-                  type="text"
-                  name="PESEL"
-                  value={editedPatient.PESEL}
-                  onChange={handleInputChange}
-                  className={formInput}
-                />
-              </label>
             </div>
             <div className="flex justify-center space-x-4">
               <button type="submit" className={bodyButton}>Save</button>
             </div>
           </form>
+          ) : null}
         </ObjectDetails>
-  )
-}
+        {
+          bedReservation? (
+            <div className="flex flex-col justify-center items-center">
+              <ObjectDetails title={"Bed Reservation"}>
+                <ObjectSlicer object={bedReservation}></ObjectSlicer>
+                <NavLink to={`/rooms/${bedReservation.ID_room}` }className={`${bodyButton} pt-3`}>Check Room</NavLink>
+              </ObjectDetails>
+            </div>
+          ) : <PatientBedReservationCreation patient_id={patient_id} refresh={refresh}></PatientBedReservationCreation>
+        }
+      </div>
+    ) : <WarningInfo loading={true}/>
+  );
+  
+  
+};
 
-export default PatientInfo
+export default PatientInfo;

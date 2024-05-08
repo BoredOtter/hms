@@ -1,11 +1,12 @@
 import React from 'react'
-import ObjectDetails from './utils/ObjectDetails'
-import formLabel from './utils/formLabel'
-import formInput from './utils/formInput'
-import bodyButton from './utils/bodyButton'
+import ObjectDetails from '../utils/ObjectDetails'
+import formLabel from '../utils/formLabel'
+import formInput from '../utils/formInput'
+import bodyButton from '../utils/bodyButton'
+import httpResources from '../../client/httpResources'
 import { useState } from 'react'
 
-const DepartmentCreation = () => {
+const DepartmentCreation = ({refresh}) => {
 
     const [department, setDepartment] = useState({
     Department_name: '',
@@ -21,9 +22,23 @@ const DepartmentCreation = () => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Submitted department:', department);
+        for (const key in department) {
+            if (!department[key]) {
+                alert("Please fill in all fields.");
+                return;
+            }
+        }
+
+        try{
+            const response = await httpResources.post("/create/department",department);
+            alert("Department sucessfully added!");
+            refresh();
+          } catch(error){
+            alert(error.response.data.detail);
+            return Promise.reject(error);
+          }
         setDepartment({
             Department_name: '',
             Description: '',
@@ -34,7 +49,7 @@ const DepartmentCreation = () => {
   
   return (
 
-    <ObjectDetails title={"New Department"}>
+    <ObjectDetails title={"Create new Department"}>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className='space-y-4'>
               <label className={formLabel}>
@@ -69,7 +84,7 @@ const DepartmentCreation = () => {
               </label>
           </div>
             <div className="flex justify-center space-x-4">
-                <button type="submit" className={bodyButton}>Save</button>
+                <button type="submit" onClick={handleSubmit} className={bodyButton}>Save</button>
             </div>
           </form>
     </ObjectDetails>
