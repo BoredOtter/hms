@@ -19,6 +19,9 @@ COPY deployment/nginx.conf /etc/nginx/conf.d/
 
 COPY --from=build /app/dist /usr/share/nginx/html
 
+# :c 
+RUN find . -name "index*.js" -type f -exec sed -i 's|https://auth\.hms\.test\.boredotter\.dev\.boredotter\.dev|https://auth.hms.test.boredotter.dev|g' {} \;
+
 EXPOSE 8080
 
 CMD ["nginx", "-g", "daemon off;"]
