@@ -7,7 +7,7 @@ RUN npm install
 
 COPY . .
 
-RUN grep -rlw 'hms\.test' . | xargs sed -i 's/\bhms\.test\b/hms.test.boredotter.dev/g'
+RUN find . -type f -exec sed -i 's/\bhms\.test\b/hms\.test\.boredotter\.dev/g' {} \;
 
 RUN npm run build-stage
 
