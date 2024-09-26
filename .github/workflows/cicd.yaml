@@ -24,7 +24,7 @@ jobs:
             context: pharmacy
 
     name: Build and Push ${{ matrix.image }}
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -47,7 +47,7 @@ jobs:
   deploy:
       name: Deploy
       needs: build-and-push
-      runs-on: ubuntu-22.04
+      runs-on: ubuntu-24.04
       steps:
       - name: Checkout
         uses: actions/checkout@v4
