@@ -45,6 +45,14 @@ const App = () => {
       <Route path='/employee-schedules' element={<EmployeeSchedulesPage employee_id={uuid}/>} />
     </>
   )
+  const generatePatientRoutes = () => (
+    <>
+      <Route path='/medications' element={<MedicationsPage/>} />
+      <Route path='/medications/:id' element={<MedicationPage/>} />
+      <Route path='/patients' element={<PatientsPage />} />
+      <Route path='/patients/:id' element={<PatientPage />} />
+    </>
+  );
   const generateDoctorRoutes = () => (
     <>
       <Route path='/register' element={<RegisterPatient />} />
@@ -88,6 +96,7 @@ const App = () => {
           {roles.includes('nurse') && generateNurseRoutes()}
           {roles.includes('doctor') && generateDoctorRoutes()}
           {roles.includes('admin') && generateAdminRoutes()}
+          {roles.includes('patient') && generatePatientRoutes()}
           <Route path='/home' element={<Home employee_name={name} employee_id={uuid}/>} />
           <Route path='/unauthorized' element={<WarningInfo info="Unauthorized!" />} />
           <Route path='/*' element={<WarningInfo info="404 Not Found!" />} />

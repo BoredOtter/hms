@@ -28,30 +28,33 @@ const NavbarRoles = () => {
 
   return (
     <div className={isWideScreen ? "flex justify-between items-center text-center" : "grid grid-cols-4 text-center items-center gap-2 mb-1"}>  
-       
-      <NavLink to='/register' className={linkClass}>Register</NavLink>
       <NavLink to='/patients' className={linkClass}>Patients</NavLink>
       <NavLink to='/medications' className={linkClass}>Medications</NavLink>
-      <NavLink to='/rooms' className={linkClass}>Rooms</NavLink>
       {employee.roles.includes('admin') && (
         <>
           <NavLink to='/operating_rooms' className={linkClass}>Operating rooms</NavLink>
           <NavLink to='/departments' className={linkClass}>Departments</NavLink>  
           <NavLink to='/employees' className={linkClass}>Employees</NavLink>
           <NavLink to='/procedures' className={linkClass}>Procedures</NavLink>
+          <NavLink to='/register' className={linkClass}>Register</NavLink>
+          <NavLink to='/rooms' className={linkClass}>Rooms</NavLink>
         </>
       )}
 
       {(employee.roles.includes('nurse')) && (
         <>
           <NavLink to='/employee-schedules' className={linkClass}>Schedules</NavLink>
+          <NavLink to='/register' className={linkClass}>Register</NavLink>
+          <NavLink to='/rooms' className={linkClass}>Rooms</NavLink>
         </>
       )}
       {
         employee.roles.includes('doctor') && (
           <>
+          <NavLink to='/register' className={linkClass}>Register</NavLink>
           <NavLink to='/employee-procedures' className={linkClass}>Procedures</NavLink>
           <NavLink to='/employee-schedules' className={linkClass}>Schedules</NavLink>
+          <NavLink to='/rooms' className={linkClass}>Rooms</NavLink>
           </>
         )
       }
